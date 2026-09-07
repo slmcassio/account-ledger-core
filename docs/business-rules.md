@@ -2,7 +2,7 @@
 
 **Project rounding decision:** use HALF_UP with two decimal places for AED and three for BHD. The explicit assumption is to favor the recipient of positive interest at exact ties, accepting the upward bias in those cases. See the [rounding decision and source limits](deliverables/AMBIGUITIES.md#rounding-mode).
 
-The table below records exercise requirements; the rounding mode above is a project choice.
+BR06 records the approved project choice for confirmed settlements. The other rows summarize exercise requirements.
 
 | ID | Business rule | Applicability | Required behavior |
 |---|---|---|---|
@@ -11,13 +11,19 @@ The table below records exercise requirements; the rounding mode above is a proj
 | BR03 | **Available balance** | Calculating the funds available for new authorizations. | Calculate **ledger balance minus the total of active holds**. |
 | BR04 | **Effect of a hold** | Applying a hold resulting from an approved authorization. | Reduce the **available balance** without changing the **ledger balance**. |
 | BR05 | **Authorization approval** | Receiving a new authorization request. | Approve only if the available balance, **after applying the new hold**, remains **at or above zero**. |
-| BR06 | **Settlement without an existing authorization** | Receiving a settlement that references an authorization ID that does not exist. | **Reject the settlement and prevent funds from leaving** the account. |
+| BR06 | **Settlement with a missing local authorization** | Recording a legitimate, externally confirmed settlement whose authorization is absent from the local ledger. | **Append the debit and report the missing authorization.** Preserve the supplied reference and dates; do not create an authorization or hold. |
 | BR07 | **Overdraft fee assessment** | A day's closing ledger balance is **below zero**. | Assess **AED 25.00**, once per day, per account. |
 | BR08 | **Fee value date** | Recording an overdraft fee. | Set `value_date` to the **day assessed**. The interpretation for late adjustments is recorded below. |
 | BR09 | **Daily interest accrual** | Calculating daily interest on the closing ledger balance. | Apply **0.04% per day to positive balances only**. Zero or negative balances do not accrue interest. |
 | BR10 | **Interest capitalization** | End of Day 6. | Capitalize accrued interest as **a single credit**. |
 | BR11 | **Interest reconciliation** | Determining the total interest to capitalize. | Ensure that the **sum of rounded daily interest accruals equals the capitalized total exactly**. |
 | BR12 | **Immutable history** | Recording and correcting events, including reversals. | Only append records to the ledger. **No existing event record may be modified or deleted**. |
+
+## Approved Interpretation: Settlements
+
+For this project, SETTLEMENT reports a legitimate payment that has already settled outside the ledger. This assumption explains BR06: the debit must reflect the payment even when the local authorization record is missing.
+
+See the [decision and rationale](deliverables/AMBIGUITIES.md#settlements-with-a-missing-authorization) and the [rejection of criterion 4](deliverables/REJECTED.md#acceptance-criterion-4).
 
 ## Approved Interpretation: Late Transactions
 

@@ -10,6 +10,12 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 18:02:12
+
+* Reviewed and simplified the [settlement research](../research/03-unmatched-settlements-research.md) and its [example](../examples/05-unmatched-settlement.md). The user approved the documents and authorized the commit.
+* Recorded the confirmed settlement assumption, updated BR06 and the numerical rationale, and documented the rejection of criterion 4.
+* Checked calculations, links, formatting, and consistency across the related documents.
+
 ### 07 September 2026, 17:34:39
 
 * Reviewed [Booking dates, value dates, and corrections](../research/02-booking-and-value-dates-research.md) with the user, who approved the document and its fictional example.

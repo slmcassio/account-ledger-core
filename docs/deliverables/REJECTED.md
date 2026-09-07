@@ -8,4 +8,12 @@ Rejected assigning the corrected historical days as an adjustment's `value_date`
 
 The adjustment must affect the balance from its recording day. Posting it against historical days would also change those days' ledger balances. The original delayed transaction retains its supplied historical value date.
 
+## Acceptance Criterion 4
+
+**Rejected:** refusing a settlement solely because its authorization ID is missing from the ledger, without recording the debit.
+
+The [approved interpretation](AMBIGUITIES.md#settlements-with-a-missing-authorization) treats SETTLEMENT as a legitimate payment already settled outside the ledger. The debit must therefore be recorded, with the missing authorization reported separately. This rejection rests on that project assumption.
+
+In the [example](../examples/05-unmatched-settlement.md), rejecting the settlement would leave AED 500.00 instead of AED 320.00, overstating the balance by AED 180.00.
+
 TODO: Record refused acceptance criteria and further abandoned approaches as they are reviewed.
