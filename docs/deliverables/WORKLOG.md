@@ -8,22 +8,6 @@ Commit milestones use the author and committer timestamps verified in Git histor
 
 ## Verified Commit Milestones
 
-### 07 September 2026, 10:23:43
-
-Commit `139563b` initialized the repository with a README. This milestone comes from the existing Git history.
-
-### 07 September 2026, 10:58:18
-
-Signed commit `9b8eae0` added the [business rules](../business-rules.md).
-
-The document records 12 business rules separately from initial account data and the test scenario. It leaves rounding, the currency of overdraft fees, the effects of backdated entries and reversals, and the lifecycle of authorization holds as open questions.
-
-### 07 September 2026, 11:35:01
-
-Signed commit `6aa6245` added the [exercise statement](../exercise-statement.md) as a separate reference document.
-
-The statement includes the event stream in its supplied order, the acceptance criteria, the required deliverables, and the evaluation guidance. Criteria that the exercise asks the candidate to challenge remain in the reference text. The document explicitly records that the detailed instructions for Part 2 have not been provided.
-
 ### 07 September 2026, 11:35:44
 
 Signed commit `9a69223` organized the documentation and added the required deliverable scaffolds.
@@ -34,6 +18,22 @@ Signed commit `9a69223` organized the documentation and added the required deliv
 * Added the [annotated failing test requirement](../../tests/README.md) as a placeholder, with implementation explicitly pending.
 * Checked Markdown whitespace and the destinations of README links before committing.
 * Verified the cryptographic signatures of both documentation commits.
+
+### 07 September 2026, 11:35:01
+
+Signed commit `6aa6245` added the [exercise statement](../exercise-statement.md) as a separate reference document.
+
+The statement includes the event stream in its supplied order, the acceptance criteria, the required deliverables, and the evaluation guidance. Criteria that the exercise asks the candidate to challenge remain in the reference text. The document explicitly records that the detailed instructions for Part 2 have not been provided.
+
+### 07 September 2026, 10:58:18
+
+Signed commit `9b8eae0` added the [business rules](../business-rules.md).
+
+The document records 12 business rules separately from initial account data and the test scenario. It leaves rounding, the currency of overdraft fees, the effects of backdated entries and reversals, and the lifecycle of authorization holds as open questions.
+
+### 07 September 2026, 10:23:43
+
+Commit `139563b` initialized the repository with a README. This milestone comes from the existing Git history.
 
 ## Earlier Session Activities
 
