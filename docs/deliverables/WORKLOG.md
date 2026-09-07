@@ -10,6 +10,14 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 20:18:53
+
+* Reviewed the [hold lifecycle research](../research/05-hold-lifecycle-research.md) and its [fictional example](../examples/07-hold-lifecycle.md). The user approved the documents, treating Auth-A as final and generating no automatic expiration during the six-day replay, and authorized the focused commit.
+* Checked Mambu, Stripe, Mastercard, and Visa documentation. Recorded source limits, including differing Mambu descriptions of partial clearing and the distinction between reservation expiration and later financial settlement.
+* Recorded the approved assumptions in the ambiguity decisions, numerical notes, and business rules. Documented the abandoned inference that missing later settlements prove finality. Kept API design notes temporary and excluded from Git staging.
+* At the user's request, compared the changes with commit `b075af0`, the review of studies 01 through 04. Prepared a new isolated worktree from that commit, preserved the earlier worktree, and aligned research 05 with the approved policy of no automatic authorization reevaluation. Preserved the reviewed studies and their examples.
+* Checked the diff, local links and anchors, Markdown formatting, example balances, and numerical comparisons. Independent document review found no actionable issues.
+
 ### 07 September 2026, 20:09:41
 
 * The user canceled the local history rewrite and requested one new commit for this review and the approved authorization policy.

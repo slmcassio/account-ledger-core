@@ -16,4 +16,10 @@ The [approved interpretation](AMBIGUITIES.md#settlements-with-a-missing-authoriz
 
 In the [example](../examples/05-unmatched-settlement.md), rejecting the settlement would leave AED 500.00 instead of AED 320.00, overstating the balance by AED 180.00.
 
+## Inferring Finality from Missing Later Settlements
+
+Rejected the original hold report's justification that Auth-A's settlement is final because the scenario supplies no later capture. The absence of another settlement does not establish whether the remaining reservation should stay active.
+
+The [approved decision](AMBIGUITIES.md#hold-settlement-and-release) treats Auth-A as final through an explicit scenario assumption. Partial, non-final settlement remains a valid alternative behavior; it is not rejected as a general approach.
+
 TODO: Record refused acceptance criteria and further abandoned approaches as they are reviewed.

@@ -42,9 +42,20 @@ The ledger supplies the current accounting balance. Authorization controls activ
 
 Preserve the original authorization decision after a balance correction. Do not automatically reevaluate it. A later increase in funds does not activate a declined request. Evaluate a new explicit request against the updated balance and active holds. See the [decision and rationale](deliverables/AMBIGUITIES.md#authorization-and-ledger-responsibilities).
 
+## Approved Interpretation: Hold Lifecycle
+
+* Record the actual debit of a legitimate, externally settled payment independently of changes to a matching active hold. An absent, released, or expired hold does not prevent recording that debit.
+* A partial, non-final settlement reduces the reservation by the settled portion and keeps the remainder active. A final settlement also releases the unused portion.
+* A release without settlement frees the specified reserved amount without creating a ledger debit or credit.
+* Preserve the original authorization and decision records. Append information explaining reservation changes and derive the remaining active amount from that history.
+* Treat Auth-A's AED 185.00 settlement as final by explicit scenario assumption: end its AED 200.00 reservation and release the unused AED 15.00 without a ledger credit.
+* Generate no automatic expiration during the supplied six-day replay. This is a bounded assumption, not a rule that holds never expire. Auth-B has a hold only if approved.
+
+See the [settlement and release decision](deliverables/AMBIGUITIES.md#hold-settlement-and-release), [expiration decision](deliverables/AMBIGUITIES.md#hold-expiration-during-the-replay), and [worked example](examples/07-hold-lifecycle.md).
+
 ## Open Questions
 
 * **Rounding precision and stages:** What intermediate precision should calculations retain, and are any stages needed beyond the required currency rounding and rounded daily accruals?
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
 * **Closing checkpoints and reversals:** When should daily calculations run, and which fees and interest should a reversal correct?
-* **Holds:** When should the remaining hold be released after a settlement below the held amount, and do holds expire?
+* **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?
