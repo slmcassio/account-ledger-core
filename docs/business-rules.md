@@ -1,5 +1,9 @@
 # Business Rules
 
+**Project rounding decision:** use HALF_UP with two decimal places for AED and three for BHD. The explicit assumption is to favor the recipient of positive interest at exact ties, accepting the upward bias in those cases. See the [rounding decision and source limits](deliverables/AMBIGUITIES.md#rounding-mode).
+
+The table below records exercise requirements; the rounding mode above is a project choice.
+
 | ID | Business rule | Applicability | Required behavior |
 |---|---|---|---|
 | BR01 | **Monetary precision** | Storing or rounding monetary amounts. | Use **two decimal places for AED** and **three for BHD**, according to the amount's currency. |
@@ -17,7 +21,7 @@
 
 ## Open Questions
 
-- **Rounding:** Which rounding mode should be used?
-- **Fee in another currency:** How should an AED-denominated overdraft fee apply to a BHD account?
-- **Backdated entries and reversals:** How should previously assessed fees and accrued interest be adjusted?
-- **Holds:** When should the remaining hold be released after a settlement below the held amount, and do holds expire?
+* **Rounding precision and stages:** What intermediate precision should calculations retain, and at which stages should rounding occur?
+* **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
+* **Backdated entries and reversals:** How should previously assessed fees and accrued interest be adjusted?
+* **Holds:** When should the remaining hold be released after a settlement below the held amount, and do holds expire?

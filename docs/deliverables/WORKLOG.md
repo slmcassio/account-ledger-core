@@ -2,9 +2,22 @@
 
 ## Recording Method
 
-This retrospective log was recorded on 07 September 2026 at 11:48:18 in America/Sao_Paulo, whose UTC offset is minus three hours on this date.
+The initial retrospective log was recorded on 07 September 2026 at 11:48:18 in America/Sao_Paulo, whose UTC offset is minus three hours on this date.
 
 Commit milestones use the author and committer timestamps verified in Git history. These timestamps mark recorded repository changes. Earlier discussions are documented separately because their individual start and completion times were not captured. No work durations or missing timestamps have been reconstructed.
+
+Later dated activity entries identify when the summary was recorded, not when the underlying work started or ended. They use the same time zone.
+
+## Research and Documentation Updates
+
+### 07 September 2026, 14:32:54
+
+Recorded the completed review of the rounding research and the resulting documentation changes. The individual research and review start and completion times were not captured.
+
+* Reviewed the [rounding research](../research/rounding-research.md) and checked its official sources. The securities examples provide limited precedents; Mambu describes precision and rounding stages without specifying HALF_UP or HALF_EVEN.
+* Recorded HALF_UP as a project choice in [AMBIGUITIES.md](AMBIGUITIES.md), keeping AED at two decimal places and BHD at three. The explicit assumption is to favor recipients of positive interest at exact ties and accept the upward bias in those cases.
+* Added the decision and a link to its rationale to the [business rules](../business-rules.md). Intermediate precision and rounding stages remain unresolved.
+* Moved the report into docs/research and removed the temporary suffix. Its additional calculation proposals remain research recommendations, not adopted project decisions.
 
 ## Verified Commit Milestones
 
@@ -47,7 +60,7 @@ The following activities were recorded retrospectively at 11:48:18 on 07 Septemb
 * Designated docs/rounding-research.tmp.md as the temporary research output and kept it outside the commits. The file is now present, but its conclusions have not yet been reviewed in this session.
 * Agreed to work through the deliverables individually. Left unresolved decisions and implementation work as TODOs.
 
-## Status at Recording
+## Status at Initial Recording
 
 * The repository contains documentation only. No implementation language or test framework has been selected, and no executable ledger or test suite exists yet.
 * The annotated failing test remains a requirement to implement. The placeholder does not satisfy that requirement.
