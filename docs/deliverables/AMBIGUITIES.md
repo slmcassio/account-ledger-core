@@ -43,3 +43,11 @@ The [fictional example](../examples/04-backdated-adjustment.md) illustrates the 
 **Rationale:** The ledger must reflect the confirmed payment. Leaving out the debit would overstate the account balance. Under this assumption, E6 debits AED 180.00 on Day 4 and reports that Auth-Z was not found. This is why the project rejects acceptance criterion 4.
 
 The [research](../research/03-unmatched-settlements-research.md) explains the alternatives and the Stripe precedent. Stripe documents such payments, but does not determine the exercise's policy. The [fictional example](../examples/05-unmatched-settlement.md) illustrates the decision. Corrections of system errors are outside this decision's scope.
+
+## Authorization and Ledger Responsibilities
+
+**Decision:** Separate the ledger's financial entries, active authorization holds, and the history of authorization decisions. Authorization uses the ledger balance and holds known when a request is processed. A declined request creates no hold or financial debit.
+
+**Rationale and scope:** This distinction explains why a hold changes available balance without changing ledger balance. It is a conceptual separation within the in-memory exercise, not a requirement for separate deployed systems. Updating the balance after a financial correction and reconsidering an earlier authorization are separate actions.
+
+**Still unresolved:** Whether later balance corrections should trigger additional authorization decisions. The [research](../research/04-authorization-decisions-research.md) proposes no automatic reevaluation, but that policy has not been approved. Its [example](../examples/06-authorization-decisions.md) marks the continuation after a reversal as conditional on that proposal.

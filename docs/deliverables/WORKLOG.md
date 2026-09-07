@@ -10,6 +10,12 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 18:19:48
+
+* Reviewed the [authorization research](../research/04-authorization-decisions-research.md) with the user, who approved the separation of ledger entries, holds, and decisions and authorized a new commit. Automatic reevaluation after corrections remains unresolved.
+* Added the [fictional example](../examples/06-authorization-decisions.md) and aligned the decision record, numerical rationale, and business rules.
+* Checked the source, calculations, local links, and formatting. Independent document review found no actionable issues.
+
 ### 07 September 2026, 18:02:12
 
 * Reviewed and simplified the [settlement research](../research/03-unmatched-settlements-research.md) and its [example](../examples/05-unmatched-settlement.md). The user approved the documents and authorized the commit.

@@ -36,6 +36,12 @@ This covers legitimate transactions delivered after they occurred, such as an of
 
 See the [decision and rationale](deliverables/AMBIGUITIES.md#late-transaction-adjustments) and [worked example](examples/04-backdated-adjustment.md).
 
+## Approved Interpretation: Authorization Responsibilities
+
+The ledger supplies the current accounting balance. Authorization controls active holds and records decisions using the balance and holds known when each request is processed. A declined request creates neither a hold nor a financial debit.
+
+Updating the balance after a financial correction and reconsidering an earlier authorization are separate actions. The policy for such reconsideration remains unresolved. See the [decision and scope](deliverables/AMBIGUITIES.md#authorization-and-ledger-responsibilities).
+
 ## Open Questions
 
 * **Rounding precision and stages:** What intermediate precision should calculations retain, and at which stages should rounding occur?
