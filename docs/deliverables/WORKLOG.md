@@ -10,6 +10,12 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 16:13:57
+
+* Reviewed [Monetary rounding](../research/01-rounding-research.md) with the user, who approved keeping its existing text.
+* Updated references to the renamed report in AGENTS.md and this worklog.
+* Checked the sources, five rounding examples, formatting, and local links.
+
 ### 07 September 2026, 14:46:53
 
 Recorded the creation of [AGENTS.md](../../AGENTS.md) to preserve project working agreements across sessions.
@@ -22,7 +28,7 @@ Recorded the creation of [AGENTS.md](../../AGENTS.md) to preserve project workin
 
 Recorded the completed review of the rounding research and the resulting documentation changes. The individual research and review start and completion times were not captured.
 
-* Reviewed the [rounding research](../research/rounding-research.md) and checked its official sources. The securities examples provide limited precedents; Mambu describes precision and rounding stages without specifying HALF_UP or HALF_EVEN.
+* Reviewed the [rounding research](../research/01-rounding-research.md) and checked its official sources. The securities examples provide limited precedents; Mambu describes precision and rounding stages without specifying HALF_UP or HALF_EVEN.
 * Recorded HALF_UP as a project choice in [AMBIGUITIES.md](AMBIGUITIES.md), keeping AED at two decimal places and BHD at three. The explicit assumption is to favor recipients of positive interest at exact ties and accept the upward bias in those cases.
 * Added the decision and a link to its rationale to the [business rules](../business-rules.md). Intermediate precision and rounding stages remain unresolved.
 * Moved the report into docs/research and removed the temporary suffix. Its additional calculation proposals remain research recommendations, not adopted project decisions.

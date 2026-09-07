@@ -26,7 +26,7 @@ Apply these instructions throughout this repository. Keep them focused on durabl
 
 * Prefer official sources. Cite the exact supporting page or section and state the limits of its applicability. Distinguish a contractual precedent, a technical example, and a mandatory rule.
 * Do not infer jurisdiction, contractual terms, rounding mode, or intermediate precision from a currency code alone. Treat monetary storage precision, calculation precision, rounding stages, and tie handling as separate questions.
-* Keep research in [docs/research](docs/research). The [rounding report](docs/research/rounding-research.md) includes proposals beyond the adopted mode; consult AMBIGUITIES.md to determine which choices have been accepted.
+* Keep research in [docs/research](docs/research). The [rounding report](docs/research/01-rounding-research.md) includes proposals beyond the adopted mode; consult AMBIGUITIES.md to determine which choices have been accepted.
 
 ## Documentation and Verification
 
