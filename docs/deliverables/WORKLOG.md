@@ -10,6 +10,14 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 14:46:53
+
+Recorded the creation of [AGENTS.md](../../AGENTS.md) to preserve project working agreements across sessions.
+
+* Captured English artifact conventions, separation of requirements and assumptions, source limits, documentation responsibilities, verification, and Git practices.
+* Linked to existing project documents so detailed decisions remain in their appropriate files.
+* Removed the instruction about the chat language at the user's request while retaining English for repository artifacts.
+
 ### 07 September 2026, 14:32:54
 
 Recorded the completed review of the rounding research and the resulting documentation changes. The individual research and review start and completion times were not captured.
