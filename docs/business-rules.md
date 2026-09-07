@@ -13,15 +13,26 @@ The table below records exercise requirements; the rounding mode above is a proj
 | BR05 | **Authorization approval** | Receiving a new authorization request. | Approve only if the available balance, **after applying the new hold**, remains **at or above zero**. |
 | BR06 | **Settlement without an existing authorization** | Receiving a settlement that references an authorization ID that does not exist. | **Reject the settlement and prevent funds from leaving** the account. |
 | BR07 | **Overdraft fee assessment** | A day's closing ledger balance is **below zero**. | Assess **AED 25.00**, once per day, per account. |
-| BR08 | **Fee value date** | Recording an overdraft fee. | Set `value_date` to the **day to which the fee assessment applies**. |
+| BR08 | **Fee value date** | Recording an overdraft fee. | Set `value_date` to the **day assessed**. The interpretation for late adjustments is recorded below. |
 | BR09 | **Daily interest accrual** | Calculating daily interest on the closing ledger balance. | Apply **0.04% per day to positive balances only**. Zero or negative balances do not accrue interest. |
 | BR10 | **Interest capitalization** | End of Day 6. | Capitalize accrued interest as **a single credit**. |
 | BR11 | **Interest reconciliation** | Determining the total interest to capitalize. | Ensure that the **sum of rounded daily interest accruals equals the capitalized total exactly**. |
 | BR12 | **Immutable history** | Recording and correcting events, including reversals. | Only append records to the ledger. **No existing event record may be modified or deleted**. |
 
+## Approved Interpretation: Late Transactions
+
+This covers legitimate transactions delivered after they occurred, such as an official transaction from Mastercard received later. System error corrections are out of scope for this interpretation.
+
+* `booking_date` is the accounting recording day; `value_date` is the day the transaction starts affecting the balance. Preserve the supplied dates and event order.
+* Append a separate adjustment for differences in affected fees and interest. Link it to the original transaction and retain a breakdown by historical day and type. Do not repeat the original transaction amount.
+* Use the correction day for both dates of the adjustment. Interpret "day assessed" as the current assessment day; historical days remain calculation references.
+* Calculate each component as `corrected amount - net amount already recorded`. Correct unpaid interest separately from the account balance until capitalization; corrections to credited interest affect the balance.
+
+See the [decision and rationale](deliverables/AMBIGUITIES.md#late-transaction-adjustments) and [worked example](examples/04-backdated-adjustment.md).
+
 ## Open Questions
 
 * **Rounding precision and stages:** What intermediate precision should calculations retain, and at which stages should rounding occur?
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
-* **Backdated entries and reversals:** How should previously assessed fees and accrued interest be adjusted?
+* **Closing checkpoints and reversals:** When should daily calculations run, and which fees and interest should a reversal correct?
 * **Holds:** When should the remaining hold be released after a settlement below the held amount, and do holds expire?

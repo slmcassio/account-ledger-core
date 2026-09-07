@@ -10,6 +10,12 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 17:34:39
+
+* Reviewed [Booking dates, value dates, and corrections](../research/02-booking-and-value-dates-research.md) with the user, who approved the document and its fictional example.
+* Recorded the decisions, numerical rationale, business rules, and rejected historical adjustment dates.
+* Checked calculations, formatting, and links.
+
 ### 07 September 2026, 16:13:57
 
 * Reviewed [Monetary rounding](../research/01-rounding-research.md) with the user, who approved keeping its existing text.
