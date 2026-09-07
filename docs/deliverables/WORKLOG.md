@@ -10,6 +10,11 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 20:24:51
+
+* Standardized the [hold lifecycle research](../research/05-hold-lifecycle-research.md) to match the concise style of studies 01 through 04. Separated the approved settlement and expiration policies and removed repetition while preserving the decisions, source references, and limits.
+* Checked the diff, whitespace, local links, reference labels, and example amounts. Independent document review found no actionable issues. The user authorized a signed commit and push of the working branch.
+
 ### 07 September 2026, 20:18:53
 
 * Reviewed the [hold lifecycle research](../research/05-hold-lifecycle-research.md) and its [fictional example](../examples/07-hold-lifecycle.md). The user approved the documents, treating Auth-A as final and generating no automatic expiration during the six-day replay, and authorized the focused commit.
