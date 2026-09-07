@@ -84,4 +84,21 @@ The exercise's Auth-A hold of 200.00, settlement of 185.00, and Day 4 settlement
 
 Days 1 through 6 are the supplied replay window. The decision to generate no automatic expiration within that window introduces no expiration duration. Halving the window would change the scenario. Mambu's documented default of seven days is an external product setting, not an adopted project constant. See the [decision and limits](AMBIGUITIES.md#hold-expiration-during-the-replay).
 
+## Values Used in the Daily Closing Example
+
+The [fictional example](../examples/08-daily-closing.md) uses the exercise's 0.04% daily rate and AED's two decimal places. Its interest amounts are exact at that precision. The following amounts are scenario data; each comparison halves one input while keeping the others unchanged.
+
+| Input | Purpose and reason for the value |
+|---|---|
+| AED 0.00 opening balance, holds, and unpaid interest | Makes the listed entries explain the entire state. Half remains zero. |
+| A: AED 100.00 credit | Produces an initial interest target of 0.04. Halving A to 50.00 leaves a final balance of 150.00 and unpaid Day 1 interest of 0.06. |
+| B: AED 50.00 credit | Changes the target while the first calculation is running. Halving B to 25.00 makes the first recorded interest 0.05 and the final unpaid interest 0.07. |
+| C: AED 50.00 credit | Changes the target after interest has been recorded. Its equality to B shows why amounts and dates alone cannot identify a duplicate. Halving C to 25.00 makes the adjustment 0.01 and the final unpaid interest 0.07. |
+
+The original 0.04 target is never recorded. I1 records 0.06; J1 adds 0.02, producing 0.08 in unpaid Day 1 interest. The final ledger balance is 200.00. These are derived results, not new constants. Redelivery of C preserves its identity and adds no second 50.00 credit.
+
+Day 1 is the calculation period; B, C, and J1 have Day 2 booking dates. B and C retain Day 1 value dates, while J1 has Day 2 value date under the approved adjustment method. The example ends at 00:37 on Day 2, before that day's close and before capitalization. Its clock times separate reading, arrivals, recording, and repetition; they are not processing deadlines.
+
+The proposed 00:00 boundary and earliest 00:30 job start reflect the user's scheduling proposal. The 30-minute interval is not a measured delivery limit or a guarantee of complete input. Halving it to 15 minutes would change the proposed start time but would not remove the need to handle late arrivals. The schedule, business time zone, and positions of closing calculations in the supplied replay remain unresolved.
+
 TODO: Record additional constants and numerical decisions as their reviews are approved.

@@ -10,6 +10,13 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 20:36:37
+
+* Reviewed and simplified the [daily closing research](../research/06-daily-closing-research.md), following the style of studies 01 through 04. Added a [complete fictional example](../examples/08-daily-closing.md) covering arrivals during and after calculation, repeated calculations, and duplicate delivery.
+* Recorded the approved active processing approach, its numerical example, and the rejected alternative of waiting for all input before calculating. Kept the daily schedule, business time zone, recording validation, and replay checkpoints as proposals. Preserved the existing adjustment dates, unpaid interest treatment, and authorization policy.
+* Checked the Microsoft source and its limits, example arithmetic, halved-input comparisons, links and anchors, Markdown tables, whitespace, and the scope of the diff. Independent document review found no actionable issues. No executable ledger or test suite exists yet.
+* The user authorized a signed commit on local main and a push. Prepared the changes against the current main, preserving unrelated work. Architectural notes remain temporary, outside the repository and outside the commit.
+
 ### 07 September 2026, 20:24:51
 
 * Standardized the [hold lifecycle research](../research/05-hold-lifecycle-research.md) to match the concise style of studies 01 through 04. Separated the approved settlement and expiration policies and removed repetition while preserving the decisions, source references, and limits.

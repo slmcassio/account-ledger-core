@@ -22,4 +22,10 @@ Rejected the original hold report's justification that Auth-A's settlement is fi
 
 The [approved decision](AMBIGUITIES.md#hold-settlement-and-release) treats Auth-A as final through an explicit scenario assumption. Partial, non-final settlement remains a valid alternative behavior; it is not rejected as a general approach.
 
+## Waiting for the Complete Input Before Calculating
+
+Rejected deferring every calculation until the entire event stream has arrived. The user chose an active system that calculates during event processing. Such a system continues receiving transactions and has no final input event to wait for.
+
+The [research](../research/06-daily-closing-research.md) keeps daily closing and later recalculation separate. A final report after the finite replay remains possible; the precise closing schedule is still proposed.
+
 TODO: Record refused acceptance criteria and further abandoned approaches as they are reviewed.

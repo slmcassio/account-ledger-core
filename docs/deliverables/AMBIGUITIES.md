@@ -77,3 +77,11 @@ The [research](../research/05-hold-lifecycle-research.md) explains the Mambu, St
 **Rationale:** Avoid introducing an unsupported expiration event into the supplied replay. This does not establish that holds never expire. A general policy would need a duration or deadline, a time reference, and rules for relevant updates; behavior beyond the window remains undefined.
 
 Auth-B has a hold only if its request is approved. The absence of settlement alone does not prove that a reservation exists. The [approved authorization policy](#authorization-and-ledger-responsibilities) preserves earlier decisions after balance corrections and requires a new explicit request for another evaluation.
+
+## Daily Calculation Timing
+
+**Decision and assumption:** Calculate during event processing in an active system, where transactions can arrive throughout the day. Preserve the supplied event order. Updating the running balance, closing a day, and recalculating an earlier day are separate operations.
+
+**Rationale:** Calculations must use the information available during processing without waiting for the full input. Closing a day does not prove that no later transaction can affect it. Keep the agreed late transaction adjustment dates and the separation of unpaid interest from the ledger balance.
+
+**Still proposed:** The midnight boundary, interest processing from 00:30 the following day, validation before recording a calculation, and the replay checkpoints described in the [research](../research/06-daily-closing-research.md). The business time zone remains undecided. The [fictional example](../examples/08-daily-closing.md) illustrates those proposals; it does not establish production timing or a concurrency implementation. Reversal compensation remains unresolved.

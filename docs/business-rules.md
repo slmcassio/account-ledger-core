@@ -53,9 +53,15 @@ Preserve the original authorization decision after a balance correction. Do not 
 
 See the [settlement and release decision](deliverables/AMBIGUITIES.md#hold-settlement-and-release), [expiration decision](deliverables/AMBIGUITIES.md#hold-expiration-during-the-replay), and [worked example](examples/07-hold-lifecycle.md).
 
+## Approved Interpretation: Active Calculations
+
+Calculate during event processing in an active system, preserving the supplied order. Financial entries update the running balance; daily closing and historical recalculation are separate operations. A closing result uses the records known at its calculation point and may need revision after later arrivals.
+
+The operational schedule and replay checkpoints remain proposals. See the [decision and open details](deliverables/AMBIGUITIES.md#daily-calculation-timing) and [worked example](examples/08-daily-closing.md).
+
 ## Open Questions
 
 * **Rounding precision and stages:** What intermediate precision should calculations retain, and are any stages needed beyond the required currency rounding and rounded daily accruals?
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
-* **Closing checkpoints and reversals:** When should daily calculations run, and which fees and interest should a reversal correct?
+* **Closing checkpoints and reversals:** Which daily schedule, business time zone, and replay checkpoints should apply, and which fees and interest should a reversal correct?
 * **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?
