@@ -8,6 +8,8 @@
 
 The exercise specifies currency precision but leaves the rounding mode undefined. HALF_UP is a project choice, not a mandatory rule established for these accounts by the sources below. Currency alone does not establish the applicable jurisdiction or contract.
 
+**Still unresolved:** Intermediate calculation precision and any additional rounding stages. The exercise already requires the rounded daily interest accruals to sum exactly to the capitalized total.
+
 ### Supporting Sources and Limits
 
 * [Emirates NBD AT1 prospectus](https://www.emiratesnbd.com/-/media/enbd/files/investor-relations/public-issuances/list/perpetual_nc6_at1_prospectus.pdf), section 5.1, printed page 45 (PDF page 56): interest for periods shorter than a full interest period on these USD securities uses the nearest cent, with positive exact ties rounded upwards. This is a precedent within that product's scope.
@@ -50,4 +52,6 @@ The [research](../research/03-unmatched-settlements-research.md) explains the al
 
 **Rationale and scope:** This distinction explains why a hold changes available balance without changing ledger balance. It is a conceptual separation within the in-memory exercise, not a requirement for separate deployed systems. Updating the balance after a financial correction and reconsidering an earlier authorization are separate actions.
 
-**Still unresolved:** Whether later balance corrections should trigger additional authorization decisions. The [research](../research/04-authorization-decisions-research.md) proposes no automatic reevaluation, but that policy has not been approved. Its [example](../examples/06-authorization-decisions.md) marks the continuation after a reversal as conditional on that proposal.
+**Decision after balance corrections:** Preserve the original authorization decision. Do not automatically reevaluate it when the balance changes. A later increase in funds does not activate a declined request. Evaluate a new explicit request against the updated balance and active holds.
+
+**Rationale:** Each decision reflects the information available when the request was processed. The exercise does not specify automatic reevaluation, so this is an approved project choice. The [example](../examples/06-authorization-decisions.md) applies this policy after a reversal.

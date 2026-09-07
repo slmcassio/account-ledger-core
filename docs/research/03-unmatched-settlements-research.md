@@ -4,7 +4,7 @@
 
 In the [exercise](../exercise-statement.md), E6 is a settlement of AED 180.00 for ACC-001. It references Auth-Z, but the event stream contains no earlier authorization for Auth-Z.
 
-Acceptance criterion 4 says to reject a settlement when its authorization cannot be found. Our [business rules](../business-rules.md) originally repeated this instruction in the row named BR06. The exercise warns that some acceptance criteria are wrong, so the rejection instruction needs to be examined.
+Acceptance criterion 4 says to reject a settlement when its authorization cannot be found. BR06 originally repeated this criterion. The exercise warns that some acceptance criteria are wrong.
 
 The nonnegotiable rules do not specify how to handle this case. The key question is what SETTLEMENT represents: a request to make a payment, or notice of a payment that has already settled.
 
@@ -15,23 +15,23 @@ The nonnegotiable rules do not specify how to handle this case. The key question
 
 ## The approved decision
 
-We adopt the second interpretation. **For this project, SETTLEMENT reports a legitimate payment that has already settled outside the ledger.** This is an explicit project assumption because the exercise does not define SETTLEMENT that precisely.
+**For this project, SETTLEMENT reports a legitimate payment that has already settled outside the ledger.** This approved assumption resolves the undefined meaning of SETTLEMENT.
 
 When the authorization is missing:
 
-1. Append the debit using the supplied `booking_date` and `value_date`. Preserve the event order and existing records.
+1. Append the debit using the supplied `booking_date` and `value_date` in the supplied event order.
 2. Keep the authorization ID supplied with the settlement and report that no matching authorization was found.
-3. Do not invent an authorization or a hold to fill the gap. Reporting the missing authorization does not cancel the debit.
+3. Do not create an authorization or hold to fill the gap.
 
 For E6, debit AED 180.00 from ACC-001, with both dates on Day 4. Keep Auth-Z as the reference and report that its authorization was not found.
 
-**We reject criterion 4 under this assumption:** the payment has already settled, so omitting its debit would leave the ledger balance too high. This conclusion follows from the meaning we chose for SETTLEMENT.
+**The project rejects criterion 4 under this assumption.** Omitting a confirmed debit would overstate the ledger balance. The mandatory rules alone do not resolve this criterion.
 
 This decision covers legitimate transactions. Corrections of system errors are outside its scope.
 
 ## Example
 
-The [worked example](../examples/05-unmatched-settlement.md) lists every event and shows the resulting balances in tables. It also shows what the balance would be if the settlement were rejected.
+In the [fictional example](../examples/05-unmatched-settlement.md), a confirmed AED 180.00 settlement reduces the balance from AED 500.00 to AED 320.00. Omitting the debit would overstate the balance by AED 180.00.
 
 ## Sources and limits
 

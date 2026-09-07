@@ -1,37 +1,37 @@
 # Settlement without a local authorization
 
-## Reference and scope
+## Scenario
 
 This fictional example illustrates the [approved settlement interpretation](../research/03-unmatched-settlements-research.md). SETTLEMENT reports a legitimate, externally confirmed settlement. Its missing local authorization is reported without preventing the debit.
 
-The example ends immediately after the settlement on Day 1, before daily closing. It does not calculate fees or interest and does not select a closing or correction policy.
+The example ends after the settlement on Day 1, before daily closing. No fees or interest have been recorded.
 
 ## Inputs
 
 * Account: DEMO-001, denominated in AED, opening at AED 0.00.
 * No authorization records or active holds exist at the start.
-* Process the two events below in the listed order. They are all the events in this scenario; no fees, interest entries, or other records have been processed.
-* S is a confirmed settlement referring to Auth-Missing. No authorization with that ID exists locally. No authorization or hold is created to match it.
-* Amounts have two decimal places. The account, amounts, and dates are scenario data, not additional business rules.
+* Process the two events below in the listed order. They are all the events in this scenario.
+* S is a confirmed settlement referring to Auth-Missing. No authorization with that ID exists locally.
+* AED amounts use the two decimal places required by the exercise. The account, amounts, and dates are scenario data.
 
 ## Events and results
 
-All amounts are AED. Both events retain their supplied dates.
+All amounts are AED.
 
 | Record | `booking_date` | `value_date` | Account entry | Ledger balance after | Active holds after | Available balance after |
 |---|---|---|---:|---:|---:|---:|
 | C: CREDIT | Day 1 | Day 1 | +500.00 | 500.00 | 0.00 | 500.00 |
 | S: SETTLEMENT, reference Auth-Missing | Day 1 | Day 1 | -180.00 | 320.00 | 0.00 | 320.00 |
 
-Append S's debit and report that Auth-Missing has no matching authorization in the local ledger. Preserve the reference on S. C remains unchanged, and no authorization or hold is invented.
+Append S's debit, retain Auth-Missing as its reference, and report the missing authorization. Create no authorization or hold.
 
 The ledger balance is `0.00 + 500.00 - 180.00 = 320.00`. Available balance is `320.00 - 0.00 = 320.00`.
 
 ## Comparison with rejection
 
-The same confirmed settlement produces different local results under the two interpretations:
+For this confirmed settlement, compare the approved behavior with criterion 4:
 
-| Interpretation | Settlement debit recorded | Missing authorization reported | Ledger balance | Active holds | Available balance |
+| Behavior | Settlement debit recorded | Missing authorization reported | Ledger balance | Active holds | Available balance |
 |---|---:|---|---:|---:|---:|
 | Reject because the reference is unknown | 0.00 | Yes | 500.00 | 0.00 | 500.00 |
 | Record the confirmed settlement, as approved | 180.00 | Yes | 320.00 | 0.00 | 320.00 |
@@ -40,4 +40,4 @@ Under the approved assumption, rejection omits a confirmed debit and overstates 
 
 ## Sources and limits
 
-The [exercise](../exercise-statement.md) supplies AED precision and the available balance formula. The [research](../research/03-unmatched-settlements-research.md#sources-and-limits) explains the Stripe precedent and its limits. External confirmation is an explicit project assumption, not something proved by the absence of a local authorization.
+The [exercise](../exercise-statement.md) supplies AED precision and the available balance formula. External confirmation is a project assumption. A missing local authorization does not prove that a payment was confirmed.

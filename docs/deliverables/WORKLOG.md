@@ -10,6 +10,22 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 20:09:41
+
+* The user canceled the local history rewrite and requested one new commit for this review and the approved authorization policy.
+* Restored local main to its original signed history. Verified that all 13 pending files were preserved. No remote references were changed.
+
+### 07 September 2026, 19:37:46
+
+* The user approved no automatic authorization reevaluation after balance corrections. Preserve the original decision; later funds do not activate a declined request. Evaluate a new explicit request against the updated balance and active holds.
+* Updated research 04, its example, the ambiguity decision, business rules, and numerical notes. Checked the diff, local links, formatting, and example calculations.
+
+### 07 September 2026, 19:25:18
+
+* Reviewed research 01 through 04 in order, with their examples, README, business rules, deliverables, and test instructions. Simplified wording and separated requirements, scenario data, approved choices, and open questions.
+* Checked official source claims and example calculations. Clarified the required sum of rounded daily accruals and the distinction between balances before and after capitalization. Added direct technical and regulatory source links.
+* Checked local links and anchors, Markdown tables, whitespace, the final diff, and preservation of the original checkout. Independent review found no actionable issues in the documentation diff before this entry. No executable ledger tests exist.
+
 ### 07 September 2026, 18:19:48
 
 * Reviewed the [authorization research](../research/04-authorization-decisions-research.md) with the user, who approved the separation of ledger entries, holds, and decisions and authorized a new commit. Automatic reevaluation after corrections remains unresolved.

@@ -2,9 +2,15 @@
 
 Document every chosen constant, its value and purpose, its source or the rationale for choosing it, and why that value was chosen instead of half of it.
 
+## Rounding
+
+The exercise requires two decimal places for AED and three for BHD. The smallest stored units are AED 0.01 and BHD 0.001. Half of either unit cannot be stored at its required precision.
+
+HALF_UP is the approved project mode. It favors recipients of positive interest at exact ties and accepts the resulting upward bias. The [rounding examples](../research/01-rounding-research.md#example) use exact decimal inputs around these boundaries; they do not set business constants.
+
 ## Values Used in the Late Transaction Example
 
-The [exercise](../exercise-statement.md) supplies the following values. Halving them would change its requirements.
+The [exercise](../exercise-statement.md) supplies the fee, rate, and precision below. The capitalization day is the endpoint of its six-day scenario. Halving a supplied value would change the rule or scenario it defines.
 
 | Value | Purpose |
 |---|---|
@@ -45,7 +51,7 @@ The report also discusses E6's AED 180.00 amount and Day 4 dates. Those values c
 
 ## Values Used in the Authorization Example
 
-The [fictional example](../examples/06-authorization-decisions.md) uses the following scenario inputs. Each comparison halves one amount while keeping the other request amounts unchanged and reevaluating the decisions.
+The [fictional example](../examples/06-authorization-decisions.md) uses the following scenario inputs. Each comparison starts a fresh scenario with one amount halved and the other request amounts unchanged.
 
 | Input | Purpose and reason for the value |
 |---|---|
@@ -57,6 +63,6 @@ The [fictional example](../examples/06-authorization-decisions.md) uses the foll
 
 AED's two decimal places and the zero minimum remaining availability come from the exercise. All events occur on Day 1 before closing; this scenario needs no fee or interest calculation. Its amounts and stopping point are not new business constants.
 
-The conditional continuation reverses D with a 10.00 credit. This amount is derived from D, not chosen independently. It then submits a new request N for 10.00, consuming the 10.00 now available. Halving N to 5.00 would leave 5.00 available. These results illustrate the pending proposal for no automatic reevaluation; they do not approve that policy.
+The continuation reverses D with a 10.00 credit. This amount is derived from D, not chosen independently. It then submits a new request N for 10.00, consuming the 10.00 now available. Halving N to 5.00 would leave 5.00 available. These results apply the approved policy of no automatic reevaluation.
 
 TODO: Record additional constants and numerical decisions as their reviews are approved.

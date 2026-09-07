@@ -1,6 +1,10 @@
 # Account Ledger Core
 
+Documentation for an account ledger that runs in memory.
+
 ## Running the Suite
+
+No executable ledger or test suite exists yet.
 
 TODO: Document prerequisites and the commands required to run the suite.
 
@@ -25,3 +29,7 @@ TODO: Explain the daily closing ledger balances, fee assessments, authorization 
 ### Working Notes
 
 * [Business rules](docs/business-rules.md)
+* [01: Monetary rounding](docs/research/01-rounding-research.md)
+* [02: Booking dates, value dates, and corrections](docs/research/02-booking-and-value-dates-research.md)
+* [03: Settlements without a matching authorization](docs/research/03-unmatched-settlements-research.md)
+* [04: Authorization and ledger balances](docs/research/04-authorization-decisions-research.md)

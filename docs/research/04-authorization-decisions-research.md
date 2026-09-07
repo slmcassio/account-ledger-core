@@ -1,42 +1,40 @@
 # Authorization and ledger balances
 
-## Reference and scope
+## Scope
 
-This study separates financial entries, authorization holds, and authorization decisions. It uses the rules in the [exercise](../exercise-statement.md) and a complete fictional example.
+This study separates financial entries, authorization holds, and authorization decisions within the exercise's in-memory scope.
 
-## Rule and open question
+## Authorization rule
 
 The ledger balance reflects recorded financial entries. Available balance is `ledger balance - active holds`.
 
-Approve a new hold only when `ledger balance - active holds - requested hold >= 0`. An approved hold reduces available balance without debiting the ledger. A declined request creates no hold.
+The [exercise](../exercise-statement.md) permits approval only when `ledger balance - active holds - requested hold >= 0`. An approved hold reduces available balance without debiting the ledger. A declined request creates no hold or financial debit.
 
-The open question concerns a later financial correction: should the authorization system only use the updated balance for new requests, or also reevaluate earlier decisions?
+Criterion 5 is conditional: if Auth-B is approved, its hold reduces available balance without changing the ledger balance. The criterion does not require approval.
 
-## Analysis
-
-**Agreed distinction:** Think of the ledger and authorization as separate responsibilities:
+## Approved responsibilities
 
 * The ledger records financial entries and supplies the current ledger balance.
-* Authorization subtracts active holds from that balance, evaluates the new request, and records approval or decline. Approval creates a hold; decline does not.
+* Authorization subtracts active holds, evaluates the new request, and records approval or decline.
 * The decision history explains what was approved or declined using the information available at that point.
 
-This is a conceptual separation within the exercise's in-memory scope. It does not require separate deployed systems.
+These are conceptual responsibilities, not separate deployed systems.
 
-At each request's position in the supplied event order, use the balance then supplied by the ledger and the holds then active. Include financial corrections already reflected in that balance. Later records are not yet known, and unpaid interest has not entered the ledger balance.
+Process each request in the supplied event order. Use the ledger balance and active holds known at that point, including financial corrections already recorded. Unpaid interest is not part of the ledger balance.
 
-When a backdated entry or reversal changes the ledger balance, authorization sees a new balance. Updating that input and reconsidering an earlier decision are separate actions.
+## Approved policy: later balance corrections
 
-**Proposal still under review:** Preserve the original decision and do not automatically reevaluate it after a balance correction. A later increase in funds would not activate a declined request. A new explicit request would be evaluated against the updated balance and active holds.
+Updating the balance and reconsidering a decision are separate actions.
 
-The alternative is to append a corrective decision. It would need rules for when to reevaluate, which requests to reconsider, and how to handle intervening holds or settlements. Immutability prevents changing or deleting existing records; it does not prohibit an additional corrective decision or define its effects.
+**Approved decision:** Preserve the original decision and do not automatically reevaluate it after a balance correction. A later increase in funds does not activate a declined request. Evaluate a new explicit request against the updated balance and active holds.
 
-Criterion 5 is conditional: if Auth-B is approved, its hold reduces available balance without changing the ledger balance. The criterion does not require Auth-B to be approved.
+This policy keeps each decision tied to the information available when the request was processed. It is a project choice. Immutability alone does not determine whether to append a corrective decision.
 
 ## Example
 
-The [complete fictional example](../examples/06-authorization-decisions.md) starts with a settled debit of AED 10.00, a settled credit of AED 50.00, an approved hold of AED 40.00, and a declined request for AED 10.00. The ledger balance is 40.00, active holds total 40.00, and available balance is 0.00.
+The [fictional example](../examples/06-authorization-decisions.md) applies a settled debit of AED 10.00 and a settled credit of AED 50.00. A hold of AED 40.00 is approved. A later request for AED 10.00 is declined. The ledger balance and active holds are each AED 40.00, leaving AED 0.00 available.
 
-A separate continuation illustrates the pending proposal: reversing the debit raises the ledger balance to 50.00. With the existing 40.00 hold, available balance becomes 10.00. The reversal updates the balance; it does not itself make another authorization decision.
+The continuation reverses the debit and raises the ledger balance to AED 50.00. Active holds stay at AED 40.00. A new request can use the AED 10.00 now available.
 
 ## Sources and limits
 

@@ -2,7 +2,7 @@
 
 **Project rounding decision:** use HALF_UP with two decimal places for AED and three for BHD. The explicit assumption is to favor the recipient of positive interest at exact ties, accepting the upward bias in those cases. See the [rounding decision and source limits](deliverables/AMBIGUITIES.md#rounding-mode).
 
-BR06 records the approved project choice for confirmed settlements. The other rows summarize exercise requirements.
+BR06 records the approved project choice for confirmed settlements. The other rows summarize exercise requirements. Day 6 in BR10 is the endpoint of the supplied six-day scenario.
 
 | ID | Business rule | Applicability | Required behavior |
 |---|---|---|---|
@@ -27,7 +27,7 @@ See the [decision and rationale](deliverables/AMBIGUITIES.md#settlements-with-a-
 
 ## Approved Interpretation: Late Transactions
 
-This covers legitimate transactions delivered after they occurred, such as an official transaction from Mastercard received later. System error corrections are out of scope for this interpretation.
+This interpretation covers legitimate transactions delivered after they occurred. It excludes system error corrections.
 
 * `booking_date` is the accounting recording day; `value_date` is the day the transaction starts affecting the balance. Preserve the supplied dates and event order.
 * Append a separate adjustment for differences in affected fees and interest. Link it to the original transaction and retain a breakdown by historical day and type. Do not repeat the original transaction amount.
@@ -40,11 +40,11 @@ See the [decision and rationale](deliverables/AMBIGUITIES.md#late-transaction-ad
 
 The ledger supplies the current accounting balance. Authorization controls active holds and records decisions using the balance and holds known when each request is processed. A declined request creates neither a hold nor a financial debit.
 
-Updating the balance after a financial correction and reconsidering an earlier authorization are separate actions. The policy for such reconsideration remains unresolved. See the [decision and scope](deliverables/AMBIGUITIES.md#authorization-and-ledger-responsibilities).
+Preserve the original authorization decision after a balance correction. Do not automatically reevaluate it. A later increase in funds does not activate a declined request. Evaluate a new explicit request against the updated balance and active holds. See the [decision and rationale](deliverables/AMBIGUITIES.md#authorization-and-ledger-responsibilities).
 
 ## Open Questions
 
-* **Rounding precision and stages:** What intermediate precision should calculations retain, and at which stages should rounding occur?
+* **Rounding precision and stages:** What intermediate precision should calculations retain, and are any stages needed beyond the required currency rounding and rounded daily accruals?
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
 * **Closing checkpoints and reversals:** When should daily calculations run, and which fees and interest should a reversal correct?
 * **Holds:** When should the remaining hold be released after a settlement below the held amount, and do holds expire?
