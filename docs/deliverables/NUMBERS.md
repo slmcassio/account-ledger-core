@@ -129,4 +129,17 @@ The snapshots use a Day 6 job and Day 5 booking cutoff so every listed input is 
 
 The supplied E7 scenario's principal balances of -370.00, 30.00, and -335.00 derive from the exercise's entries, including E6. They are before fees and do not establish the final number of assessments. See the [open dependencies](AMBIGUITIES.md#overdraft-fee-assessment-base).
 
+## Values Used in the Reversal Illustration
+
+The [study 08 comparison](../research/08-reversals-research.md#one-fee-two-outcomes) and [complete calculation](../research/examples/08-reversal-15-day-simulation.md) use illustrative inputs, not the supplied E7/E9 replay. Method B is approved; method A illustrates the alternative not adopted.
+
+* AED 2,500.00 opening balance gives daily interest of exactly 1.00 at the supplied 0.04% rate. Halving the opening balance alone gives 0.50 before the debit and a 1,750.00 deficit after it.
+* The 3,000.00 debit creates a 500.00 deficit. Halving only the debit leaves 1,000.00 positive, so it would no longer illustrate overdraft fees. The reversal amount equals the debit; it is derived, not another constant.
+* The exercise supplies the 25.00 fee, 0.04% daily rate and AED's two decimal places; HALF_UP is approved. Each 25.00 fee changes the unrounded daily interest by 0.01. Changing these inputs changes the exercise's rule.
+* No initial holds or pending interest keeps the financial effects traceable. Zero remains zero when halved. Exact arithmetic and daily currency rounding are assumptions for this calculation, not a decision on general intermediate precision.
+
+Day 1 is the opening, Day 5 the debit's booking/value date, Days 9 and 12 alternative reversal bookings, and Day 10 the only payment. Day 15 is consultation after the routine for reference Day 14. These dates compare correction before and after the payment, not a general calendar. The ordinary job precedes financial events, with reference and cumulative booking cutoff D-1. Its fee for H is assessed, booked and valued on H+1; an immediate corrective checkpoint after reversal is illustrative. Neither schedule settles study 06's pending checkpoints or ordinary assessment dates.
+
+The four or seven fees and their 100.00 or 175.00 refunds follow from those inputs. Reversal refunds are booked on the actual correction day and valued on each original charge's date under B; interest corrections keep both dates on the correction day and remain pending. The linked calculation records the derived daily targets, actual payments and final balances, including Day 10's payment in later interest bases. These results establish no current replay total.
+
 TODO: Record additional constants and numerical decisions as their reviews are approved.

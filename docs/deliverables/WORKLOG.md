@@ -10,6 +10,14 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 20:19:53
+
+* Reviewed and simplified [study 08](../research/08-reversals-research.md) through the principal, fee and interest comparisons. Kept a single-fee explanation in the study and preserved the complete [15-day calculation](../research/examples/08-reversal-15-day-simulation.md) separately.
+* The user approved recalculating all affected fees and interest and method B for reversal fee refunds: booking on the actual correction day, value on the original charge's value date. Recorded the legitimate-transaction assumption, the limited exception to late transaction dating, and the unchanged pending treatment for all interest corrections, including paid periods. Preserve actual payments and settle each component once.
+* Aligned the ambiguity decisions, business rules, numerical rationale, rejected alternatives, README and studies 06/07. Study 06's checkpoints, ordinary assessment dates, missing eligible inputs and final E7 fee count remain open; the user accepted the numerical dependencies on studies 09 and 10. No payment calendar or negative payable policy was added.
+* Independent review rechecked the ISO 20022 and Canopy sources and their limits, the example calculations and document consistency. Coordinated checks covered 88 local links and anchors, 14 Markdown tables, whitespace, the final diff and preservation of the 30-file original-checkout snapshot. No executable ledger or test suite exists.
+* This summary records completed work before the authorized signed commit on local main, not completion of that commit. No push or PR is authorized for study 08. Recording time is America/Sao_Paulo; no execution duration is inferred.
+
 ### 08 September 2026, 00:00:17
 
 * Simplified [study 07](../research/07-overdraft-fees-research.md) from 1,333 to 546 words, removing duplicated explanations and process details while preserving approved policies, both examples, and accepted open dependencies.

@@ -34,3 +34,4 @@ TODO: Explain the daily closing ledger balances, fee assessments, authorization 
 * [03: Settlements without a matching authorization](docs/research/03-unmatched-settlements-research.md)
 * [04: Authorization and ledger balances](docs/research/04-authorization-decisions-research.md)
 * [07: Daily overdraft fee assessment](docs/research/07-overdraft-fees-research.md)
+* [08: Principal reversals and financial corrections](docs/research/08-reversals-research.md)

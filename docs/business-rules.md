@@ -13,7 +13,7 @@ BR06 records the approved project choice for confirmed settlements. The other ro
 | BR05 | **Authorization approval** | Receiving a new authorization request. | Approve only if the available balance, **after applying the new hold**, remains **at or above zero**. |
 | BR06 | **Settlement with a missing local authorization** | Recording a legitimate, externally confirmed settlement whose authorization is absent from the local ledger. | **Append the debit and report the missing authorization.** Preserve the supplied reference and dates; do not create an authorization or hold. |
 | BR07 | **Overdraft fee assessment** | A day's closing ledger balance is **below zero**. | Assess **AED 25.00**, once per day, per account. |
-| BR08 | **Fee value date** | Recording an overdraft fee. | Set `value_date` to the **day assessed**. The interpretation for late adjustments is recorded below. |
+| BR08 | **Fee value date** | Recording an overdraft fee. | Set `value_date` to the **day assessed**. The interpretations for late adjustments and reversal refunds are recorded below. |
 | BR09 | **Daily interest accrual** | Calculating daily interest on the closing ledger balance. | Apply **0.04% per day to positive balances only**. Zero or negative balances do not accrue interest. |
 | BR10 | **Interest capitalization** | End of Day 6. | Capitalize accrued interest as **a single credit**. |
 | BR11 | **Interest reconciliation** | Determining the total interest to capitalize. | Ensure that the **sum of rounded daily interest accruals equals the capitalized total exactly**. |
@@ -31,11 +31,19 @@ This interpretation covers legitimate transactions delivered after they occurred
 
 * `booking_date` is the accounting recording day; `value_date` is the day the transaction starts affecting the balance. Preserve the supplied dates and event order.
 * Append a separate adjustment for differences in affected fees and interest. Link it to the original transaction and retain a breakdown by historical day and type. Do not repeat the original transaction amount.
-* Use the correction day for both dates of the adjustment. Interpret "day assessed" as the current assessment day; historical days remain calculation references.
+* Use the correction day for both dates of the adjustment. Interpret "day assessed" as the current assessment day; historical days remain calculation references. The reversal refund policy below is a separate, limited exception.
 * Calculate each component as `corrected amount - (original amount + all prior adjustments)`, including interest adjustments already paid. Fee adjustments affect the ledger. Keep every interest difference pending until the next regular payment whose booking cutoff admits it, including corrections for previously paid periods. Pending interest is unavailable and earns no interest.
 * Capitalize eligible unpaid daily accruals and adjustments once, recording which components the payment settles. Preserve earlier payments and exclude settled components from later payments, while retaining them for future difference calculations. See the [decision, rationale, and negative-total limit](deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment).
 
 See the [decision and rationale](deliverables/AMBIGUITIES.md#late-transaction-adjustments) and [worked example](examples/04-backdated-adjustment.md).
+
+## Approved Interpretation: Reversals
+
+Every correction in this exercise concerns a legitimate transaction; system errors are outside its simplified scope. Append the principal reversal once with the supplied dates, preserving all records and event order. Recalculate all affected fees and interest from the affected value day onward within the applicable input boundary, recording only the differences from originals plus all earlier adjustments, including paid ones.
+
+Book fee refunds caused by reversal on the actual correction day, but value each at the original charge's value date. This limited exception to late transaction adjustment dating neutralizes the fee's historical effect without changing when the refund was recorded. Interest corrections keep both dates on the actual correction day and stay pending until the next eligible regular payment, including corrections of paid periods. Preserve actual payments and settle each component once; pending interest earns nothing.
+
+E9 remains an AED 620.00 credit with booking Day 6 and value Day 2. E10 stays after E9 and E6's confirmed debit remains. Day 6 bookings cannot alter the Day 6 payment referencing Day 5. No authorization is automatically reevaluated. See the [decision and accepted limits](deliverables/AMBIGUITIES.md#reversal-compensation) and [comparison](research/08-reversals-research.md).
 
 ## Approved Interpretation: Authorization Responsibilities
 
@@ -66,11 +74,11 @@ For the job in D, select inputs with cumulative `booking_date <= D-1`. For each 
 
 Assess AED 25.00 when the resulting base is negative, otherwise zero. Reconcile that target with the original fee plus all earlier fee adjustments and append only the difference on the actual correction day. The reported ledger balance still includes every eligible financial entry with an applicable value date; the exclusion changes fee eligibility, not history.
 
-This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06; reversal compensation, capitalization order, and the negative BHD case remain for studies 08, 10, and 12. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
+This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06. Study 08 defines reversal compensation; capitalization order and the negative BHD case remain for studies 10 and 12. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
 
 ## Open Questions
 
 * **Rounding precision and stages:** What intermediate precision should calculations retain, and are any stages needed beyond the required currency rounding and rounded daily accruals?
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
-* **Closing checkpoints and reversals:** Which clock times, business time zone, and replay checkpoints should apply, and which fees and interest should a reversal correct?
+* **Closing checkpoints:** Which clock times, business time zone, and replay checkpoints should apply, and how should missing eligible records be handled?
 * **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?

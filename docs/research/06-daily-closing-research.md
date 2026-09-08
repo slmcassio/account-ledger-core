@@ -24,7 +24,7 @@ Interest accrues daily at 0.04% on positive closing ledger balances, using appro
 
 For legitimate late transactions, keep the [difference method](02-booking-and-value-dates-research.md#approved-adjustment-method). Compare revised fees and interest separately with their original amounts plus **all previous adjustments**, including those already paid. Append only a nonzero difference; never repeat the principal.
 
-Use the actual correction day for both adjustment dates. Link it to the original transaction and retain a breakdown by historical day and type. Preserve earlier records and payments. Positive fee differences debit the ledger; negative differences refund.
+For those late transaction adjustments, use the actual correction day for both dates. The [study 08 reversal refund exception](../deliverables/AMBIGUITIES.md#reversal-compensation) instead uses the original fee charge's value date and current booking; interest correction dates and pending treatment remain unchanged. Link it to the original transaction and retain a breakdown by historical day and type. Preserve earlier records and payments. Positive fee differences debit the ledger; negative differences refund.
 
 **Approved interest treatment:** Keep the entire interest adjustment unpaid until the next regular payment whose booking cutoff includes it. This includes corrections for previously paid periods. Positive differences increase pending interest; negative differences reduce it. Neither creates an immediate ledger credit or debit.
 
@@ -38,13 +38,12 @@ Queries append nothing. Corrections do not [automatically reevaluate authorizati
 
 * **Reviews:** Proposed: after E7's late AED 620.00 debit, review ACC-001 Days 2 through 4 before E8; after E9's reversal, Days 2 through 5; after E10's BHD 10.000 credit, ACC-002 Day 5. Routine positions remain undecided. E8 does not close Day 5.
 * **Completeness:** E10 can be processed after the job despite booking on Day 5. Handling missing eligible records is unresolved.
-* **Reversal scope:** Study 08 must define which fees and interest E9 compensates.
 * **Payment limits:** Handling a negative total payable remains unresolved; no direct debit or carry rule is adopted. The [exercise](../exercise-statement.md) requires one credit at the end of Day 6. Day 6 interest is assumed payable later under the chosen cutoff; study 10 must define that payment and document the interpretation.
 * **Clock and dates:** 00:00 boundary and 00:30 start remain proposals; time zone and ordinary assessment dates are unresolved.
 * **Duplicate delivery:** Proposed: use the same event ID to prevent repeated financial or hold effects. Equal amounts and dates are insufficient.
 * **Concurrency:** Proposed: validate entries and prior results relevant to the cutoff, then record indivisibly; retry if those changed. Excluded future bookings alone require no retry. Mechanism undecided.
 
-Study 07 defines the approved fee assessment base. Final fee results still depend on the unresolved recording points and ordinary assessment dates above, reversal scope in study 08, and capitalization order in study 10. The negative BHD case remains for study 12; intermediate interest precision awaits study 09.
+Study 07 defines the approved fee assessment base. Study 08 approves recalculating all fees and interest affected by reversal and dates fee refunds at their original charge's value date, with current booking. Final fee results still depend on the unresolved recording points and ordinary assessment dates above and capitalization order in study 10. The negative BHD case remains for study 12; intermediate interest precision awaits study 09.
 
 **Review status:** Study 06 is approved for now, with its recorded open items and dependencies explicitly pending. Revisit it when a later study affects these decisions.
 

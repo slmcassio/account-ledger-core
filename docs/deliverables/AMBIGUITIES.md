@@ -28,7 +28,7 @@ The exercise specifies currency precision but leaves the rounding mode undefined
 
 **Decision:** append the original transaction with its supplied dates. Recalculate affected fees and interest, then append a separate adjustment linked to that transaction. For each component, record `corrected amount - net amount already recorded`; do not repeat the original transaction amount.
 
-The adjustment uses the actual correction day for both `booking_date` and `value_date`. Keep the historical days and each fee or interest component in its breakdown. Fee differences affect the ledger; all interest differences follow the [pending interest decision](#interest-adjustments-wait-for-payment), including corrections for previously paid periods.
+For these late transaction adjustments, use the actual correction day for both `booking_date` and `value_date`. The separate [reversal refund decision](#reversal-compensation) is a limited exception. Keep the historical days and each fee or interest component in its breakdown. Fee differences affect the ledger; all interest differences follow the [pending interest decision](#interest-adjustments-wait-for-payment), including corrections for previously paid periods.
 
 **Assumption and rationale:** interpret the fee's "day assessed" as the day the correction is assessed and recorded. This makes the fee component affect the current balance while preserving the original records and the explanation of each historical difference. In the approved example, J has both dates on Day 5; Days 2, 3, and 4 are calculation references.
 
@@ -54,7 +54,7 @@ The [fictional example](../examples/04-backdated-adjustment.md) illustrates the 
 
 The next day 15 is illustrative, not an approved monthly calendar. No corrective credit is backdated to D15 or D5.
 
-**Limits:** Settlement of a negative total payable remains unresolved; no direct debit or carry rule is adopted. Study 08 still determines E9's compensation scope. The [daily cutoff and timing questions](#daily-calculation-timing) continue to apply.
+**Limits:** Settlement of a negative total payable remains unresolved; no direct debit or carry rule is adopted. The [reversal decision](#reversal-compensation) applies the same pending treatment to E9's affected interest. The [daily cutoff and timing questions](#daily-calculation-timing) continue to apply.
 
 ## Settlements with a Missing Authorization
 
@@ -106,7 +106,7 @@ Auth-B has a hold only if its request is approved. The absence of settlement alo
 
 **Payment choice and limit:** The Day 6 payment uses reference Day 5. E9 and adjustments booked on Day 6 cannot change it, even if processed before that payment. The job's resulting accrual and payment are outputs, not input transactions excluded by the cutoff. The payment is recorded on Day 6. The Day 7 routine calculates Day 6; under this interpretation, its interest awaits a later payment whose details remain for study 10. The exercise still requires one credit at the end of Day 6; no weekly or monthly calendar is inferred.
 
-**Still proposed:** The midnight boundary, 00:30 start, validation and indivisible recording, and replay checkpoints in [study 06](../research/06-daily-closing-research.md). The business time zone and ordinary assessment dates remain undecided. Validation must concern inputs and results relevant to the cutoff. Reversal scope and a negative total payable remain unresolved. The [earlier fictional example](../examples/08-daily-closing.md) awaits alignment with the booking cutoff and does not establish current results.
+**Still proposed:** The midnight boundary, 00:30 start, validation and indivisible recording, and replay checkpoints in [study 06](../research/06-daily-closing-research.md). The business time zone and ordinary assessment dates remain undecided. Validation must concern inputs and results relevant to the cutoff. A negative total payable remains unresolved; [reversal compensation](#reversal-compensation) is now defined. The [earlier fictional example](../examples/08-daily-closing.md) awaits alignment with the booking cutoff and does not establish current results.
 
 **Review status:** Study 06 is approved for now, with its recorded open items and dependencies explicitly pending. Revisit it when a later study affects these decisions.
 
@@ -116,6 +116,18 @@ Auth-B has a hold only if its request is approved. The absence of settlement alo
 
 **Assumption and rationale:** A fee should not sustain its own assessment after a legitimate late credit removes the original deficit. Excluding only its own period components prevents that circular result without removing other periods' dated charges or refunds. This is an approved project interpretation of the exercise, not an explicit rule in its statement.
 
-**Effect and reconciliation:** The reported ledger balance continues to include every eligible financial entry with an applicable value date. The exclusion is only for fee assessment. Compare the corrected fee target with the original charge plus all earlier fee adjustments; append only the difference. Both adjustment dates remain the actual correction day. Reviewing periods in date order does not move a new charge or refund into an earlier balance. See [study 07](../research/07-overdraft-fees-research.md) for examples.
+**Effect and reconciliation:** The reported ledger balance continues to include every eligible financial entry with an applicable value date. The exclusion is only for fee assessment. Compare the corrected fee target with the original charge plus all earlier fee adjustments; append only the difference. For legitimate late transactions, both adjustment dates remain the actual correction day. Reviewing periods in date order does not itself backdate them. [Reversal fee refunds](#reversal-compensation) instead retain the original charge's value date. See [study 07](../research/07-overdraft-fees-research.md) for examples.
 
-**Accepted limits:** Study 06 remains approved with its unresolved replay checkpoints and ordinary assessment dates; its commit did not establish a final fee count after E7. Preserve that limit when concluding this study's independent assessment decision. Reversal compensation remains for study 08, capitalization order for study 10, and the negative BHD case for study 12. Keeping these dependencies open does not adopt their proposals or determine the final Day 6 fee.
+**Accepted limits:** Study 06 remains approved with its unresolved replay checkpoints and ordinary assessment dates; its commit did not establish a final fee count after E7. Preserve that limit when concluding this study's independent assessment decision. Study 08 defines reversal compensation without resolving these timing and numerical limits. Capitalization order remains for study 10 and the negative BHD case for study 12. Keeping these dependencies open does not adopt their proposals or determine the final Day 6 fee.
+
+## Reversal Compensation
+
+**Scope and decision:** Every correction in this exercise concerns a legitimate transaction; system error correction is excluded as an explicit simplification. Reverse principal once with its supplied dates. Recalculate all affected fees and daily interest from the affected value day onward, including later periods whose bases change, within the applicable calculation boundary. Compare each corrected component with its original amount plus all earlier adjustments, including paid ones; append only the difference, linked to the reversal and affected components.
+
+**Fee refund dates:** Book each refund caused by reversal on the actual correction day, with value on the original charge's value date. This is method B in [study 08](../research/08-reversals-research.md). It is a limited exception to the current dating of [late transaction adjustments](#late-transaction-adjustments). A fee for balance day H is offset at its original charge's value date, which need not be H or the principal's value date.
+
+**Rationale:** Neutralize the reversed transaction's affected fee consequences at their economic dates while retaining when funds were actually returned. Principal only and current value dates for these refunds were not selected. Preserve every record, the approved fee assessment base and HALF_UP; do not automatically reevaluate authorizations.
+
+**Interest and cutoff:** Interest differences retain both dates on the actual correction day and remain pending until an eligible regular payment, even for previously paid periods. Preserve actual payments, count paid adjustments when finding differences, and settle each pending component once. No hypothetical capitalization or interest on pending amounts is introduced. The job in D still requires `booking_date <= D-1`; E9 and adjustments booked on Day 6 cannot alter the Day 6 payment referencing Day 5.
+
+**Accepted limits:** Study 08 is approved with study 06's checkpoints, ordinary assessment dates, missing eligible inputs and final E7 fee count still open. Exact replay interest depends on study 09's calculation stages; capitalization amounts, ordering and final balances also depend on study 10. No general payment calendar, intermediate precision or negative total payable policy is adopted. Restoring principal, historical balances, net fees and interest are distinct claims; the illustration does not establish criterion 6's blanket restoration or current replay totals.

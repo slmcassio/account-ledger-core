@@ -14,7 +14,7 @@ Under the [approved adjustment policy](../deliverables/AMBIGUITIES.md#late-trans
 
 `corrected fee - (original fee + all earlier adjustments)`
 
-A positive difference debits the ledger; a negative difference refunds. Append a linked adjustment with both dates on the actual correction day and historical components in its breakdown. All earlier adjustments count in this comparison, even when excluded from the historical balance. Repeating unchanged targets yields zero. Review days chronologically without backdating new adjustments.
+A positive difference debits the ledger; a negative difference refunds. Append a linked adjustment with both dates on the actual correction day and historical components in its breakdown. All earlier adjustments count in this comparison, even when excluded from the historical balance. Repeating unchanged targets yields zero. Review days chronologically without backdating these late transaction adjustments. [Reversal fee refunds](../deliverables/AMBIGUITIES.md#reversal-compensation) are the limited exception: current booking, original charge's value date. Interest correction dates and pending treatment remain unchanged.
 
 ## Calculation snapshots
 
@@ -32,7 +32,7 @@ Day 1's base is `-10.00 + 20.00 = 10.00`: the fee's value date already excludes 
 
 Study 06 leaves checkpoints, ordinary assessment dates, and missing eligible inputs unresolved. The final fee count after E7 remains open; its principal calculations are in [NUMBERS](../deliverables/NUMBERS.md#values-used-in-the-overdraft-fee-snapshots). E9's Day 6 booking excludes it from the Day 5 cutoff; E10 stays after E9.
 
-Accepted dependencies remain open: reversal compensation in study 08, capitalization order in study 10, and fees on negative BHD balances in study 12. These snapshots establish neither final balances nor total fees.
+Study 08 now defines reversal compensation. Accepted dependencies remain open: capitalization order in study 10 and fees on negative BHD balances in study 12. These snapshots establish neither final balances nor total fees.
 
 ## Sources and limits
 
