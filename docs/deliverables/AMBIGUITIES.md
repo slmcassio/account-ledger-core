@@ -8,13 +8,25 @@
 
 The exercise specifies currency precision but leaves the rounding mode undefined. HALF_UP is a project choice, not a mandatory rule established for these accounts by the sources below. Currency alone does not establish the applicable jurisdiction or contract.
 
-**Still unresolved:** Intermediate calculation precision and any additional rounding stages. The exercise already requires the rounded daily interest accruals to sum exactly to the capitalized total.
+For daily interest, the [calculation decision](#daily-interest-calculation) now defines exact multiplication and one daily rounding stage. It does not establish intermediate precision or rounding stages for other calculations.
 
 ### Supporting Sources and Limits
 
 * [Emirates NBD AT1 prospectus](https://www.emiratesnbd.com/-/media/enbd/files/investor-relations/public-issuances/list/perpetual_nc6_at1_prospectus.pdf), section 5.1, printed page 45 (PDF page 56): interest for periods shorter than a full interest period on these USD securities uses the nearest cent, with positive exact ties rounded upwards. This is a precedent within that product's scope.
 * [Government of Bahrain GMTN offering circular](https://www.rns-pdf.londonstockexchange.com/rns/7262H_2-2025-5-7.pdf), section 5.1, printed page 44 (PDF page 58): interest on fixed rate notes uses the nearest currency subunit, with exact halves upwards, subject to another applicable market convention. This is a contractual securities rule.
 * [Mambu deposit interest documentation](https://docs.mambu.com/docs/truncating-and-rounding-interest-deposits/): distinguishes calculation precision, storage precision, and rounding of aggregated journal entries. It does not specify HALF_UP or HALF_EVEN and does not justify the selected mode.
+
+## Daily Interest Calculation
+
+**Decision:** For each account and day, calculate `HALF_UP(max(daily_base, 0) * 0.0004, currency_precision)`. Preserve the exact product until that single rounding to AED two places or BHD three. Do not round an intermediate product or carry fractions between days.
+
+**Assumption and rationale:** Each daily amount depends only on its own base, so it can be reproduced independently. This is an approved project choice for daily interest; the rate, monetary precisions and HALF_UP mode were already established. It selects no language or arithmetic library.
+
+**Reconciliation:** Compare the revised rounded daily target with the original accrual plus all earlier adjustments, including paid ones. Subtract those monetary amounts exactly; do not round the raw interest difference. At payment, sum only eligible unpaid accruals and adjustments, settling each once. Never replace that sum with rounded aggregated raw interest or discard a reconciliation difference. Corrections retain the [pending treatment and actual dates](#interest-adjustments-wait-for-payment).
+
+The [small examples](../research/09-daily-interest-research.md#why-the-stages-matter) show why intermediate rounding, rounding after aggregation and rounding the raw difference can change the result.
+
+**Limits:** This settles daily calculation precision and stages, not the historical bases or final replay totals. Study 06's checkpoints, ordinary assessment dates, missing eligible inputs and final E7 fee count remain open. Study 10 retains capitalization ordering and later payment details, including handling a negative total payable. The approved booking cutoff and reversal refund dates are unchanged.
 
 ## Booking and Value Dates
 
@@ -40,7 +52,7 @@ The [fictional example](../examples/04-backdated-adjustment.md) illustrates the 
 
 **Decision:** Keep every interest correction pending until the next regular payment whose booking cutoff includes it, including corrections for previously paid periods. Do not settle an overdue portion immediately. Positive differences increase pending interest; negative differences reduce it.
 
-**Calculation and dates:** Compare each corrected daily amount with its original accrual plus all earlier adjustments, including paid adjustments. Append only a nonzero difference, linked to the transaction with a breakdown by historical day. Both adjustment dates are the actual correction day. The principal retains its supplied dates and affects the ledger normally; the interest adjustment does not change ledger or available balance then.
+**Calculation and dates:** Compare each corrected [rounded daily target](#daily-interest-calculation) with its original accrual plus all earlier adjustments, including paid adjustments. Append only a nonzero difference, linked to the transaction with a breakdown by historical day. Both adjustment dates are the actual correction day. The principal retains its supplied dates and affects the ledger normally; the interest adjustment does not change ledger or available balance then.
 
 **Payment:** Capitalize eligible unpaid daily accruals and adjustments exactly once. Record which components the payment settles and derive what remains unpaid from those links, preserving earlier records and payments. Later calculations still count settled components when finding a new difference. Never add a full corrected target plus its adjustment or repeat the principal.
 
@@ -130,4 +142,4 @@ Auth-B has a hold only if its request is approved. The absence of settlement alo
 
 **Interest and cutoff:** Interest differences retain both dates on the actual correction day and remain pending until an eligible regular payment, even for previously paid periods. Preserve actual payments, count paid adjustments when finding differences, and settle each pending component once. No hypothetical capitalization or interest on pending amounts is introduced. The job in D still requires `booking_date <= D-1`; E9 and adjustments booked on Day 6 cannot alter the Day 6 payment referencing Day 5.
 
-**Accepted limits:** Study 08 is approved with study 06's checkpoints, ordinary assessment dates, missing eligible inputs and final E7 fee count still open. Exact replay interest depends on study 09's calculation stages; capitalization amounts, ordering and final balances also depend on study 10. No general payment calendar, intermediate precision or negative total payable policy is adopted. Restoring principal, historical balances, net fees and interest are distinct claims; the illustration does not establish criterion 6's blanket restoration or current replay totals.
+**Accepted limits:** Study 08 is approved with study 06's checkpoints, ordinary assessment dates, missing eligible inputs and final E7 fee count still open. Study 09 now defines the [daily calculation stages](#daily-interest-calculation); exact replay interest still depends on the unresolved bases. Capitalization amounts, ordering and final balances also depend on study 10. No general payment calendar or negative total payable policy is adopted. Restoring principal, historical balances, net fees and interest are distinct claims; the illustration does not establish criterion 6's blanket restoration or current replay totals.

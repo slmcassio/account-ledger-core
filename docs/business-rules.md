@@ -76,9 +76,15 @@ Assess AED 25.00 when the resulting base is negative, otherwise zero. Reconcile 
 
 This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06. Study 08 defines reversal compensation; capitalization order and the negative BHD case remain for studies 10 and 12. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
 
+## Approved Interpretation: Daily Interest Calculation
+
+For each account and day, preserve the exact product `max(daily_base, 0) * 0.0004`, then round once with HALF_UP to that currency's precision. Do not round intermediate interest or carry fractions between days. Reconcile corrections against rounded daily targets, including all earlier adjustments, even paid ones. At payment, sum eligible unpaid daily accruals and adjustments exactly and settle each once; do not round their aggregated raw products or discard a difference.
+
+This approved interpretation of BR09 and BR11 leaves the daily bases and payment details subject to the existing open decisions. It changes neither the booking cutoff nor adjustment dates and pending treatment. See the [decision and limits](deliverables/AMBIGUITIES.md#daily-interest-calculation) and [small examples](research/09-daily-interest-research.md).
+
 ## Open Questions
 
-* **Rounding precision and stages:** What intermediate precision should calculations retain, and are any stages needed beyond the required currency rounding and rounded daily accruals?
+* **Other rounding questions:** Intermediate precision and stages outside daily interest are not established by study 09. Installment allocation remains for study 11.
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
 * **Closing checkpoints:** Which clock times, business time zone, and replay checkpoints should apply, and how should missing eligible records be handled?
 * **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?

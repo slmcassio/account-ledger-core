@@ -8,6 +8,14 @@ The exercise requires two decimal places for AED and three for BHD. The smallest
 
 HALF_UP is the approved project mode. It favors recipients of positive interest at exact ties and accepts the resulting upward bias. The [rounding examples](../research/01-rounding-research.md#example) use exact decimal inputs around these boundaries; they do not set business constants.
 
+## Daily Interest Calculation
+
+The exercise supplies 0.04% per day, or `0.0004`. Halving it changes the required rate; no annual divisor applies. The zero boundary excludes nonpositive balances and remains zero when halved.
+
+[Study 09](../research/09-daily-interest-research.md) approves exact multiplication followed by one daily HALF_UP rounding, with no fractions carried between days. Currency precision plus the rate's four fractional places gives at most six fractional places for an AED product or seven for BHD. These are derived scale bounds, not limits on integer digits or total precision; halving them would not preserve every exact product. Corrections subtract rounded daily monetary amounts exactly, and payments sum eligible unpaid components.
+
+The study's independent bases are example inputs, not replay balances or new business constants. AED 12.49 and 12.50 and BHD 1.249 expose daily rounding boundaries. Halving them no longer probes those boundaries and can produce a base outside currency precision. Two days at AED 465.00 expose the difference between daily rounding and rounding after aggregation; using one day removes that comparison. Halving the base to 232.50 retains a discrepancy but reverses its direction. The correction example supplies daily amounts 1.00, +0.20 and 1.30 to distinguish the original, prior adjustment and revised target; halving an input changes the difference, not that method. These are illustrative monetary amounts, not new constants. The small calculations stay in the study; these examples determine no final payment.
+
 ## Values Used in the Late Transaction Example
 
 These results retain example 04's earlier closing schedule. Its final payment includes Day 6 interest and awaits alignment with the [approved booking cutoff](AMBIGUITIES.md#daily-calculation-timing); it is not a current expected payment.
@@ -136,7 +144,7 @@ The [study 08 comparison](../research/08-reversals-research.md#one-fee-two-outco
 * AED 2,500.00 opening balance gives daily interest of exactly 1.00 at the supplied 0.04% rate. Halving the opening balance alone gives 0.50 before the debit and a 1,750.00 deficit after it.
 * The 3,000.00 debit creates a 500.00 deficit. Halving only the debit leaves 1,000.00 positive, so it would no longer illustrate overdraft fees. The reversal amount equals the debit; it is derived, not another constant.
 * The exercise supplies the 25.00 fee, 0.04% daily rate and AED's two decimal places; HALF_UP is approved. Each 25.00 fee changes the unrounded daily interest by 0.01. Changing these inputs changes the exercise's rule.
-* No initial holds or pending interest keeps the financial effects traceable. Zero remains zero when halved. Exact arithmetic and daily currency rounding are assumptions for this calculation, not a decision on general intermediate precision.
+* No initial holds or pending interest keeps the financial effects traceable. Zero remains zero when halved. Exact arithmetic and daily currency rounding were assumptions for this calculation. Study 09 now approves them independently for daily interest. The other assumptions remain illustrative.
 
 Day 1 is the opening, Day 5 the debit's booking/value date, Days 9 and 12 alternative reversal bookings, and Day 10 the only payment. Day 15 is consultation after the routine for reference Day 14. These dates compare correction before and after the payment, not a general calendar. The ordinary job precedes financial events, with reference and cumulative booking cutoff D-1. Its fee for H is assessed, booked and valued on H+1; an immediate corrective checkpoint after reversal is illustrative. Neither schedule settles study 06's pending checkpoints or ordinary assessment dates.
 

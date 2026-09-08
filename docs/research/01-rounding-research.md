@@ -14,7 +14,7 @@ HALF_UP rounds to the nearest representable amount, with exact ties away from ze
 
 The adopted choice assumes that positive interest recipients should receive the higher amount at exact ties. It accepts the resulting upward bias. This rationale does not establish a customer benefit for fees or negative adjustments.
 
-Intermediate calculation precision and any additional rounding stages remain unresolved. The rounding mode alone does not determine how to allocate an installment remainder or which historical amounts a reversal should correct.
+[Study 09](09-daily-interest-research.md#rule-and-approved-calculation) now defines daily interest: exact multiplication followed by one currency rounding, with no fractions carried between days. This does not set intermediate precision or stages for other calculations. The rounding mode alone does not determine installment allocation or reversal compensation; the latter follows the [study 08 decision](../deliverables/AMBIGUITIES.md#reversal-compensation).
 
 ## Example
 

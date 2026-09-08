@@ -10,6 +10,13 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 20:43:13
+
+* The user approved exact daily interest multiplication followed by one HALF_UP currency rounding, with no intermediate rounding or fractions carried between days. Updated [study 09](../research/09-daily-interest-research.md) and aligned ambiguity decisions, business rules, numerical notes, rejected criterion 8 and alternatives, README and references in studies 01/06/08.
+* At the user's request, shortened study 09 to 441 words and explained corrections as the corrected daily amount minus the total already recorded: the original accrual and all previous adjustments, including paid ones. The small example distinguishes a new 0.10 adjustment from the 1.20 already recorded. Every interest correction remains pending; preserve actual payments and settle eligible unpaid components once.
+* Kept study 06's checkpoints, ordinary assessment dates, missing eligible inputs and final E7 fee count open, along with study 10's payment ordering and remaining payment details. Preserved the approved booking cutoff and historical value dates for reversal fee refunds. No language, payment calendar or negative payable policy was adopted.
+* Independent review found no actionable issues. Coordination checked 104 local links, 58 anchors, the diff and whitespace, six new arithmetic checks and preservation of the original checkout's 31-file snapshot; 21 study calculations were verified in the preceding review. No executable ledger or test suite exists. This records completed work before the authorized signed local commit, not a completed commit or publication. Recording time is America/Sao_Paulo; no execution duration is inferred.
+
 ### 08 September 2026, 20:19:53
 
 * Reviewed and simplified [study 08](../research/08-reversals-research.md) through the principal, fee and interest comparisons. Kept a single-fee explanation in the study and preserved the complete [15-day calculation](../research/examples/08-reversal-15-day-simulation.md) separately.

@@ -58,7 +58,7 @@ Append only `corrected amount - (original + all earlier adjustments)`, including
 
 Restoring principal, historical balances, net fees, interest and authorizations are different outcomes. Criterion 6's blanket restoration claim is unsupported. [Authorizations](../deliverables/AMBIGUITIES.md#authorization-and-ledger-responsibilities) are not automatically reevaluated.
 
-Study 06 remains approved with checkpoints, ordinary assessment dates, missing eligible inputs and the final E7 fee count open. Old examples 04 and 08 establish no current replay totals. Exact interest awaits study 09's calculation stages; capitalization amounts, order and final balances also await study 10. Study 08 is approved with these dependencies explicitly accepted as pending. No general intermediate precision, payment calendar or negative payable policy is adopted.
+Study 06 remains approved with checkpoints, ordinary assessment dates, missing eligible inputs and the final E7 fee count open. Old examples 04 and 08 establish no current replay totals. [Study 09](09-daily-interest-research.md#rule-and-approved-calculation) now approves exact multiplication and one daily currency rounding, without carrying fractions between days. That separate approval does not settle the open bases. Capitalization amounts, order and final balances still await study 10. Study 08 remains approved with these dependencies explicitly accepted as pending. No general payment calendar or negative payable policy is adopted.
 
 ## Sources and limits
 

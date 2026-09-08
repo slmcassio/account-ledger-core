@@ -34,6 +34,18 @@ For reversals, the user selected recalculation of all affected fees and interest
 
 Method A in [study 08](../research/08-reversals-research.md) books and values fee refunds on the correction day. It was not adopted because those fees would remain in earlier balances. Approved method B keeps current booking but offsets each fee at its original charge's value date. The late transaction adjustment policy above remains unchanged outside this exception.
 
-Neither decision backdates interest payments: all interest differences retain current correction dates and wait for an eligible regular payment. This record does not establish criterion 6's blanket restoration or final replay totals; the numerical dependencies on studies 09 and 10 remain accepted as open.
+Neither decision backdates interest payments: all interest differences retain current correction dates and wait for an eligible regular payment. This record does not establish criterion 6's blanket restoration or final replay totals; daily calculation stages are now defined in study 09, while the unresolved bases and study 10 payment dependencies remain open.
+
+## Acceptance Criterion 8
+
+**Rejected:** discarding a remainder when rounded daily accruals differ from the capitalized total. The exercise requires those amounts to agree exactly.
+
+For two eligible unpaid days at AED 465.00, each day's raw interest is `465.00 * 0.0004 = 0.186000`, rounded to 0.19. Their payment is `0.19 + 0.19 = 0.38`. Rounding the raw sum `0.372000` to 0.37 and discarding 0.01 violates that requirement. Corrections follow the same reconciliation: pay the eligible unpaid monetary components exactly once.
+
+## Extra Daily Interest Rounding and Fraction Carry
+
+The [approved daily calculation](AMBIGUITIES.md#daily-interest-calculation) rejects intermediate rounding and carrying fractions between days. Each exact product is rounded once to its currency precision, keeping its daily result independent of other days.
+
+Rounding after aggregating raw interest does not replace the required sum of daily amounts. Likewise, a correction compares rounded daily targets rather than rounding their raw difference. The [small examples](../research/09-daily-interest-research.md#corrections-and-payment) show why that alternative can miss a monetary adjustment. This rejection concerns daily interest, not a policy for settling a negative payment total.
 
 TODO: Record refused acceptance criteria and further abandoned approaches as they are reviewed.
