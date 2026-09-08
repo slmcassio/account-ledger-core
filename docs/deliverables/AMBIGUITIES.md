@@ -28,13 +28,33 @@ The exercise specifies currency precision but leaves the rounding mode undefined
 
 **Decision:** append the original transaction with its supplied dates. Recalculate affected fees and interest, then append a separate adjustment linked to that transaction. For each component, record `corrected amount - net amount already recorded`; do not repeat the original transaction amount.
 
-The adjustment uses the correction day for both `booking_date` and `value_date`. Keep the historical days and each fee or interest component in its calculation breakdown. Interest corrections before capitalization change unpaid interest; corrections to interest already credited affect the account balance.
+The adjustment uses the actual correction day for both `booking_date` and `value_date`. Keep the historical days and each fee or interest component in its breakdown. Fee differences affect the ledger; all interest differences follow the [pending interest decision](#interest-adjustments-wait-for-payment), including corrections for previously paid periods.
 
-**Assumption and rationale:** interpret the fee's "day assessed" as the day the correction is assessed and recorded. This makes the adjustment affect the current balance while preserving the original records and the explanation of each historical difference. In the approved example, J has both dates on Day 5; Days 2, 3, and 4 are calculation references.
+**Assumption and rationale:** interpret the fee's "day assessed" as the day the correction is assessed and recorded. This makes the fee component affect the current balance while preserving the original records and the explanation of each historical difference. In the approved example, J has both dates on Day 5; Days 2, 3, and 4 are calculation references.
 
 **Basis and limits:** [the research](../research/02-booking-and-value-dates-research.md) records ISO date definitions, Mambu's backdating and reversal examples, and their limits. Difference adjustments and their dates are project choices. The cited CBUAE provisions address error correction and do not establish this policy.
 
 The [fictional example](../examples/04-backdated-adjustment.md) illustrates the approved decision.
+
+## Interest Adjustments Wait for Payment
+
+**Decision:** Keep every interest correction pending until the next regular payment whose booking cutoff includes it, including corrections for previously paid periods. Do not settle an overdue portion immediately. Positive differences increase pending interest; negative differences reduce it.
+
+**Calculation and dates:** Compare each corrected daily amount with its original accrual plus all earlier adjustments, including paid adjustments. Append only a nonzero difference, linked to the transaction with a breakdown by historical day. Both adjustment dates are the actual correction day. The principal retains its supplied dates and affects the ledger normally; the interest adjustment does not change ledger or available balance then.
+
+**Payment:** Capitalize eligible unpaid daily accruals and adjustments exactly once. Record which components the payment settles and derive what remains unpaid from those links, preserving earlier records and payments. Later calculations still count settled components when finding a new difference. Never add a full corrected target plus its adjustment or repeat the principal.
+
+**Assumption and rationale:** Accept deferred settlement even for previously paid periods, using one pending treatment independent of processing order. Pending amounts are unavailable and earn no interest, including hypothetical returns from an earlier capitalization date. This replaces the earlier immediate balance correction for previously credited interest. The difference method and dates remain; fee adjustments still debit or credit the ledger on the correction day.
+
+**Example:** A transaction is booked and corrected on D30 with value date D5. Assume three daily amounts each change from AED 1.50 to 2.00: D5 was paid on D15; D20 and D25 remain unpaid. These are illustrative calculation results; other days are omitted.
+
+* D30: record one pending adjustment of `3 * (2.00 - 1.50) = 1.50`, with both dates D30 and a breakdown of 0.50 per day.
+* Next eligible payment: these components contribute `3.00 + 1.50 = 4.50`, comprising two unpaid original accruals and the whole adjustment. D5's original 1.50 is not paid again.
+* Repeating for each day, before or after payment: `2.00 - (1.50 + 0.50) = 0.00`. Paid adjustments still count when calculating the difference.
+
+The next day 15 is illustrative, not an approved monthly calendar. No corrective credit is backdated to D15 or D5.
+
+**Limits:** Settlement of a negative total payable remains unresolved; no direct debit or carry rule is adopted. Study 08 still determines E9's compensation scope. The [daily cutoff and timing questions](#daily-calculation-timing) continue to apply.
 
 ## Settlements with a Missing Authorization
 
@@ -80,8 +100,12 @@ Auth-B has a hold only if its request is approved. The absence of settlement alo
 
 ## Daily Calculation Timing
 
-**Decision and assumption:** Calculate during event processing in an active system, where transactions can arrive throughout the day. Preserve the supplied event order. Updating the running balance, closing a day, and recalculating an earlier day are separate operations.
+**Decision and assumption:** Process events in the supplied order and update the running balance as financial transactions are recorded. Run one daily job in D for reference day D-1. Select its input entries cumulatively by `booking_date <= D-1`, then use their value dates for the days being calculated. Knowing a later booking does not make it eligible. Pending interest is separate from the ledger balance.
 
-**Rationale:** Calculations must use the information available during processing without waiting for the full input. Closing a day does not prove that no later transaction can affect it. Keep the agreed late transaction adjustment dates and the separation of unpaid interest from the ledger balance.
+**Rationale:** The booking cutoff fixes the accounting input considered by each calculation, independently of execution order. Value dates retain their economic meaning. A cutoff does not guarantee that every eligible event has arrived; handling missing eligible records, including E10 after an earlier job, remains unresolved.
 
-**Still proposed:** The midnight boundary, interest processing from 00:30 the following day, validation before recording a calculation, and the replay checkpoints described in the [research](../research/06-daily-closing-research.md). The business time zone remains undecided. The [fictional example](../examples/08-daily-closing.md) illustrates those proposals; it does not establish production timing or a concurrency implementation. Reversal compensation remains unresolved.
+**Payment choice and limit:** The Day 6 payment uses reference Day 5. E9 and adjustments booked on Day 6 cannot change it, even if processed before that payment. The job's resulting accrual and payment are outputs, not input transactions excluded by the cutoff. The payment is recorded on Day 6. The Day 7 routine calculates Day 6; under this interpretation, its interest awaits a later payment whose details remain for study 10. The exercise still requires one credit at the end of Day 6; no weekly or monthly calendar is inferred.
+
+**Still proposed:** The midnight boundary, 00:30 start, validation and indivisible recording, and replay checkpoints in [study 06](../research/06-daily-closing-research.md). The business time zone and ordinary assessment dates remain undecided. Validation must concern inputs and results relevant to the cutoff. Reversal scope and a negative total payable remain unresolved. The [earlier fictional example](../examples/08-daily-closing.md) awaits alignment with the booking cutoff and does not establish current results.
+
+**Review status:** Study 06 is approved for now, with its recorded open items and dependencies explicitly pending. Revisit it when a later study affects these decisions.

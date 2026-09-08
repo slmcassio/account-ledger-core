@@ -10,6 +10,8 @@ HALF_UP is the approved project mode. It favors recipients of positive interest 
 
 ## Values Used in the Late Transaction Example
 
+These results retain example 04's earlier closing schedule. Its final payment includes Day 6 interest and awaits alignment with the [approved booking cutoff](AMBIGUITIES.md#daily-calculation-timing); it is not a current expected payment.
+
 The [exercise](../exercise-statement.md) supplies the fee, rate, and precision below. The capitalization day is the endpoint of its six-day scenario. Halving a supplied value would change the rule or scenario it defines.
 
 | Value | Purpose |
@@ -86,6 +88,8 @@ Days 1 through 6 are the supplied replay window. The decision to generate no aut
 
 ## Values Used in the Daily Closing Example
 
+These calculations retain example 08's earlier proposal without the subsequently approved booking cutoff. They await alignment and are not current expected results.
+
 The [fictional example](../examples/08-daily-closing.md) uses the exercise's 0.04% daily rate and AED's two decimal places. Its interest amounts are exact at that precision. The following amounts are scenario data; each comparison halves one input while keeping the others unchanged.
 
 | Input | Purpose and reason for the value |
@@ -100,5 +104,11 @@ The original 0.04 target is never recorded. I1 records 0.06; J1 adds 0.02, produ
 Day 1 is the calculation period; B, C, and J1 have Day 2 booking dates. B and C retain Day 1 value dates, while J1 has Day 2 value date under the approved adjustment method. The example ends at 00:37 on Day 2, before that day's close and before capitalization. Its clock times separate reading, arrivals, recording, and repetition; they are not processing deadlines.
 
 The proposed 00:00 boundary and earliest 00:30 job start reflect the user's scheduling proposal. The 30-minute interval is not a measured delivery limit or a guarantee of complete input. Halving it to 15 minutes would change the proposed start time but would not remove the need to handle late arrivals. The schedule, business time zone, and positions of closing calculations in the supplied replay remain unresolved.
+
+## Values Used in the Pending Interest Illustration
+
+The [decision example](AMBIGUITIES.md#interest-adjustments-wait-for-payment) assumes three daily results change from AED 1.50 to 2.00. These illustrate reconciliation, not a new rate or a calculated replay result. One original amount is already paid; two remain unpaid. Each difference is 0.50, totaling 1.50. The next payment includes 3.00 of unpaid originals plus that adjustment, totaling 4.50 for these components.
+
+Halving the original 1.50 to 0.75 while retaining the target makes each difference 1.25; halving the target to 1.00 instead makes each difference -0.50. The arithmetic changes, not the policy. D5, D15, D20, D25, and D30 identify illustrative historical days, correction, and payment; they define no monthly calendar or system limit.
 
 TODO: Record additional constants and numerical decisions as their reviews are approved.

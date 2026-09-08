@@ -32,7 +32,8 @@ This interpretation covers legitimate transactions delivered after they occurred
 * `booking_date` is the accounting recording day; `value_date` is the day the transaction starts affecting the balance. Preserve the supplied dates and event order.
 * Append a separate adjustment for differences in affected fees and interest. Link it to the original transaction and retain a breakdown by historical day and type. Do not repeat the original transaction amount.
 * Use the correction day for both dates of the adjustment. Interpret "day assessed" as the current assessment day; historical days remain calculation references.
-* Calculate each component as `corrected amount - net amount already recorded`. Correct unpaid interest separately from the account balance until capitalization; corrections to credited interest affect the balance.
+* Calculate each component as `corrected amount - (original amount + all prior adjustments)`, including interest adjustments already paid. Fee adjustments affect the ledger. Keep every interest difference pending until the next regular payment whose booking cutoff admits it, including corrections for previously paid periods. Pending interest is unavailable and earns no interest.
+* Capitalize eligible unpaid daily accruals and adjustments once, recording which components the payment settles. Preserve earlier payments and exclude settled components from later payments, while retaining them for future difference calculations. See the [decision, rationale, and negative-total limit](deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment).
 
 See the [decision and rationale](deliverables/AMBIGUITIES.md#late-transaction-adjustments) and [worked example](examples/04-backdated-adjustment.md).
 
@@ -55,13 +56,13 @@ See the [settlement and release decision](deliverables/AMBIGUITIES.md#hold-settl
 
 ## Approved Interpretation: Active Calculations
 
-Calculate during event processing in an active system, preserving the supplied order. Financial entries update the running balance; daily closing and historical recalculation are separate operations. A closing result uses the records known at its calculation point and may need revision after later arrivals.
+Process financial events in the supplied order and update the running balance. Run one daily job in D for reference D-1, selecting input entries with cumulative `booking_date <= D-1`. Within that set, use value dates to calculate closing balances. Pending interest does not enter the ledger balance. The job's accrual and payment are outputs, not input transactions excluded by this cutoff.
 
-The operational schedule and replay checkpoints remain proposals. See the [decision and open details](deliverables/AMBIGUITIES.md#daily-calculation-timing) and [worked example](examples/08-daily-closing.md).
+Clock times, replay checkpoints, and handling missing eligible records remain unresolved. See the [decision and open details](deliverables/AMBIGUITIES.md#daily-calculation-timing). The [earlier worked example](examples/08-daily-closing.md) awaits alignment with the cutoff.
 
 ## Open Questions
 
 * **Rounding precision and stages:** What intermediate precision should calculations retain, and are any stages needed beyond the required currency rounding and rounded daily accruals?
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
-* **Closing checkpoints and reversals:** Which daily schedule, business time zone, and replay checkpoints should apply, and which fees and interest should a reversal correct?
+* **Closing checkpoints and reversals:** Which clock times, business time zone, and replay checkpoints should apply, and which fees and interest should a reversal correct?
 * **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?

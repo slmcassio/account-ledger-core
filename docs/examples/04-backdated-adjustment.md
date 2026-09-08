@@ -1,5 +1,7 @@
 # Backdated transaction and adjustment
 
+**Earlier scenario:** The calculations below retain the original closing schedule, including Day 6 interest in its payment. They are not current payment results under the [approved booking cutoff](../deliverables/AMBIGUITIES.md#daily-calculation-timing). Numerical alignment remains pending.
+
 ## Scenario
 
 This fictional example illustrates the [approved adjustment method](../research/02-booking-and-value-dates-research.md). One account opens at AED 0.00. The late debit is a legitimate transaction delivered after it occurred. System error corrections are outside this example's scope.
@@ -38,7 +40,7 @@ Each of Days 2 through 4 becomes `1,000 - 1,200 = -200`. J's 75.00 debit applies
 J contains two components for each of Days 2, 3, and 4:
 
 * Charge 25.00 in fees per day: `3 * 25.00 = 75.00`, debited from the account.
-* Reduce unpaid interest by 0.40 per day: `3 * -0.40 = -1.20`. Interest already calculated falls from 1.60 to 0.40. It had not entered the account balance yet, so this correction reduces the future interest payment.
+* Reduce unpaid interest by 0.40 per day: `3 * -0.40 = -1.20`. Interest already calculated falls from 1.60 to 0.40. This correction reduces the future eligible interest payment. All interest differences remain pending, including corrections for previously paid periods.
 
 C already debited 1,200.00. J has both dates on Day 5 and reduces the current balance from 300.00 to 225.00. A query limited to records before C still reproduces the earlier balances.
 

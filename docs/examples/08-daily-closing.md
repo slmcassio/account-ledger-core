@@ -1,5 +1,7 @@
 # Daily closing with late arrivals
 
+**Earlier proposal:** This example uses known records without the subsequently approved booking cutoff. Its sequence and results await alignment with the [current decision](../deliverables/AMBIGUITIES.md#daily-calculation-timing); they are not current expected results.
+
 ## Scenario
 
 This fictional example illustrates the [proposed closing process](../research/06-daily-closing-research.md). One transaction arrives while interest is being calculated; another arrives after the result is recorded.

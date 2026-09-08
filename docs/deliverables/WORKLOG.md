@@ -10,6 +10,15 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 07 September 2026, 23:28:06
+
+* Reviewed and simplified [study 06](../research/06-daily-closing-research.md). Recorded the daily D-1 job and cumulative booking cutoff while preserving supplied value dates, event order, and current balance updates.
+* Documented the approved pending interest treatment in [AMBIGUITIES](AMBIGUITIES.md#interest-adjustments-wait-for-payment): record corrections on the actual correction day, including differences for previously paid periods, and settle them once at the next eligible regular payment. Pending interest is unavailable and earns no interest.
+* Added the D30 correction example and aligned business rules, study 02, numerical notes, and the rejection of historical adjustment dates. Explicitly identified examples 04 and 08 as earlier scenarios awaiting numerical alignment with the booking cutoff.
+* The user approved study 06 for now with its recorded open items and dependencies pending, to revisit when a later study affects it. Remaining proposals were not adopted.
+* Reviewed the documentation diff, local links and anchors, whitespace, and Decimal arithmetic. Independent review checked consistency. No executable ledger or test suite exists yet.
+* The user authorized a signed commit and push restricted to study 06 and its related changes. This entry records that authorization before either action is performed.
+
 ### 07 September 2026, 20:36:37
 
 * Reviewed and simplified the [daily closing research](../research/06-daily-closing-research.md), following the style of studies 01 through 04. Added a [complete fictional example](../examples/08-daily-closing.md) covering arrivals during and after calculation, repeated calculations, and duplicate delivery.

@@ -20,11 +20,11 @@ The [exercise](../exercise-statement.md) requires a fee's `value_date` to equal 
 3. Append a separate adjustment linked to the transaction. Use the correction day for both `booking_date` and `value_date`.
 4. Keep a breakdown by historical day and component.
 
-The adjustment can charge or refund fees and increase or reduce interest. It does not repeat the original transaction amount. Corrections to unpaid interest change the future interest payment. Corrections to credited interest affect the account balance.
+The net amount includes the original result and all prior adjustments, paid or unpaid. The adjustment never repeats the principal. Fee differences debit or credit the ledger. Every interest difference remains pending until the next regular payment whose booking cutoff includes it, even when correcting a previously paid period. It is unavailable and earns no interest before capitalization. Preserve earlier payments and settle each unpaid component only once. See the [decision, rationale, and limits](../deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment).
 
 ## Example
 
-The [fictional example](../examples/04-backdated-adjustment.md) follows three transactions and their adjustment. The adjustment charges AED 75.00 for three negative closing days and reduces unpaid interest by AED 1.20. The final interest credit is AED 0.58.
+The [fictional example](../examples/04-backdated-adjustment.md) follows three transactions and their adjustment. The adjustment charges AED 75.00 for three negative closing days and reduces unpaid interest by AED 1.20. Its AED 0.58 final credit follows the earlier schedule explicitly retained in that example, not the currently approved booking cutoff.
 
 ## Sources and limits
 
