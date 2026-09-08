@@ -60,6 +60,14 @@ Process financial events in the supplied order and update the running balance. R
 
 Clock times, replay checkpoints, and handling missing eligible records remain unresolved. See the [decision and open details](deliverables/AMBIGUITIES.md#daily-calculation-timing). The [earlier worked example](examples/08-daily-closing.md) awaits alignment with the cutoff.
 
+## Approved Interpretation: Overdraft Fee Assessment Base
+
+For the job in D, select inputs with cumulative `booking_date <= D-1`. For each period being evaluated, calculate the ledger balance using those inputs and their applicable value dates. Exclude only that period's own fee components and related adjustments already included in this balance to obtain the fee assessment base. Keep other periods' fees and refunds according to their actual value dates. Holds and pending interest do not enter this base.
+
+Assess AED 25.00 when the resulting base is negative, otherwise zero. Reconcile that target with the original fee plus all earlier fee adjustments and append only the difference on the actual correction day. The reported ledger balance still includes every eligible financial entry with an applicable value date; the exclusion changes fee eligibility, not history.
+
+This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06; reversal compensation, capitalization order, and the negative BHD case remain for studies 08, 10, and 12. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
+
 ## Open Questions
 
 * **Rounding precision and stages:** What intermediate precision should calculations retain, and are any stages needed beyond the required currency rounding and rounded daily accruals?

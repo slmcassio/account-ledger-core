@@ -44,7 +44,7 @@ Queries append nothing. Corrections do not [automatically reevaluate authorizati
 * **Duplicate delivery:** Proposed: use the same event ID to prevent repeated financial or hold effects. Equal amounts and dates are insufficient.
 * **Concurrency:** Proposed: validate entries and prior results relevant to the cutoff, then record indivisibly; retry if those changed. Excluded future bookings alone require no retry. Mechanism undecided.
 
-TODO Final fee results await 07; intermediate interest precision awaits 09.
+Study 07 defines the approved fee assessment base. Final fee results still depend on the unresolved recording points and ordinary assessment dates above, reversal scope in study 08, and capitalization order in study 10. The negative BHD case remains for study 12; intermediate interest precision awaits study 09.
 
 **Review status:** Study 06 is approved for now, with its recorded open items and dependencies explicitly pending. Revisit it when a later study affects these decisions.
 

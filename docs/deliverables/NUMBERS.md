@@ -111,4 +111,22 @@ The [decision example](AMBIGUITIES.md#interest-adjustments-wait-for-payment) ass
 
 Halving the original 1.50 to 0.75 while retaining the target makes each difference 1.25; halving the target to 1.00 instead makes each difference -0.50. The arithmetic changes, not the policy. D5, D15, D20, D25, and D30 identify illustrative historical days, correction, and payment; they define no monthly calendar or system limit.
 
+## Values Used in the Overdraft Fee Snapshots
+
+[Study 07](../research/07-overdraft-fees-research.md#calculation-snapshots) uses the exercise's AED 25.00 fee, zero eligibility boundary, and two decimal places. Halving the fee or changing that boundary would change the supplied rule. The approved assessment base is a project interpretation, not another monetary constant.
+
+Both hypothetical accounts open at 0.00 with no holds; half of zero remains zero. These inputs make the listed financial entries explain each balance. No capitalization is included, and pending interest has no ledger effect. The following comparisons halve one input while retaining the other fixture data.
+
+* First snapshot, credit 100.00: provides the initial balance against the delayed debit. Halving it to 50.00 gives Day 1 and Day 2 bases of -60.00 and -40.00, requiring a 25.00 target for each period.
+* First snapshot, credit 20.00: restores Day 2 to a positive base after that debit. Halving it to 10.00 leaves Day 1 at -10.00 and Day 2 at exactly zero, which still requires no Day 2 fee.
+* First snapshot, delayed debit 110.00: exceeds the first credit but not both credits combined. Halving it to 55.00 leaves bases of 45.00 and 65.00, requiring no fee for either period.
+* Second snapshot, debit 10.00: provides the original deficit. Halving it to 5.00 while retaining the supplied 25.00 fee and late credit gives Day 1 and Day 2 bases of 15.00 and -10.00.
+* Second snapshot, late credit 20.00: removes that original deficit while leaving Day 2 negative after the earlier period's dated fee. Halving it to 10.00 gives Day 1 and Day 2 bases of zero and -25.00. Day 1's corrected target remains zero.
+
+In the first snapshot, the original inputs give Day 1 and Day 2 bases of -10.00 and 10.00. With no previously recorded fees for those periods, their correction amounts are 25.00 and zero. In the second, the bases are 10.00 and -15.00. Day 1's target changes from its recorded 25.00 to zero, requiring a 25.00 refund. These are derived historical calculations, not final account balances or a total assessment count.
+
+The snapshots use a Day 6 job and Day 5 booking cutoff so every listed input is eligible. Credits or debits with Day 1 value date illustrate a historical effect; the first snapshot's second credit and the second snapshot's existing fee have Day 2 value dates. The existing fee's Day 2 assessment and booking are supplied fixture data, not an approved ordinary schedule. Any correction assessed on Day 6 has both dates on Day 6. These dates isolate cutoff and adjustment effects; they introduce no business deadline or replay checkpoint.
+
+The supplied E7 scenario's principal balances of -370.00, 30.00, and -335.00 derive from the exercise's entries, including E6. They are before fees and do not establish the final number of assessments. See the [open dependencies](AMBIGUITIES.md#overdraft-fee-assessment-base).
+
 TODO: Record additional constants and numerical decisions as their reviews are approved.

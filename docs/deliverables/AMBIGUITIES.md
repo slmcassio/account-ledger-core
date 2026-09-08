@@ -109,3 +109,13 @@ Auth-B has a hold only if its request is approved. The absence of settlement alo
 **Still proposed:** The midnight boundary, 00:30 start, validation and indivisible recording, and replay checkpoints in [study 06](../research/06-daily-closing-research.md). The business time zone and ordinary assessment dates remain undecided. Validation must concern inputs and results relevant to the cutoff. Reversal scope and a negative total payable remain unresolved. The [earlier fictional example](../examples/08-daily-closing.md) awaits alignment with the booking cutoff and does not establish current results.
 
 **Review status:** Study 06 is approved for now, with its recorded open items and dependencies explicitly pending. Revisit it when a later study affects these decisions.
+
+## Overdraft Fee Assessment Base
+
+**Decision:** For the daily job in D, first select inputs cumulatively with `booking_date <= D-1`. For each period being evaluated, obtain its ledger balance from those inputs using their applicable value dates. Exclude only the fee components attributed to that period and their adjustments already included in the balance. Keep other periods' fees and refunds according to their actual value dates. A negative assessment base requires AED 25.00; a zero or positive base requires no fee. Holds and pending interest do not enter the base.
+
+**Assumption and rationale:** A fee should not sustain its own assessment after a legitimate late credit removes the original deficit. Excluding only its own period components prevents that circular result without removing other periods' dated charges or refunds. This is an approved project interpretation of the exercise, not an explicit rule in its statement.
+
+**Effect and reconciliation:** The reported ledger balance continues to include every eligible financial entry with an applicable value date. The exclusion is only for fee assessment. Compare the corrected fee target with the original charge plus all earlier fee adjustments; append only the difference. Both adjustment dates remain the actual correction day. Reviewing periods in date order does not move a new charge or refund into an earlier balance. See [study 07](../research/07-overdraft-fees-research.md) for examples.
+
+**Accepted limits:** Study 06 remains approved with its unresolved replay checkpoints and ordinary assessment dates; its commit did not establish a final fee count after E7. Preserve that limit when concluding this study's independent assessment decision. Reversal compensation remains for study 08, capitalization order for study 10, and the negative BHD case for study 12. Keeping these dependencies open does not adopt their proposals or determine the final Day 6 fee.

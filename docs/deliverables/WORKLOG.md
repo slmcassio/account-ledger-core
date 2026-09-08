@@ -10,6 +10,21 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 00:00:17
+
+* Simplified [study 07](../research/07-overdraft-fees-research.md) from 1,333 to 546 words, removing duplicated explanations and process details while preserving approved policies, both examples, and accepted open dependencies.
+* Reviewed the editorial diff and verified six Decimal calculations, local links and anchors, and whitespace. No executable ledger tests exist.
+* The user authorized amending the unpushed study 07 commit with this revision and worklog entry. This records the authorization before the amend, not its completion.
+
+### 07 September 2026, 23:52:53
+
+* Reviewed [study 07](../research/07-overdraft-fees-research.md) against the signed, verified study 06 commit. Preserved the approved exclusion of only the assessed period's own fee components and adjustments already included in its base, applying the cumulative booking cutoff before value dates.
+* Replaced earlier immediate closing examples with explicit historical calculation snapshots. Kept all prior adjustments in each component's recorded net without admitting them to a historical balance outside their actual dates. Pending interest remains separate from the ledger.
+* Recorded the approved assessment decision and rationale in [AMBIGUITIES](AMBIGUITIES.md#overdraft-fee-assessment-base), business rules, numerical notes, and README. Updated study 06's dependency note because study 07 resolves the base, not the final assessment count.
+* Preserved the accepted open checkpoints, ordinary assessment dates, and missing eligible input handling from study 06, plus reversal compensation for study 08, capitalization order for study 10, and the negative BHD case for study 12. No new material decision was required for study 07's independent scope.
+* Independent review verified the existing Mambu source and its limits, the final study diff, 10 Decimal calculations, four local links and anchors, and three formatting checks. Finalization checked 18 Decimal calculations; the coordinated documentation check passed 58 local links and anchors, whitespace, and preservation of 30 original checkout files. No executable ledger or test suite exists yet.
+* Prepared a focused signed commit on local main under the user's existing conditional authorization. This entry records completed work immediately before that commit; it does not assert that the commit or any publication has occurred. No push is authorized for study 07.
+
 ### 07 September 2026, 23:28:06
 
 * Reviewed and simplified [study 06](../research/06-daily-closing-research.md). Recorded the daily D-1 job and cumulative booking cutoff while preserving supplied value dates, event order, and current balance updates.
