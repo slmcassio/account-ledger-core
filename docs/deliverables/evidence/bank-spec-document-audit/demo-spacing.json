@@ -1,0 +1,7 @@
+{
+  "reports": 14,
+  "added_blank_lines": 14,
+  "nonblank_output_unchanged": true,
+  "exact_expected_output": true,
+  "blank_before_every_header": true
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "demo-before",
+    "command": [
+      "clojure",
+      "-M:demo"
+    ],
+    "started_at": "2026-09-09T10:21:13.360017-03:00",
+    "ended_at": "2026-09-09T10:21:13.936238-03:00",
+    "exit_code": 0
+  },
+  {
+    "name": "demo",
+    "command": [
+      "clojure",
+      "-M:demo"
+    ],
+    "started_at": "2026-09-09T10:21:13.936926-03:00",
+    "ended_at": "2026-09-09T10:21:14.535562-03:00",
+    "exit_code": 0
+  },
+  {
+    "name": "normal",
+    "command": [
+      "clojure",
+      "-M:test"
+    ],
+    "started_at": "2026-09-09T10:21:14.536155-03:00",
+    "ended_at": "2026-09-09T10:21:15.746595-03:00",
+    "exit_code": 0
+  },
+  {
+    "name": "design-challenge",
+    "command": [
+      "clojure",
+      "-M:design-challenge"
+    ],
+    "started_at": "2026-09-09T10:21:15.746957-03:00",
+    "ended_at": "2026-09-09T10:21:16.255636-03:00",
+    "exit_code": 1
+  }
+]

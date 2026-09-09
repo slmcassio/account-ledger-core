@@ -530,7 +530,7 @@ General external input completeness, automatic expiration beyond the replay and 
 
 1. **Ambiguity:** Which local record exists if submission fails or its accepted response is lost?
 2. **Why unclear:** Saved accrual components alone do not identify the payment that selected them. An accepted fee without assessment metadata cannot participate in later fee comparisons.
-3. **Decision:** Following the user's explicit correction, save the complete command before calling Authorization. Retain an unknown command unchanged, block another financial operation for that account, and confirm original component links from either the financial result or delivered event. Only a definite invalid/stale rejection releases the command for fresh calculation. Require the assessment/receipt metadata in every accepted financial command.
+3. **Decision:** Following the user's explicit correction, save the complete command before calling Authorization. Retain an unknown command unchanged, block another Yield fee or interest settlement for that account without blocking principal commands, and confirm original component links from either the financial result or delivered event. Only a definite invalid/stale rejection releases the command for fresh calculation. Require the assessment/receipt metadata in every accepted financial command.
 4. **Reason:** This preserves the calculation that caused the effect and prevents a later settlement from paying the same interest again. It uses the existing serial, in-memory boundaries without adding durable storage or a generic retry mechanism. See [implementation decisions](../../agent-decisions.md#financial-intents-before-effects) and [verification](VERIFICATION.md#financial-intent-correction).
 
 ### Module recording and delivery

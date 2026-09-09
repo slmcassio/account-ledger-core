@@ -38,11 +38,11 @@ Settlement receipts contain `:settlement/id`, `:component/ids`, signed `:money/a
 
 Before `:submit-financial!`, append the complete command to local `:financial-intents` and retain the same command in the pending index. Both report fields return vectors of command maps; the pending vector has at most one command per account under serial jobs. Interest commands link already saved calculation components; fee commands include their assessment. The intent itself confirms no fee or payment.
 
-* Unknown outcomes and exceptions retain the exact pending map. Retry of the same settlement ID resends it with its original amount, dates, links and counter; retry appends no new intent. A calculation first resumes any pending fee. Different financial commands and new zero settlements return `:retry-required` with `:reason :pending-financial-command` while unresolved.
+* Unknown outcomes and exceptions retain the exact pending map. Retry of the same settlement ID resends it with its original amount, dates, links and counter; retry appends no new intent. A calculation first resumes any pending fee. Different Yield fee commands and interest settlements, including zero, return `:retry-required` with `:reason :pending-financial-command` while unresolved.
 * Definite `:invalid` or `:retry-required`/`:stale-source` clears pending state without deleting proposal history. A later attempt can recalculate from fresh inputs and append a new proposal with the same unrecorded ID. Do not replace only the source counter.
 * A recorded result, confirmed duplicate or delivered committed event appends the original fee assessment or interest receipt and clears the pending command atomically. Interest delivery uses the event's original settlement ID and signed amount without requiring that settlement to be called again. Components confirmed in that receipt cannot enter another settlement.
 
-Pure accruals may append components during an unknown payment, but cannot replace its saved command or make the report complete.
+Accrual-only jobs may append components during an unknown payment, but cannot replace its saved command or make the report complete. Principal credits and debits remain accepted by Authorization.
 
 Use SPEC's pending-delivery, acknowledgement, drain and Yield port signatures exactly. Never hold a module state lock across a call to another module. A failed delivery returns errors and remains pending; no loop spins until success. For calculation or payment, a known gap, unresolved financial command or unresolved delivery prevents a complete result.
 

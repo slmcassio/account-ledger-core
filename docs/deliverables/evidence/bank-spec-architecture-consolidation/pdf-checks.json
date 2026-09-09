@@ -1,0 +1,66 @@
+{
+  "recorded_at": "2026-09-09T10:33:50.784476-03:00",
+  "pdf_sha256": "77b59140def2c2d8ee9fc52840dd9eee9a3784356d354d428130e191f8cc2897",
+  "pdf_pages": 4,
+  "sources": [
+    "docs/architecture.md",
+    "docs/trade-offs.md",
+    "docs/production-considerations.md"
+  ],
+  "normalized_body_matches_sources": true,
+  "normalization": "Exclude Markdown formatting/link URLs, whitespace, bullet glyphs and PDF footers/page numbers. Represent Mermaid as its five original source-to-recipient labels, which are printed in the PDF. Compare all remaining characters in order.",
+  "normalized_characters": 11393,
+  "original_mermaid_byte_identical": true,
+  "mermaid_sha256": "4ab53f20125e3da373a3e0d575321d1ca34aadc329071851a25a2c5fd171d8a1",
+  "interaction_numbers": [
+    1,
+    2,
+    3,
+    10,
+    11
+  ],
+  "all_four_pages_rendered_and_visually_inspected": true,
+  "body_inside_40pt_page_margins_without_footer_overlap": true,
+  "geometry": [
+    {
+      "page": 1,
+      "body_bounds": [
+        50.0,
+        545.0,
+        49.726,
+        781.925
+      ],
+      "footer_top": 811.656
+    },
+    {
+      "page": 2,
+      "body_bounds": [
+        50.0,
+        553.514,
+        49.726,
+        772.88
+      ],
+      "footer_top": 811.656
+    },
+    {
+      "page": 3,
+      "body_bounds": [
+        50.0,
+        554.0,
+        49.726,
+        642.425
+      ],
+      "footer_top": 811.656
+    },
+    {
+      "page": 4,
+      "body_bounds": [
+        50.0,
+        544.174,
+        48.484,
+        295.125
+      ],
+      "footer_top": 811.656
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+
+Testing account-ledger.design-challenge
+
+FAIL in (known-id-does-not-detect-content-collision) (design_challenge.clj:15)
+expected: (= :payload-conflict (:outcome (authorization/submit! module (assoc original :money/amount 100M))))
+  actual: (not (= :payload-conflict :duplicate))
+
+Ran 1 tests containing 1 assertions.
+1 failures, 0 errors.
+Deliberate challenge: {:test 1, :pass 0, :fail 1, :error 0, :type :summary}

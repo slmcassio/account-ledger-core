@@ -1,0 +1,121 @@
+Six-day operational reports captured at each checkpoint
+
+Day 1 | ACC-001 | AED
+  Financial: 250.00M Held: 0.00M Available: 250.00M Counter: 2
+  Interest paid: 0.00M Pending: 0.00M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): []
+  Occurrences: []
+  Complete internal delivery: true
+
+Day 1 | ACC-002 | BHD
+  Financial: 0.000M Held: 0.000M Available: 0.000M Counter: 0
+  Interest paid: 0.000M Pending: 0.000M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): []
+  Occurrences: []
+  Installments: []
+  Complete internal delivery: true
+
+Day 2 | ACC-001 | AED
+  Financial: 250.00M Held: 200.00M Available: 50.00M Counter: 3
+  Interest paid: 0.00M Pending: 0.10M
+  Authorizations: {"Auth-A" :approved} Active holds: {"Auth-A" 200.00M}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.00M}]
+  Occurrences: []
+  Complete internal delivery: true
+
+Day 2 | ACC-002 | BHD
+  Financial: 0.000M Held: 0.000M Available: 0.000M Counter: 0
+  Interest paid: 0.000M Pending: 0.000M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.000M}]
+  Occurrences: []
+  Installments: []
+  Complete internal delivery: true
+
+Day 3 | ACC-001 | AED
+  Financial: 650.00M Held: 200.00M Available: 450.00M Counter: 4
+  Interest paid: 0.00M Pending: 0.20M
+  Authorizations: {"Auth-A" :approved} Active holds: {"Auth-A" 200.00M}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.00M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.00M}]
+  Occurrences: []
+  Complete internal delivery: true
+
+Day 3 | ACC-002 | BHD
+  Financial: 0.000M Held: 0.000M Available: 0.000M Counter: 0
+  Interest paid: 0.000M Pending: 0.000M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.000M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.000M}]
+  Occurrences: []
+  Installments: []
+  Complete internal delivery: true
+
+Day 4 | ACC-001 | AED
+  Financial: 285.00M Held: 0.00M Available: 285.00M Counter: 6
+  Interest paid: 0.00M Pending: 0.46M
+  Authorizations: {"Auth-A" :settled} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.00M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.00M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.00M}]
+  Occurrences: [{:type :missing-authorization, :authorization/id "Auth-Z"}]
+  Complete internal delivery: true
+
+Day 4 | ACC-002 | BHD
+  Financial: 0.000M Held: 0.000M Available: 0.000M Counter: 0
+  Interest paid: 0.000M Pending: 0.000M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.000M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.000M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.000M}]
+  Occurrences: []
+  Installments: []
+  Complete internal delivery: true
+
+Day 5 | ACC-001 | AED
+  Financial: -335.00M Held: 0.00M Available: -335.00M Counter: 7
+  Interest paid: 0.00M Pending: 0.57M
+  Authorizations: {"Auth-A" :settled, "Auth-B" :declined} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.00M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.00M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.00M} {:reference-day 4, :booking-day 5, :value-day 5, :money/amount 0.00M}]
+  Occurrences: [{:type :missing-authorization, :authorization/id "Auth-Z"}]
+  Complete internal delivery: true
+
+Day 5 | ACC-002 | BHD
+  Financial: 0.000M Held: 0.000M Available: 0.000M Counter: 0
+  Interest paid: 0.000M Pending: 0.000M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.000M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.000M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.000M} {:reference-day 4, :booking-day 5, :value-day 5, :money/amount 0.000M}]
+  Occurrences: []
+  Installments: []
+  Complete internal delivery: true
+
+Day 6 | ACC-001 | AED
+  Financial: 210.57M Held: 0.00M Available: 210.57M Counter: 12
+  Interest paid: 0.57M Pending: -0.46M
+  Authorizations: {"Auth-A" :settled, "Auth-B" :declined} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.00M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.00M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.00M} {:reference-day 4, :booking-day 5, :value-day 5, :money/amount 0.00M} {:reference-day 2, :booking-day 6, :value-day 6, :money/amount 25.00M} {:reference-day 4, :booking-day 6, :value-day 6, :money/amount 25.00M} {:reference-day 5, :booking-day 6, :value-day 6, :money/amount 25.00M}]
+  Occurrences: [{:type :missing-authorization, :authorization/id "Auth-Z"}]
+  Complete internal delivery: true
+
+Day 6 | ACC-002 | BHD
+  Financial: 10.000M Held: 0.000M Available: 10.000M Counter: 1
+  Interest paid: 0.000M Pending: 0.004M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.000M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.000M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.000M} {:reference-day 4, :booking-day 5, :value-day 5, :money/amount 0.000M} {:reference-day 5, :booking-day 6, :value-day 6, :money/amount 0.000M}]
+  Occurrences: []
+  Installments: [[3.333M 3.333M 3.334M]]
+  Complete internal delivery: true
+Separate Day 7 continuation. Earlier Day 6 reports remain unchanged.
+
+Day 7 | ACC-001 | AED
+  Financial: 285.57M Held: 0.00M Available: 285.57M Counter: 15
+  Interest paid: 0.57M Pending: 0.19M
+  Authorizations: {"Auth-A" :settled, "Auth-B" :declined} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.00M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.00M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.00M} {:reference-day 4, :booking-day 5, :value-day 5, :money/amount 0.00M} {:reference-day 2, :booking-day 6, :value-day 6, :money/amount 25.00M} {:reference-day 4, :booking-day 6, :value-day 6, :money/amount 25.00M} {:reference-day 5, :booking-day 6, :value-day 6, :money/amount 25.00M} {:reference-day 2, :booking-day 7, :value-day 6, :money/amount -25.00M} {:reference-day 4, :booking-day 7, :value-day 6, :money/amount -25.00M} {:reference-day 5, :booking-day 7, :value-day 6, :money/amount -25.00M} {:reference-day 6, :booking-day 7, :value-day 7, :money/amount 0.00M}]
+  Occurrences: [{:type :missing-authorization, :authorization/id "Auth-Z"}]
+  Complete internal delivery: true
+
+Day 7 | ACC-002 | BHD
+  Financial: 10.000M Held: 0.000M Available: 10.000M Counter: 1
+  Interest paid: 0.000M Pending: 0.008M
+  Authorizations: {} Active holds: {}
+  Fee history (reference / booking / value / signed charge): [{:reference-day 1, :booking-day 2, :value-day 2, :money/amount 0.000M} {:reference-day 2, :booking-day 3, :value-day 3, :money/amount 0.000M} {:reference-day 3, :booking-day 4, :value-day 4, :money/amount 0.000M} {:reference-day 4, :booking-day 5, :value-day 5, :money/amount 0.000M} {:reference-day 5, :booking-day 6, :value-day 6, :money/amount 0.000M} {:reference-day 6, :booking-day 7, :value-day 7, :money/amount 0.000M}]
+  Occurrences: []
+  Installments: [[3.333M 3.333M 3.334M]]
+  Complete internal delivery: true

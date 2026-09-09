@@ -1,0 +1,42 @@
+{
+  "pdf_sha256": "e5d65db6e26424b7b7fb45f60077a38ffc35841e65cc24ab51f45c9368eb4a9d",
+  "pdf_pages": 4,
+  "pdf_body_equals_three_markdown_sources": true,
+  "comparison_normalization": "Markdown formatting and link destinations removed; whitespace, bullet glyphs and PDF footer/page numbers ignored. All remaining characters compared in order.",
+  "normalized_characters": 10530,
+  "body_text_has_at_least_40pt_page_margins_and_no_footer_overlap": true,
+  "geometry": [
+    {
+      "page": 1,
+      "body_left": 50.0,
+      "body_right": 545.0,
+      "body_top": 49.726,
+      "body_bottom": 619.225,
+      "footer_top": 811.656
+    },
+    {
+      "page": 2,
+      "body_left": 50.0,
+      "body_right": 553.514,
+      "body_top": 49.726,
+      "body_bottom": 785.08,
+      "footer_top": 811.656
+    },
+    {
+      "page": 3,
+      "body_left": 50.0,
+      "body_right": 554.0,
+      "body_top": 49.726,
+      "body_bottom": 685.025,
+      "footer_top": 811.656
+    },
+    {
+      "page": 4,
+      "body_left": 50.0,
+      "body_right": 544.174,
+      "body_top": 48.898,
+      "body_bottom": 320.225,
+      "footer_top": 811.656
+    }
+  ]
+}

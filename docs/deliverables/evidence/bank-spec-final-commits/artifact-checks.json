@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-09-09T10:40:45.481106-03:00",
+  "markdown_documents_checked": 41,
+  "local_link_occurrences": 583,
+  "local_markdown_anchors": 307,
+  "missing_links_or_anchors": 0,
+  "unstaged_and_staged_whitespace_checks_passed": true,
+  "pdf_pages": 4,
+  "pdf_sha256_matches_visually_verified_consolidation": true,
+  "pdf_sha256": "77b59140def2c2d8ee9fc52840dd9eee9a3784356d354d428130e191f8cc2897",
+  "original_exercise_unchanged": true,
+  "earlier_worklog_preserved": true,
+  "review_files_sha256": {
+    "docs/reviews/bank-spec/business-rules.md": "86ac7b59ef121ca8cecee90cf2e8b8aaa4303c556e1bf52a1b6e5a447574343d",
+    "docs/reviews/bank-spec/code-quality.md": "9f8f21af9b5d8c9d9e82f088d6cb3a097359fa55a007d440b2c9ddba45b3e42e",
+    "docs/reviews/bank-spec/performance.md": "ca4fbbb0d5a2042081679baa9407939978ca7997c011d7c318f468da8543e231",
+    "docs/reviews/bank-spec/test-quality.md": "c07e5f87c07401fa2ad316b6d385d4f376cc29fb968efb2e9c4b38b3e0e2f430"
+  },
+  "reviews_staged": false,
+  "primary_clean": true,
+  "primary_HEAD": "887d73021f78b0f612bde01eef9e47cc275b889f",
+  "normal_tests": 117,
+  "normal_assertions": 1197,
+  "normal_failures": 0,
+  "normal_errors": 0,
+  "challenge_failures": 1,
+  "challenge_errors": 0,
+  "demo_only_change": "Exactly 14 blank lines inserted before day/account report headers.",
+  "commit_and_signature_results": "Verified separately after each authorized commit; not claimed by this preparation record."
+}

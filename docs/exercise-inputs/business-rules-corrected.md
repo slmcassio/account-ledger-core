@@ -82,7 +82,7 @@ See the [settlement and release decision](../deliverables/AMBIGUITIES.md#hold-se
 
 For each account and day, preserve the exact product `max(daily_base, 0) * 0.0004`, then round once with HALF_UP to that currency's precision. Do not round intermediate interest or carry fractions between days. Reconcile corrections against rounded daily targets, including all earlier adjustments, even paid ones. At payment, sum eligible unpaid daily accruals and adjustments exactly and settle each once; do not round their aggregated raw products or discard a difference.
 
-This approved interpretation of BR09 and BR11 leaves the daily bases and payment details subject to the existing open decisions. It changes neither the booking cutoff nor adjustment dates and pending treatment. See the [decision and limits](../deliverables/AMBIGUITIES.md#daily-interest-calculation) and [small examples](../research/09-daily-interest-research.md).
+BANK-SPEC resolves the dated calculation bases and payment protocol under the [implemented resolutions](../deliverables/AMBIGUITIES.md#bank-spec-implementation-resolutions). This interpretation of BR09 and BR11 preserves the booking cutoff, adjustment dates and pending treatment; a real calendar and general external input completeness remain outside scope. See the [decision and limits](../deliverables/AMBIGUITIES.md#daily-interest-calculation) and [small examples](../research/09-daily-interest-research.md).
 
 ## Approved Interpretation: Active Calculations
 
@@ -98,7 +98,7 @@ Yield reconstructs interest bases from approved transactions forwarded by Author
 
 Tax charges on yield and changes to those taxes are outside scope.
 
-The current source account counter remains mandatory at payment even when a new booking is excluded and the eligible amount is unchanged. Validation of cutoff-relevant calculation records remains a separate proposal under the [timing decision](../deliverables/AMBIGUITIES.md#daily-calculation-timing). The [worked example](../examples/08-daily-closing.md) separates current bookings from historical eligibility.
+The current source account counter remains mandatory at payment even when a new booking is excluded and the eligible amount is unchanged. BANK-SPEC runs calculation jobs serially, records local transitions atomically and saves each financial command before submission. Authorization validates its source counter atomically with recording the effect; unknown outcomes retain the original intent for confirmation or an identical retry. See the [implemented resolutions](../deliverables/AMBIGUITIES.md#bank-spec-implementation-resolutions) and [financial intent decision](../deliverables/AMBIGUITIES.md#recording-financial-intent-before-submission). The [worked example](../examples/08-daily-closing.md) separates current bookings from historical eligibility.
 
 ## Approved Interpretation: Overdraft Fee Assessment Base
 

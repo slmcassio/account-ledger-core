@@ -42,7 +42,7 @@ A, B and C are the only financial credits. I1 is an unpaid ordinary accrual for 
 
 Current ledger balance is `100.00 + 50.00 + 50.00 = 200.00`. Day 1 unpaid interest is 0.04 after the Day 2 calculation and `0.04 + 0.02 + 0.02 = 0.08` after the Day 3 review. Pending amounts have no ledger effect.
 
-The [Authorization payment contract](../deliverables/AMBIGUITIES.md#yield-calculation-and-payment) still requires the current source account counter for a financial payment. An excluded booking can advance that counter and require recalculation with the same amount. Validation and atomic recording of calculation records remain a separate [open proposal](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
+The [Authorization payment contract](../deliverables/AMBIGUITIES.md#yield-calculation-and-payment) still requires the current source account counter for a financial payment. An excluded booking can advance that counter and require recalculation with the same amount. BANK-SPEC uses serial jobs and atomic local calculation transitions under the [implemented resolutions](../deliverables/AMBIGUITIES.md#bank-spec-implementation-resolutions). These boundaries do not establish completeness of external deliveries or a real business calendar.
 
 The account, amounts, arrival order and review checkpoint are scenario inputs. This example sets no clock time, time zone, general input-completeness policy or final replay total.
 

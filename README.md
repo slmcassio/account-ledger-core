@@ -2,6 +2,8 @@
 
 One Clojure/JVM application in memory, with Authorization, Ledger, and Yield and Fees. It implements the supplied exercise with the [adopted rules](docs/exercise-inputs/business-rules-corrected.md) and the [BANK-SPEC schedule](docs/implementation/bank-spec/SPEC.md). No HTTP, database, UI or runtime persistence is required.
 
+Start with the [architecture, tradeoffs and production PDF](docs/deliverables/architecture-tradeoffs-production.pdf), [API guide](docs/api.md) and [verification evidence](docs/deliverables/VERIFICATION.md). The [documentation index](#documentation) links their supporting sources and decisions.
+
 ## Running the Suite
 
 Run from the repository root with Java and the Clojure CLI. Verified environment: Java 25 and Clojure CLI 1.12.5.1654. `deps.edn` pins Clojure 1.12.5, spec.alpha 0.5.238 and core.specs.alpha 0.4.74. Dependency download is needed only if they are absent from the local Maven cache.
@@ -51,32 +53,52 @@ The separately labeled Day 7 continuation returns 75.00 in fees, producing AED *
 
 Use [API documentation](docs/api.md) for historical accounting queries with explicit economic day, booking cutoff and local journal position. Queries never trigger delivery or corrections. [Architecture](docs/architecture.md), [implementation decisions](agent-decisions.md) and [numbers](docs/deliverables/NUMBERS.md) explain the small design for a live defense.
 
-Yield saves each fee or interest command locally before submitting it. An uncertain response retains the exact command and blocks another financial operation for that account until resolved. Confirmation records the original assessment or paid component links, including when it arrives by event delivery. Reports expose `:financial-intents` and `:pending-financial-commands`; unresolved commands make the report incomplete. These records remain in memory and do not survive process exit.
+Yield saves each fee or interest command locally before submitting it. An uncertain response retains the exact command and blocks another Yield fee or interest settlement for that account until resolved. Principal credits and debits remain accepted through Authorization. Confirmation records the original assessment or paid component links, including when it arrives by event delivery. Reports expose `:financial-intents` and `:pending-financial-commands`; unresolved commands make the report incomplete. These records remain in memory and do not survive process exit.
 
 ## Documentation
 
-### Exercise Reference
+### Requirements and Adopted Rules
 
-* [Exercise statement](docs/exercise-inputs/exercise-statement.md)
+* [Original exercise statement](docs/exercise-inputs/exercise-statement.md)
+* [Part 2 architecture requirements supplied with the assessment](docs/exercise-inputs/architecture-requirements.md)
+* [Corrected business rules and adopted interpretations](docs/exercise-inputs/business-rules-corrected.md)
 
-### Required Deliverables
+### Architecture Deliverable
+
+* [Combined PDF: architecture, tradeoffs and production considerations](docs/deliverables/architecture-tradeoffs-production.pdf)
+* [Architecture](docs/architecture.md): module responsibilities, component interactions, recording and recovery.
+* [Tradeoffs](docs/trade-offs.md): design choices, scope cuts and their costs.
+* [Production considerations](docs/production-considerations.md): growth, authorization lifecycle, value dates and proposed controls.
+
+The three Markdown documents above are the sources of the combined PDF. Architecture has one source; the references below provide detailed API contracts, numerical rules and implementation decisions.
+
+### Decisions and Verification
 
 * [Constants and numerical decisions](docs/deliverables/NUMBERS.md)
-* [Ambiguities and decisions](docs/deliverables/AMBIGUITIES.md)
+* [Ambiguities, adopted decisions and remaining questions](docs/deliverables/AMBIGUITIES.md)
 * [Rejected criteria and approaches](docs/deliverables/REJECTED.md)
+* [Executed verification evidence and requirement coverage](docs/deliverables/VERIFICATION.md)
+* [Test instructions and deliberate design challenge](tests/README.md)
 * [Worklog](docs/deliverables/WORKLOG.md)
-* [Annotated failing test requirement](tests/README.md)
-* [Part 2: Architecture summary](docs/architecture-summary.md)
-* [Detailed architecture reference](docs/architecture.md)
-* [Tradeoffs](docs/trade-offs.md)
-* [Production considerations](docs/production-considerations.md)
-* [Architecture, tradeoffs and production PDF](docs/deliverables/architecture-tradeoffs-production.pdf)
 
-### Working Notes
+### Implementation References
+
+* [API guide](docs/api.md): public operations, result maps, composition and historical queries.
+* [Shared interface contracts](docs/implementation/bank-spec/CONTRACTS.md): command, event and report fields.
+* [Implementation decisions](agent-decisions.md): recorded choices and their reasons.
+
+### Worked Examples
+
+* [Backdated adjustment](docs/examples/04-backdated-adjustment.md)
+* [Settlement without a matching authorization](docs/examples/05-unmatched-settlement.md)
+* [Authorization decisions](docs/examples/06-authorization-decisions.md)
+* [Hold lifecycle](docs/examples/07-hold-lifecycle.md)
+* [Daily closing and calculation timing](docs/examples/08-daily-closing.md)
+
+### Research Notes
 
 Research includes proposals and source review. [AMBIGUITIES](docs/deliverables/AMBIGUITIES.md) records adopted decisions and remaining questions.
 
-* [Corrected business rules](docs/exercise-inputs/business-rules-corrected.md)
 * [01: Monetary rounding](docs/research/01-rounding-research.md)
 * [02: Booking dates, value dates, and corrections](docs/research/02-booking-and-value-dates-research.md)
 * [03: Settlements without a matching authorization](docs/research/03-unmatched-settlements-research.md)

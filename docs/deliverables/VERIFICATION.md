@@ -1,5 +1,51 @@
 # BANK-SPEC Verification
 
+## Final verification before local commits
+
+The user authorized focused local commits for the pending demo formatting and documentation updates. Fresh execution again passed **117 tests / 1,197 assertions**, zero failures/errors, exit 0: [normal output](evidence/bank-spec-final-commits/normal.txt). The separate [design challenge](evidence/bank-spec-final-commits/design-challenge.txt) produced exactly **one deliberate assertion failure**, zero errors, exit 1, for the documented known-ID payload-collision limitation.
+
+The [demo](evidence/bank-spec-final-commits/demo.txt) exited 0 and exactly matched the earlier executed capture after inserting one blank line before each of its fourteen day/account headers. [Command timestamps](evidence/bank-spec-final-commits/commands.json) retain actual run boundaries in America/Sao_Paulo. No numerical or domain behavior changed. No separate formatter/linter task is configured; Git whitespace checks and local Markdown link/anchor checks cover the document changes.
+
+Independent final review found no actionable finding or inappropriate evidence content. The four-page PDF still matches the SHA256 of the rendered and inspected consolidation artifact. [Final artifact checks](evidence/bank-spec-final-commits/artifact-checks.json) record link, whitespace, PDF and preservation checks. Local review reports remain unchanged and excluded. Earlier evidence below remains its original execution record.
+
+## Architecture document consolidation
+
+The user approved one concise [architecture document](../architecture.md) as the architecture source of the combined PDF. Removed `architecture-summary.md` after consolidating essential content and updating README, the Part 2 supplement and the current decision record. The detailed architecture's prose decreased from 2,488 to 505 words, counting headings and excluding Mermaid, HTML anchors and link destinations. Financial rules, formulas and detailed payload contracts remain in the linked API, CONTRACTS, NUMBERS and AMBIGUITIES documents.
+
+The consolidated text preserves module ownership, pure/effectful boundaries, atomic identity/version recording, decline semantics, exact saved-command recovery, receipt reconciliation, pending Yield versus principal behavior, delivery completeness and temporal/report boundaries. The counter 10 to 11 example still requires receiving the missing event before recalculation. The original Mermaid C3 is byte-identical, including interaction labels 1, 2, 3, 10 and 11. The PDF prints those five relationships directly from the diagram labels. Historical WORKLOG anchors remain valid without rewriting earlier entries. An independent reviewer found no essential information loss and checked eight outgoing links and eighteen incoming anchor references.
+
+The regenerated PDF has **four pages**, rendered and visually inspected. All **11,393 normalized body characters**, including the diagram's textual relationships, match the three current Markdown sources in order. Body text remains within page margins and separate from footers: [PDF/source checks](evidence/bank-spec-architecture-consolidation/pdf-checks.json), [extracted text](evidence/bank-spec-architecture-consolidation/pdf-text.txt). The prior Part 2 coverage map below remains applicable: architecture on page 1, tradeoffs and cuts on page 2, scale/lifecycle on page 3, value dates and the proposed control on page 4.
+
+[Final links, whitespace and preservation checks](evidence/bank-spec-architecture-consolidation/artifact-checks.json) cover this documentation change. Source code, tests, original exercise, earlier evidence and local review files are unchanged from the start of consolidation. No Clojure tests were rerun for this documentation-only edit; the actual 117-test / 1,197-assertion run below remains the most recent normal suite result. No commit or remote operation was performed.
+
+## Architecture deliverable audit and demo spacing
+
+The combined architecture PDF now contains **four pages**, within the user's limit. The [supplemental Part 2 requirements](../exercise-inputs/architecture-requirements.md) transcribe the assessment screenshot supplied in this conversation. The original exercise statement remains unchanged, including its historical note that only the Part 2 title was available when copied.
+
+| Required topic | Coverage in the final PDF |
+|---|---|
+| Architecture and tradeoffs | Page 1: ownership, ports, pure logic, effect ordering and temporal boundaries. Page 2: concrete choices, benefits and costs. |
+| Append-only growth at 100 times volume | Page 3: the repeated delivery scan under the stated workload, unbounded state in each module, an ordered pending index as the cheapest first change, and the remaining memory limits. This is algorithmic reasoning, not a benchmark result. |
+| Every authorization ending, real-world scenario and mandated behavior | Page 3: refusal, release, final/fully consuming capture, inactive/missing references and reversal effects; partial operations remain intermediate. Automatic expiry is explicitly unimplemented, with a proposed audited release and no invented deadline. |
+| Value-dated entries in a UAE licensed bank and one control | Page 4: economic, recording and observation boundaries; reconciliation, statements, closed periods and consumer error correction; an independently approved adjustment gate. Verified official CBUAE citations are scoped to applicable products and do not prescribe the exercise's numerical policies. |
+| Every documented cut, reason and deferred production risk | Page 2: eleven explicit cut/reason/risk rows, plus concurrency and payload-conflict limits in the choice table. No replay narrative or repeated rule catalogue. |
+
+The audit corrected inaccurate attribution of broker exclusion and numerical constants, expanded the cut/risk mapping and concrete lifecycle scenarios, and distinguished legitimate late inputs from bank-caused error remediation. The requested wording is now “One application”; the implementation-history paragraph remains removed. The performance discussion identifies its workload assumptions and does not claim measured throughput or a universal bottleneck ranking.
+
+Current Markdown descriptions are aligned with the implementation: reports read live module state without an atomic cross-module snapshot guarantee; the serial-job, local atomic-recording and source-validation choices are adopted rather than open proposals. A pending Yield command blocks new Yield fees/payments for that account, while principal credits/debits remain accepted. README, detailed architecture, API, contracts, current ambiguity decisions, corrected business rules, example 08 and agent decisions reflect these distinctions. Historical research, earlier WORKLOG entries and original verification records remain historical evidence, not rewritten current claims.
+
+Independent reviewers checked coverage, implementation consistency and links. Their final checks found no remaining substantive discrepancy within the supplied exercise scope. One checked 230 local link occurrences and 155 anchors across the twelve source Markdown files before this evidence entry. A second compared 107 extracted source paragraphs, headings and table cells with the PDF. The lead additionally compared all **10,530 normalized body characters in order** against the three Markdown sources, rendered and inspected all four pages, and checked page margins and footer separation: [PDF checks](evidence/bank-spec-document-audit/pdf-checks.json), [extracted text](evidence/bank-spec-document-audit/pdf-text.txt). Normalization removes presentation syntax, whitespace, bullet glyphs, PDF footers and page numbers, not substantive wording.
+
+The demo readability change was completed by an agent in parallel: one blank line before each `Day`/account header. The actual before/after runs have exactly **14 added blank lines**; every other line remains identical. No calculation or state-transition code changed, and no formatting-only test was added.
+
+| Executed check | Actual result | Evidence |
+|---|---|---|
+| `clojure -M:test` | **117 tests / 1,197 assertions**, zero failures/errors, exit 0 | [normal suite](evidence/bank-spec-document-audit/normal.txt) |
+| `clojure -M:demo`, before and after | Exit 0 both; all 14 report headers preceded by a blank line; exact expected formatting transformation | [before](evidence/bank-spec-document-audit/demo-before.txt), [after](evidence/bank-spec-document-audit/demo.txt), [comparison](evidence/bank-spec-document-audit/demo-spacing.json) |
+| `clojure -M:design-challenge`, separate | **1 test / 1 assertion, 1 deliberate failure**, zero errors, exit 1: known ID returns duplicate rather than detecting changed content | [challenge](evidence/bank-spec-document-audit/design-challenge.txt) |
+
+[Command timestamps](evidence/bank-spec-document-audit/commands.json), [final artifact checks](evidence/bank-spec-document-audit/artifact-checks.json) and [preservation evidence](evidence/bank-spec-document-audit/preservation.json) record the actual checks. The original exercise, historical worklog, primary checkout and all four local review reports are preserved. This follow-up makes no new commit or remote change. The earlier refactor and mutation results below remain their original execution records.
+
 ## Module structure refactor
 
 Refactored from `8530deb` into per-module `logic`, `ports`, `db` and `model` directories, with mirrored tests. Public operations retain their argument and result maps under the new `ports.api-server` namespaces. All **98 original test names remain discovered exactly once**, and every previous assertion was retained. Pure logic contains no API or storage calls; an architecture regression checks local dependencies and known effectful operations. The static guard is not a general proof of purity for arbitrary Java interop or dynamically constructed code.

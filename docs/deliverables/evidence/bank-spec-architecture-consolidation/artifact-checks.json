@@ -1,0 +1,29 @@
+{
+  "recorded_at": "2026-09-09T10:35:07.414745-03:00",
+  "markdown_documents_checked": 41,
+  "local_link_occurrences": 577,
+  "local_markdown_anchors": 306,
+  "missing_links_or_anchors": 0,
+  "whitespace_check_passed": true,
+  "summary_removed": true,
+  "all_other_preexisting_files_unchanged_since_consolidation_started": true,
+  "changed_preexisting_files": [
+    "README.md",
+    "agent-decisions.md",
+    "docs/architecture-summary.md",
+    "docs/architecture.md",
+    "docs/deliverables/VERIFICATION.md",
+    "docs/deliverables/WORKLOG.md",
+    "docs/deliverables/architecture-tradeoffs-production.pdf",
+    "docs/exercise-inputs/architecture-requirements.md"
+  ],
+  "source_and_test_files_unchanged": true,
+  "original_exercise_reviews_and_prior_evidence_unchanged": true,
+  "earlier_worklog_and_verification_records_retained": true,
+  "index_empty": true,
+  "worktree_HEAD": "dec7a50f161ecd39be21b9ebccda064ee86ef955",
+  "primary_HEAD": "dec7a50f161ecd39be21b9ebccda064ee86ef955",
+  "primary_clean": true,
+  "clojure_tests_rerun": false,
+  "reason_no_test_run": "Documentation-only consolidation; source and test file hashes are unchanged from the preceding executed suite."
+}

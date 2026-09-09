@@ -1,0 +1,33 @@
+{
+  "recorded_at": "2026-09-09T10:24:33.174752-03:00",
+  "markdown_files_checked": 14,
+  "local_link_occurrences": 375,
+  "local_markdown_anchors": 185,
+  "missing_links_or_anchors": 0,
+  "whitespace_check_passed": true,
+  "pdf_pages_rendered_and_visually_inspected": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "pdf_source_comparison": "See pdf-checks.json; exact normalized body equality.",
+  "original_exercise_and_reviews_preserved": true,
+  "historical_worklog_preserved": true,
+  "source_files": [
+    "README.md",
+    "agent-decisions.md",
+    "docs/api.md",
+    "docs/architecture-summary.md",
+    "docs/architecture.md",
+    "docs/deliverables/AMBIGUITIES.md",
+    "docs/deliverables/VERIFICATION.md",
+    "docs/deliverables/WORKLOG.md",
+    "docs/examples/08-daily-closing.md",
+    "docs/exercise-inputs/architecture-requirements.md",
+    "docs/exercise-inputs/business-rules-corrected.md",
+    "docs/implementation/bank-spec/CONTRACTS.md",
+    "docs/production-considerations.md",
+    "docs/trade-offs.md"
+  ]
+}

@@ -1,0 +1,230 @@
+BANK-SPEC  |  Architecture, trade-offs and production considerations
+1
+Architecture
+BANK-SPEC is one Clojure application running in memory. Three modules own separate immutable histories and
+communicate through explicit function ports. The design prioritizes explainable financial behavior and deterministic
+verification. These notes cover the Part 2 requirements. The detailed architecture retains implementation and calculation
+notes.
+Responsibilities and boundaries
+ Authorization owns available funds, holds, operational snapshots and decisions. It records identity, account version
+and outcome atomically before making an event available for delivery.
+ Ledger owns balanced journal entries and accounting balances. Each accepted financial movement posts once by
+transaction ID. Booking date, value date and journal position make historical queries reproducible.
+ Yield and Fees owns dated assessments, interest components, financial intents and settlement receipts. It calculates
+from approved events, saves the complete intended command, then requests its financial effect through Authorization.
+Each domain has logic, ports, db and model directories, mirrored in tests. Logic contains pure functions only.
+ports/api_server.clj coordinates public operations; ports/api_client.clj owns outgoing calls.
+db/memory.clj owns local atomic state replacement. model/models.clj describes internal data without changing
+public validation. Ledger has no outgoing dependency. Shared arithmetic and validation also remain pure.
+Recording, delivery and recovery
+A technical entry point submits transactions to Authorization. The deterministic dispatcher sends saved envelopes to
+Yield and, for financial movements, Ledger. It acknowledges each destination independently. Neither Authorization nor
+Yield reads Ledger balances.
+Local locks protect identity, version and state changes; no cross-module call runs under those locks. Delivery can lag, so
+operational balances and accounting balances have different observation boundaries. Reports expose known pending
+work and never trigger recovery as a side effect of reading.
+Yield saves the exact payment or fee command before submission. A lost response leaves that command pending for an
+identical retry. A confirmed result, confirmed duplicate or delivered event reconciles its original assessment or
+component receipt before later settlement selection. A different settlement cannot pay the same component again. A
+definite rejection permits recalculation; uncertainty does not. This recovery works only while the process and its memory
+remain alive.
+Time and immutable corrections
+Economic value date, recording date and observed event/journal position remain distinct. Late inputs append linked
+differences; they never rewrite earlier payments, decisions or captured reports. Pending interest is separate from posted
+money until settlement. Exact decimal arithmetic and explicit currency rounding implement the adopted numerical policy.
+The executable checks cover module boundaries, failure recovery and the supplied replay against an independent
+numerical oracle. Tradeoffs explains the deliberate limitations; production considerations identifies the controls and
+structural changes needed before live use.
+
+
+BANK-SPEC  |  Architecture, trade-offs and production considerations
+2
+Tradeoffs
+These implemented choices favor a small, explainable model. Production limits below describe work still required, not
+delivered capabilities.
+Choice
+Benefit
+Cost or boundary
+One application, three
+modules, explicit ports
+Clear financial ownership without distributed
+infrastructure.
+Shared failure and memory limits; ports provide no
+security isolation.
+Pure rules, local atomic
+writes, serial jobs
+Testable decisions; identity, version and
+recording stay together.
+Commands serialize locally; concurrent Yield jobs are
+unsupported.
+Append-only history and
+corrections
+Reproduce earlier views and explain later
+changes.
+Unbounded history and repeated scans.
+Save financial intent
+before submission
+Retry the original command; reconcile its
+original components.
+New Yield fees or payments wait; principal continues. No
+restart recovery.
+Recorded ID wins without
+payload comparison
+Retries repeat no effect.
+A reused ID can hide different content; the separate
+challenge demonstrates this limitation.
+Reconstruct dated
+balances from approved
+events
+Explain late corrections without consuming
+another module's balance.
+Scanning costs; a complete internal prefix cannot prove
+all external inputs arrived.
+Exact decimals and daily
+currency rounding
+Reconcile posted amounts and rounded
+components exactly.
+Currency scales, daily rate and AED fee come from the
+exercise; HALF_UP and the BHD fee exception are
+adopted choices.
+What was cut and why
+The first two rows are explicit exercise exclusions. The remaining rows are BANK-SPEC choices or limits of the supplied
+scenario. Earlier choices also exclude parallel jobs and payload-conflict detection.
+Cut or simplification
+Why retained
+Production risk deferred
+Durable storage and
+database
+Required in-memory scope.
+State, pending intents and audit records vanish on
+restart.
+HTTP/web layer and UI
+Required core-only scope.
+No customer interface, authenticated access or
+authorization of external callers.
+Broker, distribution,
+timers, backoff and
+rejected-message queue
+Deterministic delivery and explicit retry keep
+coordination small.
+No independent failover or automatic recovery; failures
+need operator action.
+Payment-network
+integration and external
+completeness proof
+Inputs are assumed legitimate; only known
+internal delivery is checked.
+Missing or disputed external money needs
+authentication, reconciliation and exception handling.
+Automatic hold expiry
+No contractual lifetime supplied.
+Uncollected holds can remain indefinitely; production
+needs audited expiry releases.
+Real business calendar
+Integer days make the fixture reproducible.
+Holiday, time-zone and cutoff mistakes can change
+financial eligibility.
+General installment
+schedule
+One supplied three-part credit is one atomic
+journal.
+No independent future installment posting or collection
+lifecycle.
+Production chart of
+accounts
+Same-currency clearing balances this small
+ledger.
+Fee revenue, interest expense and settlement controls
+need dedicated accounting mappings.
+FX and yield taxes
+No conversion or tax policies adopted.
+Cross-currency valuation and required
+withholding/reporting are unimplemented.
+Bank-caused error
+remediation
+Corrections cover legitimate late transactions
+and reversals only.
+Customer redress can require treatment different from
+regular pending-interest payment.
+General historical-view
+engine
+One explicit interest-only bound serves the
+supplied correction example.
+Arbitrary partial views and partial-view fees are
+unsupported.
+
+
+BANK-SPEC  |  Architecture, trade-offs and production considerations
+3
+Production Considerations
+These are limits and recommendations, not implemented production capabilities.
+Growth at 100 times the volume
+With a drain after each transaction, the first avoidable latency cost to address is delivery lookup: every drain scans
+retained :delivery-order, including acknowledged IDs. Acknowledgement removes the envelope from
+:deliveries; order and acknowledgement IDs remain. Repeated drains can therefore accumulate quadratic work.
+Heap capacity may become the first hard limit; no benchmark establishes a universal bottleneck ranking.
+Unbounded state includes Authorization's identity results, decision/snapshot history and delivery indexes; Ledger's
+journal and identity set; and Yield's events, fee/interest components, receipts, intent history and identity indexes. Ledger
+queries scan history; Yield repeatedly scans events/components. At 100 times the retained records, a linear scan
+examines approximately 100 times as many records. This is an algorithmic estimate; Clojure collections share structure.
+Cheapest change: maintain a separate ordered index of pending deliveries, removing acknowledged entries from that
+work index while preserving financial/audit history. Next, add per-account journal indexes and dated checkpoints,
+invalidated by relevant late entries and preserving booking, value and observation boundaries. Indexes reduce scans;
+durable storage and a governed archive policy are still needed to bound live memory. Deleting old identities or settled
+components can break duplicate protection or later corrections.
+Authorization endings and intermediate states
+These are the current model's complete lifecycle paths. An already approved hold can end through full explicit release,
+final capture, or a capture that exhausts its remainder. Decline is an initial refusal. A reversal corrects money and does
+not itself terminate or restore a hold.
+Real-world situation
+Required model behavior
+A purchase request exceeds available funds
+Record a permanent decline without creating a hold, financial posting or
+snapshot. Later funds do not reactivate it.
+A merchant cancels the remaining order
+Full explicit release ends the hold and restores availability without crediting
+money.
+A hotel's final bill is below its reservation
+Debit the final bill, release the unused remainder and end the hold without a
+release credit.
+A restaurant's confirmed final bill, including a tip,
+consumes or exceeds the reservation
+Debit the whole confirmed amount and exhaust the hold, including with a non-final
+flag. Do not suppress confirmed money because availability is insufficient.
+A merchant sends a late capture after
+cancellation, decline or an earlier exhausting
+capture
+Record the debit and inactive-authorization; create no new hold. A
+never-recorded reference produces missing-authorization.
+A captured charge is fully reversed
+Append the principal reversal once. Preserve any residual hold; do not recreate a
+consumed or released hold.
+For an order split across shipments, a partial cancellation releases only that part; a non-final capture below the remaining
+hold consumes only the captured amount. Both are intermediate states. Invalid releases leave the existing state
+unchanged, and duplicate transaction IDs repeat no effect.
+Expiry is not implemented: if a hotel never captures or releases a reservation, its residual hold remains active. Before
+production, define the contractual deadline and append an audited expiry release, restoring availability without a financial
+credit. Do not infer a deadline from the replay window. A genuine late capture still requires recording and reconciliation.
+
+
+BANK-SPEC  |  Architecture, trade-offs and production considerations
+4
+Value dates for a UAE licensed bank
+A late booking can change an earlier economic balance and its fee/interest entitlement while preserving a previously
+captured report. Operations must reconcile postings, recalculated entitlements and affected statements; retain both
+dates and the observation boundary; and control changes affecting closed periods. A backdated economic effect is not
+evidence that funds were operationally available earlier.
+For applicable consumer deposit products, CBUAE Standards 2.1.2.4-5 cover interest/payment and fee disclosures;
+2.1.2.9 covers periodic statements with movements, interest, fees and closing balance. These duties make value-date
+corrections a customer communication and statement issue, not just arithmetic. They do not establish this exercise's
+cutoff, rounding or fee policy. CBUAE, pages 9-10.
+Bank-caused errors are outside this implementation's correction scope. CBUAE 5.1.1.38-40 requires correction for
+affected consumers, immediate refunds of deductions/costs caused by an error, and notification within ten complete
+business days of identifying it. The exercise's regular pending-interest schedule must not be assumed sufficient for that
+redress. CBUAE, page 45.
+One control before live use: an independently approved backdated-adjustment gate. Record the authenticated initiator
+and approver, original reference, cause classification, both dates and a preview of affected balances, fees and interest;
+reconcile postings and statements before release. Route bank-caused errors to the applicable redress process and flag
+closed-period changes. This is a proposed implementation of control, not a claim that the cited clauses prescribe that
+exact workflow. Applicability depends on the institution, customer and product; durable recovery and a contractual
+calendar remain prerequisites.
