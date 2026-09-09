@@ -1,176 +1,230 @@
 # Numbers
 
-Document every chosen constant, its value and purpose, its source or the rationale for choosing it, and why that value was chosen instead of half of it.
+Each row answers four questions: **What value? Where did it come from? What is it for and why? Why not half?**
+
+**Rule** means an exercise requirement. **Choice** means an approved project decision. **Scenario** and **Example** identify supplied and illustrative inputs. **Derived** values follow from those inputs. **Proposal** means not adopted.
+
+Halving comparisons change one input at a time and keep the others fixed. Example results are not final replay totals. Sources below contain the complete calculations.
 
 ## Rounding
 
-The exercise requires two decimal places for AED and three for BHD. The smallest stored units are AED 0.01 and BHD 0.001. Half of either unit cannot be stored at its required precision.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| AED: 2 decimal places; BHD: 3 | Rule | Store and round each amount at its currency's required precision. | Fewer places would lose required monetary units. |
+| AED 0.01; BHD 0.001 | Derived | Smallest stored units at those precisions. | 0.005 and 0.0005 cannot be stored at the required precision. |
+| HALF_UP | Choice | Exact ties go away from zero, favoring positive interest recipients at ties. We accept that upward bias. | Not a numerical amount; halving does not apply. |
 
-HALF_UP is the approved project mode. It favors recipients of positive interest at exact ties and accepts the resulting upward bias. The [rounding examples](../research/01-rounding-research.md#example) use exact decimal inputs around these boundaries; they do not set business constants.
+The mode does not imply a customer benefit for fees or negative adjustments. The study's small tie examples are exact inputs, not business constants. Currency alone establishes neither jurisdiction nor contract.
+
+**Source:** [study 01, analysis and examples](../research/01-rounding-research.md#analysis). Its contractual precedents do not mandate this mode for these accounts.
 
 ## Daily Interest Calculation
 
-The exercise supplies 0.04% per day, or `0.0004`. Halving it changes the required rate; no annual divisor applies. The zero boundary excludes nonpositive balances and remains zero when halved.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| 0.04% per day = `0.0004` | Rule | Apply the supplied daily rate to positive closing balances. No annual divisor applies. | 0.02% changes the required rate. |
+| Zero interest for a base at or below zero | Rule | Exclude nonpositive balances. | Half of zero is still zero. |
+| One rounding per account and day | Choice | Preserve the exact product, then round once; carry no fractions between days. | A rounding stage cannot be halved. Extra stages can change the result. |
+| At most 6 fractional places for AED products; 7 for BHD | Derived | Currency scale plus the rate's 4 places preserves exact products. These are not total precision limits. | Fewer places may lose a significant fractional digit. |
+| AED 12.49 and 12.50; BHD 1.249 | Example | Expose daily rounding boundaries and the risk of intermediate rounding. | Halving no longer tests those boundaries and may exceed currency precision. |
+| Two days at AED 465.00 | Example | Compare daily rounding with rounding the raw sum. | One day removes the comparison. A base of 232.50 keeps a discrepancy but reverses its direction. |
+| AED 1.00 original, +0.20 prior adjustment, 1.30 target | Example | Show why the next adjustment is only `1.30 - (1.00 + 0.20) = 0.10`. | Halving an input changes the difference, not the method. |
 
-The [approved daily calculation](AMBIGUITIES.md#daily-interest-calculation) uses exact multiplication followed by one daily HALF_UP rounding, with no fractions carried between days. Currency precision plus the rate's four fractional places gives at most six fractional places for an AED product or seven for BHD. These are derived scale bounds, not limits on integer digits or total precision; halving them would not preserve every exact product. Corrections subtract rounded daily monetary amounts exactly, and payments sum eligible unpaid components.
+Two daily amounts of 0.19 pay 0.38; rounding their raw sum gives 0.37. Corrections subtract the original accrual and all prior adjustments, including paid ones, from the revised rounded daily target. Payments sum only eligible unpaid components exactly.
 
-The [study's independent bases](../research/09-daily-interest-research.md) are example inputs, not replay balances or new business constants. AED 12.49 and 12.50 and BHD 1.249 expose daily rounding boundaries. Halving them no longer probes those boundaries and can produce a base outside currency precision. Two days at AED 465.00 expose the difference between daily rounding and rounding after aggregation; using one day removes that comparison. Halving the base to 232.50 retains a discrepancy but reverses its direction. The correction example supplies daily amounts 1.00, +0.20 and 1.30 to distinguish the original, prior adjustment and revised target; halving an input changes the difference, not that method. These are illustrative monetary amounts, not new constants. The small calculations stay in the study; these examples determine no final payment.
+**Source:** [study 09, calculation and examples](../research/09-daily-interest-research.md#rule-and-approved-calculation). Precision and rounding stages for other calculations remain open.
 
 ## Values Used in the Late Transaction Example
 
-Example 04 applies the [approved booking cutoff](AMBIGUITIES.md#daily-calculation-timing) with an illustrative Day 6 historical review. Its results describe that fixture, not the supplied replay.
+All monetary values below are AED. The example uses the required 25.00 fee, daily rate and currency precision. Its Day 6 review is illustrative.
 
-The [exercise](../exercise-inputs/exercise-statement.md) supplies the fee, rate, and precision below. The capitalization day is the endpoint of its six-day scenario. Halving a supplied value would change the rule or scenario it defines.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| 0.00 opening balance | Example | Make the listed movements explain the full balance. | Half remains zero. |
+| A: 1,000.00 credit | Example | Establish the positive balance before the delayed debit. | 500.00 would also make Day 5 negative. |
+| B: 500.00 credit | Example | Keep funds positive after the corrective fees. | 250.00 leaves -25.00 after those fees and before payment. |
+| C: 1,200.00 debit | Example | Produce a historical deficit of 200.00. | 600.00 leaves a positive balance and no historical fee. |
+| A: both dates Day 1; B: both Day 5; C: booking Day 5, value Day 2 | Example | Make the late debit affect Days 2 through 4. | These are scenario dates, not numeric limits. Changing them changes the affected days. |
+| End of Day 6 payment | Scenario, reused in example | Apply the supplied capitalization endpoint and approved cutoff. | Day 3 changes that endpoint. |
 
-| Value | Purpose |
-|---|---|
-| AED 25.00 | Fee for each negative closing day. |
-| 0.04% = 0.0004 per day | Interest rate on positive closing balances. |
-| Two decimal places for AED | Monetary storage and rounding precision. |
-| End of Day 6 | Single capitalization of the daily interest amounts. |
+**Derived results:** corrective fees `3 * 25.00 = 75.00`; pending interest correction -1.20; funds before payment 225.00. Both correction dates are Day 6. Day 5's base of 300.00 earns 0.12. Day 6 pays `1.60 + 0.12 = 1.72`, excluding that day's correction, and closes at 226.72. Day 7 calculates `226.72 * 0.0004 = 0.090688`, rounded to 0.09 for the next month's payment.
 
-The [fictional example](../examples/04-backdated-adjustment.md) uses these inputs. They are scenario data, not business constants. The comparisons below halve one amount while keeping the others unchanged.
-
-| Input | Purpose and reason for the value |
-|---|---|
-| AED 0.00 opening balance | Makes every balance traceable to the listed transactions. Half is still zero. |
-| A: AED 1,000.00 credit | Establishes the positive balance before the delayed debit. With 500.00, Day 5 would also be negative. |
-| B: AED 500.00 credit | Keeps the balance positive after the Day 6 fee correction. With 250.00, the balance after the historical fee adjustment and before payment would be -25.00. |
-| C: AED 1,200.00 debit | Makes the historical balance -200.00. A debit of 600.00 would leave it positive and produce no historical fee. |
-
-A has Day 1 booking and value dates. B has both dates on Day 5. C is booked on Day 5 with Day 2 value date, so the example covers three already closed days, Days 2 through 4. These dates illustrate delayed delivery; they are not configurable numeric limits.
-
-Derived results are three corrective fees totaling 75.00, a pending interest correction of -1.20 and a balance of 225.00 before payment. Both correction dates are Day 6. Day 5's base remains 300.00 and earns 0.12. Day 6 pays the original 1.60 plus 0.12, totaling 1.72, and excludes the correction booked that day. Closing balance is 226.72, with -1.20 pending. Day 7 calculates Day 6 interest: `226.72 * 0.0004 = 0.090688`, rounded to 0.09 for the next month's payment. These are fixture results, not final replay balances.
+**Source:** [example 04](../examples/04-backdated-adjustment.md) and [study 02, example limits](../research/02-booking-and-value-dates-research.md#example).
 
 ## Values Used in the Unmatched Settlement Example
 
-The [fictional example](../examples/05-unmatched-settlement.md) uses the following scenario data. The amounts illustrate the decision; the decision does not depend on their size. Each comparison halves one amount while keeping the other inputs unchanged.
+All monetary values below are AED. Both events use Day 1 for booking and value dates; the example stops before daily calculations.
 
-| Input | Purpose and reason for the value |
-|---|---|
-| AED 0.00 opening balance | Makes the two listed events explain the entire balance. Half is still zero. |
-| AED 0.00 active holds | Makes available balance equal ledger balance, isolating the missing authorization question. Half is still zero. |
-| C: AED 500.00 credit | Provides a round starting amount above the settlement debit. Halving it to 250.00 would leave 70.00 after settlement. |
-| S: AED 180.00 settlement | Makes the omitted debit visible while leaving a positive balance. Halving it to 90.00 would leave 410.00 after settlement. |
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| 0.00 opening balance and active holds | Example | Isolate the debit; ledger and available balances agree. | Half remains zero. |
+| C: 500.00 credit | Example | Cover the settlement with a simple starting amount. | 250.00 leaves 70.00 after settlement. |
+| S: 180.00 settlement | Example | Make the missing debit visible without a deficit. | 90.00 leaves 410.00. |
+| E6: 180.00; both dates Day 4 | Scenario | Identify the exercise's unmatched settlement. | Changing these inputs changes E6. |
 
-Both events have Day 1 booking and value dates. The example ends before daily closing so the comparison needs no fee or interest calculations. These dates define the example, not a new timing rule. AED uses the two decimal places required by the exercise.
+**Derived result:** `500.00 - 180.00 = 320.00`. Omitting the debit overstates both balances by 180.00. The confirmed-payment policy does not depend on these illustrative amounts.
 
-The resulting ledger and available balances are both 320.00. Rejecting the settlement would leave both at 500.00, a difference of 180.00. These are derived results, not additional constants.
-
-The report also discusses E6's AED 180.00 amount and Day 4 dates. Those values come from the exercise's event stream and remain scenario data.
+**Source:** [example 05](../examples/05-unmatched-settlement.md) and [study 03, approved decision](../research/03-unmatched-settlements-research.md#the-approved-decision).
 
 ## Values Used in the Authorization Example
 
-The [fictional example](../examples/06-authorization-decisions.md) uses the following scenario inputs. Each comparison starts a fresh scenario with one amount halved and the other request amounts unchanged.
+All monetary values below are AED. The events occur on Day 1 before daily calculations. The zero approval boundary is an exercise rule.
 
-| Input | Purpose and reason for the value |
-|---|---|
-| AED 0.00 opening balance and active holds | Makes every balance and reservation traceable to the listed events. Half is still zero. |
-| D: AED 10.00 settled debit | Shows that a financial movement changes the ledger independently of authorization. Halving it to 5.00 leaves 45.00 after C and 5.00 available after A. |
-| C: AED 50.00 settled credit | Leaves 40.00 in the ledger, exactly enough for A. Halving it to 25.00 leaves 15.00, so A is declined. |
-| A: AED 40.00 requested hold | Tests approval at exactly zero remaining availability. Halving it to 20.00 leaves enough for B to be approved as well. |
-| B: AED 10.00 requested hold | Demonstrates a decline with no additional reservation. Halving it to 5.00 still produces a decline after A consumes all availability. |
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| 0.00 opening balance and holds | Example | Make every change traceable to a listed event. | Half remains zero. |
+| D: 10.00 settled debit | Example | Show a financial movement independent of a hold decision. | 5.00 leaves 45.00 after C and 5.00 available after A. |
+| C: 50.00 settled credit | Example | Leave exactly enough for A. | 25.00 leaves only 15.00, so A is declined. |
+| A: 40.00 requested hold | Example | Test approval at exactly zero remaining availability. | 20.00 also leaves enough to approve B. |
+| B: 10.00 requested hold | Example | Show a decline after A uses all availability. | 5.00 is still declined. |
+| N: 10.00 new request after reversal | Example | Use the funds restored by reversing D. | 5.00 leaves 5.00 available. |
 
-AED's two decimal places and the zero minimum remaining availability come from the exercise. All events occur on Day 1 before closing; this scenario needs no fee or interest calculation. Its amounts and stopping point are not new business constants.
+**Derived result:** C and D leave 40.00 in the ledger; A reserves 40.00. Reversing D restores 10.00 without automatically activating the declined B. The reversal amount comes from D, not a new constant.
 
-The continuation reverses D with a 10.00 credit. This amount is derived from D, not chosen independently. It then submits a new request N for 10.00, consuming the 10.00 now available. Halving N to 5.00 would leave 5.00 available. These results apply the approved policy of no automatic reevaluation.
+**Source:** [example 06](../examples/06-authorization-decisions.md) and [study 04, later corrections](../research/04-authorization-decisions-research.md#approved-policy-later-balance-corrections).
 
 ## Values Used in the Hold Lifecycle Example
 
-The [fictional example](../examples/07-hold-lifecycle.md) uses the following scenario data. These amounts illustrate reservation effects; they are not new business constants. Each comparison halves one input while keeping the others unchanged.
+All monetary values below are AED. Example events use Day 1 dates and stop before daily calculations to isolate reservation effects.
 
-| Input | Purpose and reason for the value |
-|---|---|
-| AED 0.00 opening balance and initial active holds | Makes all balances traceable to the listed events. Half remains zero. |
-| C: AED 50.00 credit | Covers the requested reservation and leaves a visible available balance. Halving it to 25.00 would still permit the 20.00 hold, leaving 5.00 available before settlement. |
-| A: AED 20.00 hold | Exceeds the settlement, making an unused portion visible. Halving it to 10.00 would put the 15.00 settlement above the held amount and would no longer illustrate an unused remainder. |
-| F or P: AED 15.00 settlement | Leaves a small remainder from the 20.00 hold. Halving it to 7.50 would leave a ledger balance of 42.50 and, on the non-final path, a remaining hold of 12.50. |
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| 0.00 opening balance and holds | Example | Explain balances entirely through listed events. | Half remains zero. |
+| C: 50.00 credit | Example | Cover the hold and leave funds available. | 25.00 still covers it, leaving 5.00 available. |
+| A: 20.00 hold | Example | Reserve more than the settlement. | 10.00 is below the settlement and leaves no unused remainder. |
+| F or P: 15.00 settlement | Example | Leave an unused reservation of 5.00. | 7.50 leaves 42.50 in the ledger and 12.50 held on the non-final path. |
+| R: 5.00 release | Derived | Release the entire `20.00 - 15.00` remainder. | 2.50 would be a partial release, leaving 2.50 held. |
+| Auth-A: 200.00 hold; 185.00 settlement on Day 4 | Scenario | Apply the approved final-settlement assumption to E5. | Changing these inputs changes the supplied event. |
+| Days 1 through 6 | Scenario | Bound the decision to generate no automatic expiration. | Three days would shorten the supplied replay. |
+| Seven-day default in Mambu | External example | Show that a product may define expiry; it is not adopted here. | No project duration exists to halve. |
 
-All example events have Day 1 booking and value dates and occur before daily closing. These dates and the stopping point isolate the hold effects from fees and interest; they do not define a processing schedule. AED uses the two decimal places required by the exercise.
+**Derived result:** either settlement leaves 35.00 in the ledger. Final settlement leaves no hold and 35.00 available; non-final settlement leaves 5.00 held and 30.00 available. Auth-A's unused 15.00 is released without a credit. Six replay days do not define a hold lifetime.
 
-The initial available balance is 30.00. Both settlements leave a ledger balance of 35.00. Final settlement leaves no active hold and an available balance of 35.00; non-final settlement leaves 5.00 held and 30.00 available. R releases that entire remaining 5.00 without changing the ledger balance. The 5.00 is derived from `20.00 - 15.00`, not an independent constant. Releasing only 2.50 would be a different, partial release and leave 2.50 reserved.
-
-The exercise's Auth-A hold of 200.00, settlement of 185.00, and Day 4 settlement dates are supplied scenario data. Treating that settlement as final is the approved project assumption. The released 15.00 is the derived unused portion, not an additional credit.
-
-Days 1 through 6 are the supplied replay window. The decision to generate no automatic expiration within that window introduces no expiration duration. Halving the window would change the scenario. Mambu's documented default of seven days is an external product setting, not an adopted project constant. See the [decision and limits](AMBIGUITIES.md#hold-expiration-during-the-replay).
+**Source:** [example 07](../examples/07-hold-lifecycle.md) and [study 05, policies and source limits](../research/05-hold-lifecycle-research.md#approved-policy-settlement-and-release).
 
 ## Values Used in the Daily Closing Example
 
-The [fictional example](../examples/08-daily-closing.md) uses the exercise's 0.04% rate and AED precision. Its inputs are scenario data, not business constants; each comparison below halves one input independently.
+All monetary values below are AED. Equal amounts with distinct IDs are separate credits.
 
-* Opening balance, holds and unpaid interest are 0.00 to isolate the listed events; half remains zero.
-* A credits 100.00, producing Day 1 interest of 0.04. Halving A gives an original 0.02 and a revised 0.06 after both late credits become eligible.
-* B and C each credit 50.00, with distinct IDs. Halving either gives a revised base of 175.00 and daily interest of 0.07. Equal amounts and dates do not make distinct IDs duplicates.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| 0.00 opening balance, holds and unpaid interest | Example | Isolate the supplied credits. | Half remains zero. |
+| A: 100.00 credit | Example | Produce original daily interest of 0.04. | 50.00 gives 0.02 originally and 0.06 after both late credits. |
+| B and C: 50.00 each | Example | Show two separate corrections to the same historical day. | Halving either gives a final base of 175.00 and daily interest of 0.07. |
+| Day 2 job; Day 1 cutoff; Day 3 historical review | Example | Separate initial calculation from later eligible corrections. | Changing these dates changes eligibility. They set no general checkpoint. |
+| Midnight boundary; 00:30 start; 30-minute gap | Proposal | Record an unapproved schedule discussed in study 06. | A 15-minute gap only changes the proposed start; neither guarantees complete input. |
 
-The Day 2 job uses booking cutoff Day 1 and records 0.04. B and C are booked Day 2 and valued Day 1: they raise current funds to 200.00 but are excluded from that job. At the illustrative Day 3 historical review, each adds 0.02 to the recorded Day 1 interest, totaling `0.04 + 0.02 + 0.02 = 0.08`. Both adjustments have booking and value dates Day 3. These dates expose the cutoff and correction treatment without setting a general checkpoint.
+B and C are booked Day 2 and valued Day 1. They raise current funds to 200.00 but are excluded from the Day 2 job. At the illustrative Day 3 review, two corrections produce `0.04 + 0.02 + 0.02 = 0.08`; both adjustments have Day 3 dates. Time zone and general clock schedule remain open.
 
-The proposed midnight boundary and 00:30 start remain unresolved alongside the time zone. The 30-minute gap is not a measured delivery limit or completeness guarantee; halving it would change only the proposed start time. The example selects no clock times.
+**Source:** [example 08](../examples/08-daily-closing.md) and [study 06, open decisions](../research/06-daily-closing-research.md#decisions-still-open).
 
 ## Values Used in the Pending Interest Illustration
 
-The [decision example](AMBIGUITIES.md#interest-adjustments-wait-for-payment) assumes three daily results change from AED 1.50 to 2.00. These illustrate reconciliation, not a new rate or a calculated replay result. One original amount is already paid; two remain unpaid. Each difference is 0.50, totaling 1.50. The next payment includes 3.00 of unpaid originals plus that adjustment, totaling 4.50 for these components.
+These are illustrative daily results, not replay calculations or a new rate.
 
-Halving the original 1.50 to 0.75 while retaining the target makes each difference 1.25; halving the target to 1.00 instead makes each difference -0.50. The arithmetic changes, not the policy. D5, D15, D20, D25, and D30 identify illustrative historical days, correction, and payment; they define no monthly calendar or system limit.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| AED 1.50 original daily amount | Example | Compare recorded accrual with a revised target. | 0.75 makes each difference 1.25. |
+| AED 2.00 revised daily target | Example | Produce a visible positive correction. | 1.00 makes each difference -0.50. |
+| Three days: one paid, two unpaid | Example | Show that paid originals are excluded from payment but included in reconciliation. | A different count changes component coverage and totals. |
+| D5, D20 and D25 accruals; D15 earlier payment; D30 correction | Example | Distinguish historical periods, payment and correction. | These are illustrative dates, not a monthly calendar. |
+
+**Derived results:** `3 * (2.00 - 1.50) = 1.50` pending correction on D30. The next eligible payment includes `2 * 1.50 + 1.50 = 4.50`. Repeating after payment gives `2.00 - (1.50 + 0.50) = 0.00` per day. Paid adjustments still count in that comparison.
+
+**Source:** [pending interest decision](AMBIGUITIES.md#interest-adjustments-wait-for-payment) and [study 10, payment components](../research/10-interest-capitalization-research.md#approved-payment-and-components).
 
 ## Values Used in the Overdraft Fee Snapshots
 
-[Study 07](../research/07-overdraft-fees-research.md#calculation-snapshots) uses the exercise's AED 25.00 fee, zero eligibility boundary, and two decimal places. Halving the fee or changing that boundary would change the supplied rule. The approved assessment base is a project interpretation, not another monetary constant.
+Both illustrative accounts open at AED 0.00 with no holds or capitalization. The required fee is AED 25.00 and the eligibility boundary is zero. Halving the fee changes the rule; half of zero remains zero.
 
-Both hypothetical accounts open at 0.00 with no holds; half of zero remains zero. These inputs make the listed financial entries explain each balance. No capitalization is included, and pending interest has no ledger effect. Each comparison below halves one input while retaining the other scenario data.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| First snapshot: 100.00 credit | Example | Establish funds before the delayed debit. | 50.00 gives Day 1/2 bases of -60.00 and -40.00. |
+| First snapshot: 20.00 credit | Example | Restore Day 2 to a positive base. | 10.00 leaves Day 2 at zero, still without a fee. |
+| First snapshot: 110.00 debit | Example | Exceed the first credit but not both credits together. | 55.00 leaves bases of 45.00 and 65.00, both without fees. |
+| Second snapshot: 10.00 debit | Example | Create the original deficit. | 5.00 leaves revised bases of 15.00 and -10.00, retaining the original fee. |
+| Second snapshot: 20.00 late credit | Example | Remove the first deficit while retaining the earlier period's fee in Day 2. | 10.00 leaves bases of zero and -25.00; Day 1 still needs no fee. |
+| Day 6 job; Day 5 cutoff | Example | Admit all listed bookings. | Different dates change eligibility; they set no replay checkpoint. |
+| Ordinary fee for H: assessment, booking and value on H+1 | Choice | Follow the approved daily job and charge on its actual assessment day. | Half a day is not the chosen daily schedule. |
 
-* First snapshot, credit 100.00: provides the initial balance against the delayed debit. Halving it to 50.00 gives Day 1 and Day 2 bases of -60.00 and -40.00, requiring a 25.00 target for each period.
-* First snapshot, credit 20.00: restores Day 2 to a positive base after that debit. Halving it to 10.00 leaves Day 1 at -10.00 and Day 2 at exactly zero, which still requires no Day 2 fee.
-* First snapshot, delayed debit 110.00: exceeds the first credit but not both credits combined. Halving it to 55.00 leaves bases of 45.00 and 65.00, requiring no fee for either period.
-* Second snapshot, debit 10.00: provides the original deficit. Halving it to 5.00 while retaining the supplied 25.00 fee and late credit gives Day 1 and Day 2 bases of 15.00 and -10.00.
-* Second snapshot, late credit 20.00: removes the original deficit while leaving Day 2 negative after the earlier period's dated fee. Halving it to 10.00 gives Day 1 and Day 2 bases of zero and -25.00. Day 1's corrected target remains zero.
+**Derived results:** the first snapshot has bases -10.00 and 10.00, giving targets 25.00 and zero. The second has bases 10.00 and -15.00, so Day 1's recorded 25.00 needs a refund. Late corrections assessed on Day 6 have both dates Day 6. Only reversal fee refunds use original charge value dates.
 
-The first snapshot's original inputs give Day 1 and Day 2 bases of -10.00 and 10.00. With no previously recorded fees for those periods, their correction amounts are 25.00 and zero. The second gives bases of 10.00 and -15.00. Day 1's target changes from its recorded 25.00 to zero, requiring a 25.00 refund. These are derived historical calculations, not final account balances or a total assessment count.
+For E7, before E9 and excluding fees and capitalization: Day 2 principal is `1,200.00 - 950.00 - 620.00 = -370.00`; Day 3 adds 400.00 to give 30.00; Day 4 subtracts 185.00 and 180.00 to give -335.00. These are not final balances or a fee count.
 
-The snapshots use a Day 6 job and Day 5 booking cutoff so every listed input is eligible. Credits or debits with Day 1 value date illustrate a historical effect. The first snapshot's second credit and the second snapshot's existing fee have Day 2 value dates. That fee's Day 2 assessment, booking and value dates follow the approved H+1 ordinary schedule for Day 1. Late transaction corrections in these snapshots assessed on Day 6 have both dates on Day 6; the [reversal refund exception](AMBIGUITIES.md#reversal-compensation) does not apply to them. These dates isolate cutoff and adjustment effects; they introduce no business deadline or replay checkpoint.
-
-For the supplied E7 scenario, the Day 2 principal balance is `1,200.00 - 950.00 - 620.00 = -370.00`. Day 3 adds 400.00, giving 30.00; Day 4 subtracts E5's 185.00 and E6's 180.00, giving -335.00. These calculations include E7 and exclude E9, fees, and capitalization. They establish no final number of assessments. See the [open dependencies](AMBIGUITIES.md#overdraft-fee-assessment-base).
+**Source:** [study 07, calculation snapshots](../research/07-overdraft-fees-research.md#calculation-snapshots) and [the supplied event stream](../exercise-inputs/exercise-statement.md#event-stream).
 
 ## Values Used in the Reversal Illustration
 
-The [study 08 comparison](../research/08-reversals-research.md#one-fee-two-outcomes) and [complete calculation](../research/examples/08-reversal-15-day-simulation.md) use illustrative inputs, not the supplied E7/E9 replay. Method B is approved; method A illustrates the alternative not adopted.
+The simulation compares method A, not adopted, with approved method B. Its dates and results are illustrative, not the E7/E9 replay.
 
-* AED 2,500.00 opening balance gives daily interest of exactly 1.00 at the supplied 0.04% rate. Halving the opening balance alone gives 0.50 before the debit and a 1,750.00 deficit after it.
-* The 3,000.00 debit creates a 500.00 deficit. Halving only the debit leaves 1,000.00 positive, so it would no longer illustrate overdraft fees. The reversal amount equals the debit; it is derived, not another constant.
-* The exercise supplies the 25.00 fee, 0.04% daily rate and AED's two decimal places; HALF_UP is approved. Each 25.00 fee changes the unrounded daily interest by 0.01. Changing these inputs changes the exercise's rule.
-* No initial holds or pending interest keeps the financial effects traceable. Zero remains zero when halved. Exact multiplication and one daily currency rounding follow the [approved daily interest rule](AMBIGUITIES.md#daily-interest-calculation). The other assumptions remain illustrative.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| AED 2,500.00 opening balance | Example | Earn exactly 1.00 daily before the debit. | 1,250.00 earns 0.50 and gives a 1,750.00 deficit after the debit. |
+| AED 3,000.00 debit | Example | Create a 500.00 deficit. | 1,500.00 leaves 1,000.00 positive and no overdraft. |
+| AED 3,000.00 reversal | Derived | Reverse the original principal once. | Half would reverse only part of it. |
+| Zero initial holds and pending interest | Example | Isolate the financial movements. | Half remains zero. |
+| Day 1 opening; Day 5 debit; Day 9 or 12 reversal; Day 10 payment; Day 15 consultation | Example | Compare correction before and after payment. | Changing the dates changes the comparison, not a project calendar. |
 
-Day 1 is the opening, Day 5 the debit's booking/value date, Days 9 and 12 alternative reversal bookings, and Day 10 the only payment. Day 15 is consultation after the routine for reference Day 14. These dates compare correction before and after the payment, not a general calendar. The ordinary job precedes financial events, with reference and cumulative booking cutoff D-1. Its fee for H is assessed, booked and valued on H+1; an immediate corrective checkpoint after reversal is illustrative. H+1 follows the approved ordinary fee schedule; the corrective checkpoint remains illustrative and does not settle study 06's general checkpoint questions.
+The ordinary job runs before financial events, using reference D-1; ordinary fees for H have both dates H+1. The immediate corrective review after reversal is illustrative. Day 15 consultation follows the job for Day 14 and pays nothing.
 
-The four or seven fees and their 100.00 or 175.00 refunds follow from those inputs. Reversal refunds are booked on the actual correction day and valued on each original charge's date under B; interest corrections keep both dates on the correction day and remain pending. The linked calculation records the derived daily targets, actual payments and final balances, including Day 10's payment in later interest bases. These results establish no current replay total.
+**Derived results:** four or seven fees give `4 * 25.00 = 100.00` or `7 * 25.00 = 175.00` refunds. At the required rate, each 25.00 fee changes unrounded daily interest by 0.01. Method B refunds retain each original charge's value date; interest corrections remain pending with current correction dates. The simulation preserves actual payments and includes them in later bases.
+
+**Source:** [study 08, comparison](../research/08-reversals-research.md#one-fee-two-outcomes) and [complete simulation](../research/examples/08-reversal-15-day-simulation.md).
 
 ## Interest Settlement and Calendar Examples
 
-The [approved payment decision](AMBIGUITIES.md#interest-payment-schedule-and-capitalization) maps Day 6 to the first business day of a new month and Day 5 to the preceding month end. Dates 26, 27, 28, 29, 30 and 01 illustrate a 30-day month; they are scenario labels, not business constants or an actual calendar. Halving them would not preserve this mapping. Day 6 interest is calculated on Day 7 and paid on the first business day of the following month.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| Day 6 first business day; Day 5 previous month end | Choice | Map the supplied payment day to the approved monthly schedule. | Changing the dates breaks that mapping. |
+| Dates 26, 27, 28, 29, 30, 01 in a 30-day month | Example | Illustrate the Day 1 through Day 6 mapping. | Date labels are not configurable amounts. No actual calendar is selected. |
+| AED 0.10, 0.20 and -0.02 | Example | Show an eligible positive total: `0.28` credits. | Halving one component changes the total. |
+| AED 0.10 and -0.30 | Example | Show a negative total: `-0.20` debits, even from zero funds. | Halving a component changes the debit. |
+| Zero eligible total | Choice | Settle components once without moving funds. | Half remains zero; the recording protocol is still open. |
+| AED 12.49 balance and 0.01 payment | Example | Reach 12.50 and cross a daily rounding boundary. | Halving no longer probes that boundary. |
 
-[Study 10](../research/10-interest-capitalization-research.md) supplies independent eligible components: `0.10 + 0.20 - 0.02 = 0.28` credits; `0.10 - 0.30 = -0.20` debits and takes a zero balance to -0.20. A zero eligible total settles its components without moving funds. These examples illustrate the sign rule, not final payments. Halving an input changes the total; zero remains zero when halved.
+Day 7 calculates Day 6 interest: `12.50 * 0.0004 = 0.005`, rounded to 0.01. Without the payment, `12.49 * 0.0004 = 0.004996` rounds to 0.00. This cannot change the earlier payment. Day 6 ordinary interest belongs to the new month and waits for the following month's first business day.
 
-Its capitalization example credits 0.01 to 12.49, giving 12.50. At 0.0004, Day 7 calculates `12.50 * 0.0004 = 0.005`, rounded to 0.01; without the credit, `12.49 * 0.0004 = 0.004996` rounds to 0.00. These inputs expose a rounding boundary; halving them no longer probes that boundary.
+**Source:** [study 10, settlement, dates and calendar](../research/10-interest-capitalization-research.md#approved-signed-settlement).
 
 ## E10 Installment Values
 
-The [exercise](../exercise-inputs/exercise-statement.md#event-stream) supplies E10's BHD 10.000 credit to ACC-002, three installments and Day 5 booking and value dates. E10 remains after E9 in the supplied replay order. These are scenario inputs, not business constants. Halving the amount or changing the count or dates would change E10.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| BHD 10.000; three installments; both dates Day 5 | Scenario | Preserve E10's supplied credit and dates for ACC-002. | Changing these inputs changes E10. |
+| BHD 0.001 minimum unit | Derived | Allocate whole stored units at BHD precision. | 0.0005 cannot be stored at three decimal places. |
+| Remainder in installment 3 | Choice | Let the final installment complete the total reproducibly. | It is a position, not an amount. Positions 1 or 2 could also conserve the total. |
+| Receipt on Day 6, after E9 and the Day 5 calculation | Choice | Apply the approved late-arrival scenario without changing E10's dates. | Changing the position changes the recorded calculation history. |
 
-BHD's required three decimal places give a minimum stored unit of 0.001. Half of that unit is 0.0005, which cannot be stored at that precision. Thus `10,000 = 3 * 3,333 + 1` minimum units. The [approved allocation](AMBIGUITIES.md#e10-installment-allocation) assigns the remaining unit to installment 3, deriving BHD 3.333, 3.333 and 3.334, totaling 10.000. The position is a convention, not a monetary constant. HALF_UP does not determine it.
+**Derived allocation:** `10,000 = 3 * 3,333 + 1` minimum units, giving `3.333 + 3.333 + 3.334 = 10.000`. HALF_UP does not choose the remainder position. Three 3.334 installments create 0.002 extra; three 3.333 installments leave 0.001 unallocated.
 
-Under the [approved receipt scenario](AMBIGUITIES.md#e10-installment-allocation), E10 arrives on Day 6 after E9 and after Day 5 interest was recorded as 0.000. The revised target is `10.000 * 0.0004 = 0.004`, so append +0.004 with both dates Day 6. It is excluded from Day 6 payment and remains pending until the next eligible monthly payment. This derived correction does not establish final balances or installment event counts.
+**Derived correction:** Day 5 interest changes from 0.000 to `10.000 * 0.0004 = 0.004`. Append +0.004 with both dates Day 6; it is excluded from Day 6 payment and remains pending. Final balances and installment event counts remain open.
 
-Criterion 7 gives `3 * 3.334 = 10.002`, an excess of BHD 0.002. Rounding each exact third independently with HALF_UP gives `3 * 3.333 = 9.999`, leaving BHD 0.001 unallocated. These are derived comparisons, not permitted changes to the original credit.
+**Source:** [study 11, allocation](../research/11-installments-research.md#approved-remainder-position) and [study 06, E10 receipt](../research/06-daily-closing-research.md#receipt-and-missing-inputs).
 
 ## Overdraft Fee Currency Values
 
-The [approved configuration](AMBIGUITIES.md#overdraft-fee-currency) uses AED 25.00 for ACC-001's account type, retaining the exercise's amount, and BHD 0.000 for ACC-002's account type, an explicit project exception. Halving AED 25.00 changes the supplied amount; half of the chosen zero BHD fee remains zero. Neither value defines an exchange rate.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| AED 25.00 for ACC-001's account type | Rule, retained in configuration | Keep the exercise's fee amount in the account's currency. | 12.50 changes the required amount. |
+| BHD 0.000 for ACC-002's account type | Choice and explicit exception | Simplify the exercise because conversion requirements are missing. | Half remains zero. The zero fee departs from the literal mandatory rule. |
+| BHD 0.000 opening balance; E10 credit of 10.000 | Scenario | Explain ACC-002's principal, excluding fees and interest. | Zero remains zero; 5.000 changes the supplied credit. |
+| BHD -1.000 assessment base | Example | Show that a zero fee does not prevent negative balances. | -0.500 remains negative after the zero fee. |
 
-[Study 12](../research/12-fee-currency-research.md) uses ACC-002's supplied zero opening balance and E10 credit as scenario data, with principal separate from interest. Its hypothetical BHD -1.000 base illustrates that zero fees do not prevent negative balances; halving it to -0.500 preserves that conclusion. It is not a new account, movement or constant.
+Neither fee is an exchange rate. Once E10 is recorded, principal is zero for Days 1 through 4 and 10.000 for Days 5 and 6; these are not final balances with interest. No foreign exchange, separate AED obligation or additional account is adopted.
+
+**Source:** [study 12, approved exception and boundaries](../research/12-fee-currency-research.md#rule-and-approved-exception).
 
 ## Account Event Counter
 
-The user selected **1** for each account's first transaction that creates a snapshot and an increment of **1** for each subsequent snapshot. These values give each snapshot the next whole-number position in that account's history. Half of either value would introduce fractional positions, which are not part of this counting scheme. A declined authorization records its decision and ID without a snapshot or counter increment; it does not consume a position.
+| Value | Origin | Use and reason | Why not half? |
+|---|---|---|---|
+| First snapshot counter: 1 | Choice | Start each account's recorded snapshot sequence at a whole-number position. | 0.5 would introduce fractional positions. |
+| Increment per later snapshot: 1 | Choice | Assign the next position from the calculation base's counter. | 0.5 would change that counting scheme. |
+| Counter increment on a decline: 0 | Choice | Preserve the account version because funds and holds do not change. | Half remains zero. The decision and ID are still recorded. |
+| Counters 10 and 11 | Example | Illustrate an account advancing while Yield calculates. | They are example versions, not configuration values. |
 
-The candidate counter is the calculation base's last recorded counter plus one, under the [snapshot decision](AMBIGUITIES.md#snapshot-recording-and-retries). The architecture's counters 10 and 11 illustrate a concurrency scenario; they are not configuration values.
+For a transaction that creates a snapshot, `candidate.event_counter = base.last_event_counter + 1`. Declines consume no position. A changed base requires recalculation; do not put a new counter on an old result.
 
-TODO: Record additional constants and numerical decisions as their reviews are approved.
+**Source:** [snapshot decision](AMBIGUITIES.md#snapshot-recording-and-retries) and [architecture version example](../architecture.md#calculation-version-validation).
+
+Only add further constants when supported by an approved decision or an identified scenario. [Open calculation decisions](AMBIGUITIES.md#pending-calculation-decisions) still prevent final replay totals.

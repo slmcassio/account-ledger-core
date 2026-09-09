@@ -1,67 +1,115 @@
 # Rejected Criteria and Approaches
 
-Document each refused acceptance criterion with reasons, plus approaches actually abandoned during development.
+Each refusal answers four questions: **What was rejected? Why? What did we adopt? What supports it?** Rejections below are already recorded project decisions; a research alternative alone is not a new rejection.
+
+## Acceptance Criteria Coverage
+
+| Criterion | Status | Reason or boundary |
+|---|---|---|
+| 1 | Correct at its stated boundary | Before E9 and excluding fees, Day 2 principal is `1,200 - 950 - 620 = AED -370.00`. |
+| 2 | Unresolved for the current replay | The final E7 fee count depends on open review checkpoints. No approved total establishes exactly one fee. |
+| 3 | Supported under the settlement assumption | E5 reports a confirmed external payment, so record its debit. |
+| 4 | Rejected under the settlement assumption | Missing local authorization does not erase a confirmed debit. |
+| 5 | Correct as a condition | An approved hold reduces availability, not the ledger. This does not establish Auth-B's approval. |
+| 6 | Blanket claim unsupported | Principal, fees, balances and pending interest are distinct; records and payments remain. No final replay result establishes full restoration. |
+| 7 | Rejected | Three BHD 3.334 installments exceed BHD 10.000. |
+| 8 | Rejected | Discarding a difference violates exact daily-interest reconciliation. |
+
+**Source:** [study 13, criterion analysis](../research/13-acceptance-criteria-research.md#analysis). Its historical three-fee counterfactual rejects E6 and uses dates incompatible with current policy; it is not an approved replay result. An assessed balance day and a fee's actual charge day are different under the H+1 schedule.
 
 ## Historical Value Dates for Late Adjustments
 
-For legitimate late transaction adjustments, rejected assigning the corrected historical days as the adjustment's `value_date`. This does not reject the separately approved [reversal fee refund exception](AMBIGUITIES.md#reversal-compensation). In the [reviewed example](../examples/04-backdated-adjustment.md), J uses its Day 6 correction checkpoint for both dates; Days 2, 3, and 4 only identify the calculation periods.
+1. **Rejected:** Giving legitimate late transaction adjustments the historical days' value dates.
+2. **Reason:** That would change historical fee balances instead of applying the correction to current funds, as chosen for this policy.
+3. **Adopted behavior:** Use the actual correction day for both adjustment dates. Preserve the original transaction's supplied dates and keep interest differences pending.
+4. **Evidence:** In [example 04](../examples/04-backdated-adjustment.md), adjustment J uses Day 6 dates; Days 2 through 4 identify calculation periods only.
 
-Under the approved project decision, the fee component affects the balance from its recording day. Posting that debit or credit against historical days would also change those days' ledger balances. Interest differences remain pending until the [next eligible regular payment](AMBIGUITIES.md#interest-adjustments-wait-for-payment); their dates do not create a historical ledger credit. The original delayed transaction retains its supplied historical value date.
+**Limit:** [Reversal fee refunds](AMBIGUITIES.md#reversal-compensation) retain their separately approved original charge value dates. This refusal does not apply to that exception.
 
 ## Immediate Balance Corrections for Paid Interest
 
-Replaced the earlier approach that corrected already credited interest directly in the account balance. The [approved decision](AMBIGUITIES.md#interest-adjustments-wait-for-payment) keeps every interest difference pending until an eligible regular payment, preserving earlier payments and settling each unpaid component once. Fee adjustments change current funds when recorded; reversal fee refunds also affect reconstructed balances from the original charge's value date.
+1. **Rejected:** Immediately changing the account balance to correct interest that was already paid.
+2. **Reason:** The approved simplification uses one pending treatment, regardless of whether the original interest was paid.
+3. **Adopted behavior:** Keep every interest difference pending until an eligible regular payment. Preserve earlier payments and settle each unpaid component once.
+4. **Evidence:** The [pending interest decision](AMBIGUITIES.md#interest-adjustments-wait-for-payment) explicitly replaces the earlier immediate correction approach.
+
+**Limit:** Fee adjustments affect funds when recorded; reversal fee refunds also change reconstructed historical balances.
 
 ## Acceptance Criterion 4
 
-**Rejected:** refusing a settlement solely because its authorization ID is missing from the ledger, without recording the debit.
+1. **Rejected:** Refusing a settlement solely because its authorization ID is missing and omitting the debit.
+2. **Reason:** Under the approved assumption, SETTLEMENT reports a legitimate payment already settled externally. Omitting it overstates funds.
+3. **Adopted behavior:** Record the debit with its supplied dates and reference. Report the missing authorization; create no substitute authorization or hold.
+4. **Evidence:** [Study 03](../research/03-unmatched-settlements-research.md#example) shows `AED 500.00 - 180.00 = 320.00`. Omitting the debit overstates funds by 180.00.
 
-The [approved interpretation](AMBIGUITIES.md#settlements-with-a-missing-authorization) treats SETTLEMENT as a legitimate payment already settled outside the ledger. The debit must therefore be recorded, with the missing authorization reported separately. This rejection rests on that project assumption.
-
-In the [example](../examples/05-unmatched-settlement.md), rejecting the settlement would leave AED 500.00 instead of AED 320.00, overstating the balance by AED 180.00.
+**Limit:** The mandatory rules alone do not resolve criterion 4. This refusal depends on the approved meaning of SETTLEMENT.
 
 ## Inferring Finality from Missing Later Settlements
 
-Rejected the original hold report's justification that Auth-A's settlement is final because the scenario supplies no later capture. The absence of another settlement does not establish whether the remaining reservation should stay active.
+1. **Rejected:** Claiming Auth-A's settlement is final because no later settlement appears.
+2. **Reason:** Missing later events do not establish whether unused funds should remain reserved.
+3. **Adopted behavior:** Treat Auth-A as final through an explicit scenario assumption. Release its unused AED 15.00 without a ledger credit.
+4. **Evidence:** [Study 05](../research/05-hold-lifecycle-research.md#approved-policy-settlement-and-release) distinguishes final settlement from a non-final settlement that keeps the remainder held.
 
-The [approved decision](AMBIGUITIES.md#hold-settlement-and-release) treats Auth-A as final through an explicit scenario assumption. Partial, non-final settlement remains a valid alternative behavior; it is not rejected as a general approach.
+**Limit:** Partial, non-final settlement remains valid behavior. Only the unsupported justification was rejected.
 
 ## Waiting for the Complete Input Before Calculating
 
-Rejected deferring every calculation until the entire event stream has arrived. The user chose an active system that calculates during event processing. Such a system continues receiving transactions and has no final input event to wait for.
+1. **Rejected:** Waiting for the entire event stream before every calculation.
+2. **Reason:** The chosen active system keeps receiving transactions and calculates during processing.
+3. **Adopted behavior:** Run daily calculations with the previous-day booking cutoff and append corrections when later eligible inputs change recorded results.
+4. **Evidence:** [Study 06](../research/06-daily-closing-research.md#receipt-and-missing-inputs) records E10 arriving after the Day 5 calculation and creating a pending BHD +0.004 adjustment.
 
-The [research](../research/06-daily-closing-research.md) keeps daily closing and later recalculation separate. A final report after the finite replay remains possible. The previous-day reference and booking cutoff are approved; clock times and replay positions remain proposed.
+**Limit:** A final report after the finite replay remains possible. E10's position is approved; other replay checkpoints, clock times and general input completeness remain open.
 
 ## Principal Only and Current Dates for Reversal Fee Refunds
 
-For reversals, the approved scope includes recalculation of all affected fees and interest from the affected value day onward, within the applicable calculation boundary. Returning only principal was not selected because derived bases can change. Recalculation does not automatically refund every fee.
+1. **Rejected:** Returning only principal, or using the correction day as the value date of reversal fee refunds (method A).
+2. **Reason:** Reversal can change fees and interest. Current value dates would leave the refunded fees in earlier balances.
+3. **Adopted behavior:** Recalculate affected components and append differences. Under method B, book fee refunds now and value them at the original charge's value date.
+4. **Evidence:** [Study 08](../research/08-reversals-research.md#one-fee-two-outcomes) gives a corrected Day 6 balance of AED 2,500.00 under B, versus 2,475.00 under A.
 
-Method A in [study 08](../research/08-reversals-research.md) books and values fee refunds on the correction day. It was not adopted because those fees would remain in earlier balances. Approved method B keeps current booking but offsets each fee at its original charge's value date. The late transaction adjustment policy above remains unchanged outside this exception.
-
-Neither decision backdates interest payments: all interest differences retain current correction dates and wait for an eligible regular payment. This record does not establish criterion 6's blanket restoration or final replay totals; those remain subject to the [pending calculation decisions](AMBIGUITIES.md#pending-calculation-decisions).
+**Limit:** Respect the calculation boundary; do not automatically refund every fee. Interest corrections retain current dates and wait for eligible payment. This does not establish criterion 6's blanket restoration or final replay totals.
 
 ## Acceptance Criterion 7
 
-**Rejected:** requiring all three E10 installments to be BHD 3.334. Their sum is `3 * 3.334 = 10.002`, exceeding the original BHD 10.000 credit by BHD 0.002.
+1. **Rejected:** Requiring all three E10 installments to be BHD 3.334.
+2. **Reason:** Their sum is `3 * 3.334 = 10.002`, creating BHD 0.002 beyond the supplied credit.
+3. **Adopted behavior:** Allocate BHD 3.333, 3.333 and 3.334, placing the remaining minimum unit in installment 3.
+4. **Evidence:** [Study 11](../research/11-installments-research.md#small-example) shows `3.333 + 3.333 + 3.334 = 10.000`.
 
-This contradiction does not depend on which installment receives the remaining minimum unit. The [approved allocation](AMBIGUITIES.md#e10-installment-allocation) puts it in installment 3; the first or second position would also preserve the original credit.
+**Limit:** The contradiction is independent of remainder position. Positions 1 or 2 would also conserve the credit; HALF_UP does not select the position.
 
 ## Acceptance Criterion 8
 
-**Rejected:** discarding a remainder when rounded daily accruals differ from the capitalized total. The exercise requires those amounts to agree exactly.
-
-For two eligible unpaid days at AED 465.00, each day's raw interest is `465.00 * 0.0004 = 0.186000`, rounded to 0.19. Their payment is `0.19 + 0.19 = 0.38`. Rounding the raw sum `0.372000` to 0.37 and discarding 0.01 violates that requirement. Corrections follow the same reconciliation: pay the eligible unpaid monetary components exactly once.
+1. **Rejected:** Discarding a difference between rounded daily accruals and the capitalized total.
+2. **Reason:** The exercise requires exact equality between those amounts.
+3. **Adopted behavior:** Sum eligible unpaid daily monetary amounts and adjustments exactly; settle each once.
+4. **Evidence:** [Study 09](../research/09-daily-interest-research.md#why-the-stages-matter) gives two daily amounts of AED 0.19. Paying 0.37 instead of `0.19 + 0.19 = 0.38` loses 0.01.
 
 ## Extra Daily Interest Rounding and Fraction Carry
 
-The [approved daily calculation](AMBIGUITIES.md#daily-interest-calculation) rejects intermediate rounding and carrying fractions between days. Each exact product is rounded once to its currency precision, keeping its daily result independent of other days.
+1. **Rejected:** Rounding intermediate daily interest, carrying fractions between days, or replacing daily rounding with rounding the raw total.
+2. **Reason:** These methods can change a day's amount or break its reconciliation with payment.
+3. **Adopted behavior:** Multiply exactly and round each day once. Calculate corrections from rounded targets, not rounded raw differences.
+4. **Evidence:** [Study 09](../research/09-daily-interest-research.md#corrections-and-payment) changes an AED base from 12.49 to 12.50: daily interest rises from 0.00 to 0.01, although the raw difference rounds to zero.
 
-Rounding after aggregating raw interest does not replace the required sum of daily amounts. Likewise, a correction compares rounded daily targets rather than rounding their raw difference. The [small examples](../research/09-daily-interest-research.md#corrections-and-payment) show why that alternative can miss a monetary adjustment. This rejection concerns daily interest, not a policy for settling a negative payment total.
+**Limit:** This decision concerns daily interest. It selects no precision policy for other calculations or treatment of negative payment totals.
 
 ## Snapshots for Declined Authorizations
 
-Replaced the earlier choice to create a snapshot and advance the account counter for a declined authorization. A decline changes neither funds nor holds. Advancing the counter made Yield's source version stale even though the declined request was absent from its approved transaction feed.
+1. **Rejected:** Creating a snapshot and advancing the account counter for a declined authorization.
+2. **Reason:** A decline changes neither funds nor holds. Advancing the counter would unnecessarily invalidate Yield's source version.
+3. **Adopted behavior:** Record the decline and its supplied ID without a hold, financial posting, new snapshot or counter increment.
+4. **Evidence:** The [revised snapshot decision](AMBIGUITIES.md#snapshot-recording-and-retries) replaces the earlier behavior. A recorded decline remains unchanged on redelivery.
 
-The [revised decision](AMBIGUITIES.md#snapshot-recording-and-retries) retains the decline and its supplied ID in decision history, with no new snapshot or counter increment. Duplicate requests still preserve that decision.
+## Preventing Negative Balances Instead of Configuring the Fee
 
-TODO: Record refused acceptance criteria and further abandoned approaches as they are reviewed.
+1. **Rejected:** Making the BHD account incapable of becoming negative as the answer to the fee-currency question.
+2. **Reason:** That would change account behavior. The approved simplification configures the fee while preserving confirmed debits and the new-hold approval rule.
+3. **Adopted behavior:** Use BHD 0.000 for ACC-002's account type. It is an explicit exception to the exercise's literal AED fee rule.
+4. **Evidence:** [Study 12](../research/12-fee-currency-research.md#negative-example-and-boundaries) records this alternative as considered and not selected: `BHD -1.000 - 0.000 = -1.000`.
+
+**Limit:** A zero fee does not permit an unfunded hold. It introduces no conversion or separate AED obligation.
+
+Add further refusals only when their review and rationale are recorded. Keep unresolved criteria visible rather than inventing a result.

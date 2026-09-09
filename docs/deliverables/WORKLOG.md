@@ -8,6 +8,17 @@ Commit milestones use the author and committer timestamps verified in Git histor
 
 Later dated activity entries identify when the summary was recorded, not when the underlying work started or ended. They use the same time zone.
 
+## Entry Format
+
+Use these four fields for new entries. Record only completed work, approved decisions and checks actually performed; identify unresolved items explicitly.
+
+1. **Work:** What changed and which documents or behavior were affected?
+2. **Decisions and open items:** What was decided, why, and what remains unresolved?
+3. **Verification:** Which checks ran, what were their results, and what was not tested?
+4. **Recorded time:** When was this summary recorded in America/Sao_Paulo? Do not infer execution times or duration.
+
+Earlier entries remain verbatim. Their decisions and status describe their recording time, not necessarily the current state. Consult [AMBIGUITIES](AMBIGUITIES.md) for current decisions and open questions.
+
 ## Research and Documentation Updates
 
 ### 09 September 2026, 01:35:57
@@ -19,6 +30,13 @@ Recorded in America/Sao_Paulo. This timestamp records the entry, not execution s
 * Clarified criterion 2: the final E7 fee count remains open, while ordinary H+1 assessment dates and actual late correction dates are approved.
 * Independent content and coverage reviews, 15 exact decimal arithmetic checks, 19 PRD links and anchors, and whitespace checks passed. No ledger implementation tests were performed.
 * The user authorized this worklog update, a signed commit and a push to `origin/main`. This entry records completed documentation work and verification; publication is not claimed complete here.
+
+### 09 September 2026, 01:01:36
+
+1. **Work:** Completed DELIVERABLES-CLARITY in an isolated worktree. Standardized [AMBIGUITIES](AMBIGUITIES.md), [NUMBERS](NUMBERS.md) and [REJECTED](REJECTED.md) with short answers and source links. Added this worklog's entry format while preserving every earlier entry verbatim.
+2. **Decisions and open items:** Used the 13 studies, current architecture and recorded decisions without adopting new financial or technical policy. Preserved approved exceptions, scenario boundaries and unresolved questions so each decision can be explained in the live defense.
+3. **Verification:** Checked the diff, whitespace, item structure, local links and anchors. All 88 exact decimal checks passed. Applied independent review corrections. Verified historical entries, original heading targets, an empty index and the unchanged primary checkout. No executable ledger or test suite exists; no behavior tests ran.
+4. **Recorded time:** 09 September 2026, 01:01:36 in America/Sao_Paulo. This records the summary, not execution start, completion time or duration. No commit or publication was requested or performed.
 
 ### 09 September 2026, 00:38:38
 

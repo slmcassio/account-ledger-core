@@ -1,254 +1,511 @@
 # Ambiguities
 
+Each item answers four questions: what is unclear, why, what we decided, and why we chose it. **Open** means no resolution has been approved. Research links retain the supporting evidence and its limits.
+
 ## Rounding Mode
 
-**Decision: use HALF_UP, with two decimal places for AED and three for BHD.** Round to the nearest representable amount, with exact ties away from zero.
+1. **Ambiguity:** How should exact monetary ties be rounded?
+2. **Why unclear:** The exercise sets currency precision but names no rounding mode.
+3. **Decision:** Use HALF_UP: nearest amount, with exact ties away from zero. Store and round AED to two decimal places and BHD to three.
+4. **Reason:** The approved assumption favors positive interest recipients at exact ties. We accept the upward bias; this rationale does not imply a customer benefit for fees or negative adjustments.
 
-**Rationale and assumption:** favoring the recipient of positive interest at exact ties is the desired project policy. HALF_UP gives that recipient the higher amount. We accept the upward bias at those ties; HALF_EVEN can reduce that bias. This rationale does not imply a customer benefit for fees or negative adjustments.
+<a id="supporting-sources-and-limits"></a>
 
-The exercise specifies currency precision but leaves the rounding mode undefined. HALF_UP is a project choice, not a mandatory rule established for these accounts by the sources below. Currency alone does not establish the applicable jurisdiction or contract.
+**Source:** [Study 01, analysis](../research/01-rounding-research.md#analysis) and [sources and limits](../research/01-rounding-research.md#sources-and-limits). The securities documents are contractual precedents, not mandatory account rules. Currency alone establishes neither jurisdiction nor contract. Mambu's [precision documentation](https://docs.mambu.com/docs/truncating-and-rounding-interest-deposits/) does not specify HALF_UP or HALF_EVEN.
 
-**Scope:** The [daily interest decision](#daily-interest-calculation) defines its calculation precision and rounding stages. Intermediate precision and stages outside daily interest remain unresolved. The exercise already requires the rounded daily interest accruals to sum exactly to the capitalized total.
-
-### Supporting Sources and Limits
-
-* [Emirates NBD AT1 prospectus](https://www.emiratesnbd.com/-/media/enbd/files/investor-relations/public-issuances/list/perpetual_nc6_at1_prospectus.pdf), section 5.1, printed page 45 (PDF page 56): interest for periods shorter than a full interest period on these USD securities uses the nearest cent, with positive exact ties rounded upwards. This is a precedent within that product's scope.
-* [Government of Bahrain GMTN offering circular](https://www.rns-pdf.londonstockexchange.com/rns/7262H_2-2025-5-7.pdf), section 5.1, printed page 44 (PDF page 58): interest on fixed rate notes uses the nearest currency subunit, with exact halves upwards, subject to another applicable market convention. This is a contractual securities rule.
-* [Mambu deposit interest documentation](https://docs.mambu.com/docs/truncating-and-rounding-interest-deposits/): distinguishes calculation precision, storage precision, and rounding of aggregated journal entries. It does not specify HALF_UP or HALF_EVEN and does not justify the selected mode.
+**Open:** Intermediate precision and rounding stages outside daily interest remain undefined.
 
 ## Daily Interest Calculation
 
-**Decision:** For each account and day, calculate `HALF_UP(max(daily_base, 0) * 0.0004, currency_precision)`. Preserve the exact product until that single rounding to AED two places or BHD three. Do not round an intermediate product or carry fractions between days.
+### Daily product and rounding
 
-**Assumption and rationale:** Each daily amount depends only on its own base, so it can be reproduced independently. This is an approved project choice for daily interest; the rate, monetary precisions and HALF_UP mode were already established. It selects no language or arithmetic library.
+1. **Ambiguity:** At which calculation stage should daily interest be rounded?
+2. **Why unclear:** The required rate and currency precision do not specify intermediate rounding or carrying fractions between days.
+3. **Decision:** Calculate `HALF_UP(max(daily_base, 0) * 0.0004, currency_precision)` once per account and day. Keep the product exact until that rounding; carry no fractions between days.
+4. **Reason:** Each day's amount can be reproduced from its own base. Intermediate rounding can change it. This selects no language or arithmetic library.
 
-**Reconciliation:** Compare the revised rounded daily target with the original accrual plus all earlier adjustments, including paid ones. Subtract those monetary amounts exactly; do not round the raw interest difference. At payment, sum only eligible unpaid accruals and adjustments, settling each once. Never replace that sum with rounded aggregated raw interest or discard a reconciliation difference. Corrections retain the [pending treatment and actual dates](#interest-adjustments-wait-for-payment).
+**Source:** [Study 09, calculation](../research/09-daily-interest-research.md#rule-and-approved-calculation) and [examples](../research/09-daily-interest-research.md#why-the-stages-matter). Its arithmetic reference is technical support, not a banking mandate.
 
-The [small examples](../research/09-daily-interest-research.md#why-the-stages-matter) show why intermediate rounding, rounding after aggregation and rounding the raw difference can change the result.
+### Correcting a rounded daily amount
 
-**Limits:** This settles daily calculation precision and stages, not historical bases or final replay totals. General checkpoints, missing eligible inputs, the actual business day calendar and the zero-settlement protocol remain [pending](#pending-calculation-decisions). The approved booking cutoff, payment schedule and reversal refund dates remain unchanged.
+1. **Ambiguity:** Should a correction round the raw interest difference or compare rounded daily amounts?
+2. **Why unclear:** These methods can give different results at rounding boundaries.
+3. **Decision:** Subtract the original accrual and all previous adjustments, including paid ones, from the revised rounded daily target. Subtract exactly and append only a nonzero difference.
+4. **Reason:** The correction reconciles recorded monetary amounts. Repeating an unchanged target gives zero, including after payment.
+
+**Source:** [Study 09, corrections and payment](../research/09-daily-interest-research.md#corrections-and-payment). Payment uses the [unpaid component rule](#interest-adjustments-wait-for-payment); final bases and totals remain open.
 
 ## Booking and Value Dates
 
-**Decision:** `booking_date` is the accounting recording day, supplied as "Booked". `value_date` is the day from which the transaction affects the balance. Neither necessarily identifies when the event occurred or arrived. Preserve the supplied event order and dates.
+1. **Ambiguity:** Does "Booked" identify the financial effect, recording, occurrence or receipt day?
+2. **Why unclear:** Supplied booking and value dates differ, and E10 follows E9 despite its earlier booking date.
+3. **Decision:** `booking_date` is the accounting recording day; `value_date` determines when the balance is affected. Preserve supplied dates and event order. Record actual receipt separately; neither date necessarily identifies occurrence or receipt.
+4. **Reason:** Separate recording from financial effect. A later record can change reconstructed historical balances while queries restricted to earlier records reproduce the earlier view.
 
-**Rationale:** separate when a transaction is recorded from when it has financial effect. A backdated transaction can change a historical balance without changing an existing record. Queries limited to earlier records reproduce the earlier view.
+**Source:** [Study 02, date definitions](../research/02-booking-and-value-dates-research.md#date-definitions) and [limits](../research/02-booking-and-value-dates-research.md#sources-and-limits). ISO defines message dates, not this project's adjustment policy.
 
 ## Late Transaction Adjustments
 
-**Scope:** legitimate transactions delivered after they occurred, such as an official transaction received from Mastercard later. Events resulting from system errors and corrections of those errors are outside this discussion's scope.
+### Amount and audit trail
 
-**Decision:** append the original transaction with its supplied dates. Recalculate affected fees and interest, then append a separate adjustment linked to that transaction. For each component, record `corrected amount - net amount already recorded`; do not repeat the original transaction amount.
+1. **Ambiguity:** How should a legitimate late transaction change fees and interest already recorded?
+2. **Why unclear:** History must remain immutable, but the affected calculations may now be wrong.
+3. **Decision:** Append the transaction with its supplied dates. Recalculate each affected component and append only `corrected amount - (original amount + all prior adjustments)`, counting paid adjustments. Link the difference to its trigger and historical day; never repeat principal.
+4. **Reason:** Record only what changed while preserving the original result and its explanation. System error corrections are excluded by explicit simplification.
 
-For these late transaction adjustments, use the actual correction day for both `booking_date` and `value_date`. The separate [reversal refund decision](#reversal-compensation) is a limited exception. Keep the historical days and each fee or interest component in its breakdown. Fee differences affect the ledger; all interest differences follow the [pending interest decision](#interest-adjustments-wait-for-payment), including corrections for previously paid periods.
+**Source:** [Study 02, approved adjustment method](../research/02-booking-and-value-dates-research.md#approved-adjustment-method).
 
-**Assumption and rationale:** interpret the fee's "day assessed" as the day the correction is assessed and recorded. This makes the fee component affect the current balance while preserving the original records and the explanation of each historical difference. In the fictional example, J has both dates on its Day 6 correction checkpoint; Days 2, 3 and 4 are calculation references.
+### Adjustment dates
 
-**Basis and limits:** [the research](../research/02-booking-and-value-dates-research.md) records ISO date definitions, Mambu's backdating and reversal examples, and their limits. Difference adjustments and their dates are project choices. The cited CBUAE provisions address error correction and do not establish this policy.
+1. **Ambiguity:** Should a late adjustment affect the historical day or the correction day?
+2. **Why unclear:** "Day assessed" could mean the affected balance day or the later assessment day.
+3. **Decision:** Use the actual correction day for both adjustment dates. Historical days identify calculation components. Fee differences affect the ledger; interest differences [remain pending](#interest-adjustments-wait-for-payment). [Reversal fee refunds](#reversal-compensation) have a limited exception.
+4. **Reason:** The approved interpretation makes the fee difference affect current funds while preserving the calculation history. Interest waits for payment; no earlier record is rewritten.
 
-The [fictional example](../examples/04-backdated-adjustment.md) illustrates the approved decision.
+**Source:** [Study 02, definitions and policy](../research/02-booking-and-value-dates-research.md#date-definitions). Mambu illustrates other product behavior; CBUAE error provisions do not establish this legitimate late transaction policy. [Example 04](../examples/04-backdated-adjustment.md) uses an illustrative Day 6 correction, not a replay checkpoint.
 
 ## Interest Adjustments Wait for Payment
 
-**Decision:** Keep every interest correction pending until the next regular payment whose booking cutoff includes it, including corrections for previously paid periods. Do not settle an overdue portion immediately. Positive differences increase pending interest; negative differences reduce it.
+### Corrections of paid and unpaid periods
 
-**Calculation and dates:** Compare each corrected [rounded daily target](#daily-interest-calculation) with its original accrual plus all earlier adjustments, including paid adjustments. Append only a nonzero difference, linked to the transaction with a breakdown by historical day. Both adjustment dates are the actual correction day. The principal retains its supplied dates and affects the ledger normally; the interest adjustment does not change ledger or available balance then.
+1. **Ambiguity:** Should a correction for a paid period change the balance immediately?
+2. **Why unclear:** An earlier payment has already reached the ledger, while unpaid interest has not.
+3. **Decision:** Keep every interest difference pending until the next regular payment whose booking cutoff admits it. Positive differences increase pending interest; negative differences reduce it. Both adjustment dates remain the actual correction day.
+4. **Reason:** Use one treatment regardless of whether the original period was paid. This approved deferral replaces the earlier immediate correction of credited interest.
 
-**Payment:** Capitalize eligible unpaid daily accruals and adjustments exactly once. Record which components the payment settles and derive what remains unpaid from those links, preserving earlier records and payments. Later calculations still count settled components when finding a new difference. Never add a full corrected target plus its adjustment or repeat the principal.
+**Source:** [Study 10, payment components](../research/10-interest-capitalization-research.md#approved-payment-and-components) and [recorded decision](WORKLOG.md#08-september-2026-000010).
 
-**Assumption and rationale:** Accept deferred settlement even for previously paid periods, using one pending treatment independent of processing order. Pending amounts are unavailable and earn no interest, including hypothetical returns from an earlier capitalization date. This replaces the earlier immediate balance correction for previously credited interest. The difference method and interest adjustment dates remain. Fee adjustments change current funds when recorded; [reversal fee refunds](#reversal-compensation) also affect reconstructed balances from the original charge's value date.
+### Components settled by a payment
 
-**Example:** A transaction is booked and corrected on D30 with value date D5. Assume three daily amounts each change from AED 1.50 to 2.00: D5 was paid on D15; D20 and D25 remain unpaid. These are illustrative calculation results; other days are omitted.
+1. **Ambiguity:** Which amounts should enter the next interest payment after a correction?
+2. **Why unclear:** Including paid originals again would duplicate interest; ignoring paid adjustments would distort later corrections.
+3. **Decision:** Sum eligible unpaid accruals and adjustments exactly, never rounded aggregated raw interest. Link each component to its settlement and settle it once. Preserve earlier payments; retain settled components when calculating future differences.
+4. **Reason:** Settlement links distinguish what remains unpaid from what was already recorded. Never pay a full corrected target plus its adjustment, repeat principal, or discard a reconciliation difference.
 
-* D30: record one pending adjustment of `3 * (2.00 - 1.50) = 1.50`, with both dates D30 and a breakdown of 0.50 per day.
-* Next eligible payment: these components contribute `3.00 + 1.50 = 4.50`, comprising two unpaid original accruals and the whole adjustment. D5's original 1.50 is not paid again.
-* Repeating for each day, before or after payment: `2.00 - (1.50 + 0.50) = 0.00`. Paid adjustments still count when calculating the difference.
+**Source:** [Study 10, payment components](../research/10-interest-capitalization-research.md#approved-payment-and-components) and [Study 09, rounding stages](../research/09-daily-interest-research.md#why-the-stages-matter).
 
-D15 is an illustrative earlier payment date; it does not define the [approved monthly schedule](#interest-payment-schedule-and-capitalization). No corrective credit is backdated to D15 or D5.
+**Example:** A transaction is booked and corrected on D30 with value date D5. Assume D5, D20 and D25 each change from AED 1.50 to 2.00; other days are omitted. D5 was paid on D15; D20 and D25 remain unpaid.
 
-**Settlement:** Apply the [approved sign rule](#interest-payment-schedule-and-capitalization) to the eligible total. The [reversal decision](#reversal-compensation) applies the same pending treatment to E9's affected interest. The [daily cutoff and timing questions](#daily-calculation-timing) continue to apply.
+Record `3 * 0.50 = 1.50` pending, with both adjustment dates D30 and a breakdown by day. The next eligible payment includes `3.00 + 1.50 = 4.50`, excluding D5's paid original. Each repeated calculation gives `2.00 - (1.50 + 0.50) = 0.00`, before or after payment. D15 is illustrative, not the [monthly schedule](#interest-payment-schedule-and-capitalization); no corrective credit is backdated.
+
+### Balance and interest on pending amounts
+
+1. **Ambiguity:** Do pending accruals or corrections provide funds or earn further interest?
+2. **Why unclear:** Economic interest entitlement and actual capitalization occur at different times.
+3. **Decision:** Pending amounts affect neither ledger nor available balance and earn no interest. Calculate no hypothetical returns from earlier payment dates.
+4. **Reason:** This approved simplification keeps pending calculations separate from posted money. Actual payments start affecting subsequent balances on their payment dates.
+
+**Source:** [Study 10, pending interest](../research/10-interest-capitalization-research.md#why-pending-interest-earns-nothing). The CBUAE disclosure provisions establish neither this method nor its applicability or compliance.
 
 ## Interest Payment Schedule and Capitalization
 
-**Decision:** At the end of Day 6, settle each account's eligible unpaid interest total separately in AED or BHD. A positive total credits the account; a negative total debits it, even into a negative balance. A zero total settles the components without a financial movement. Settle each component once and do not carry an eligible negative total forward.
+### Positive, negative and zero totals
 
-**Assumption and rationale:** This extends the exercise's literal credit wording to negative and zero totals. Recover excess interest at regular settlement while preserving earlier payments and the [component reconciliation rules](#interest-adjustments-wait-for-payment). Negative daily balances still earn zero interest.
+1. **Ambiguity:** What happens when eligible unpaid interest totals zero or less?
+2. **Why unclear:** The exercise literally requires one Day 6 credit per account, without defining those cases.
+3. **Decision:** At the end of Day 6, settle each account separately in AED or BHD: positive totals credit; negative totals debit, even into a negative balance; zero settles components without moving funds. Carry no eligible negative total forward.
+4. **Reason:** The approved extension recovers excess interest at regular settlement while preserving earlier payments. Negative daily balances still earn zero interest.
 
-**Schedule and scenario:** Pay monthly on the first business day for the previous month's ordinary accruals, plus eligible unpaid adjustments, including corrections of older paid periods. Day 6 is the first business day of a new month; Day 5 ends the previous month. For an illustrative 30-day month, Days 1 through 6 map to dates 26, 27, 28, 29, 30 and 01. This assumption selects no actual month, year, jurisdiction or holiday calendar.
+**Source:** [Study 10, signed settlement](../research/10-interest-capitalization-research.md#approved-signed-settlement). The [zero settlement protocol](#zero-settlement-protocol) remains open.
 
-Keep the monthly accrual period separate from the cumulative `booking_date <= D-1` cutoff. Current month ordinary accruals remain pending. A newly calculated ordinary accrual for the previous month may join the payment; corrections booked on payment day remain excluded.
+### Monthly schedule and Day 6
 
-**Payment dates and capitalization:** Book and value each credit or debit on its actual payment day, after calculation. A Day 6 movement enters Day 6 fee and interest bases calculated on Day 7; it does not change Day 5 interest. Day 6 interest belongs to the new month and is paid on the first business day of the following month. Actual payment dates let settled interest affect subsequent balances without treating pending interest as already paid.
+1. **Ambiguity:** How does the required Day 6 settlement relate to a recurring payment schedule?
+2. **Why unclear:** The exercise supplies synthetic days, with no month or calendar.
+3. **Decision:** Day 5 ends the previous month; Day 6 is the new month's first business day. Pay monthly on the first business day for the previous month's ordinary accruals plus eligible unpaid adjustments, including older corrections.
+4. **Reason:** This approved scenario mapping connects Day 6 to the monthly policy. Booking eligibility remains separate; current month ordinary accruals stay pending.
 
-**Limits:** Actual future payment dates require a business day calendar. Final replay totals, input completeness and the representation, IDs, validation, snapshots and counter effects of zero settlement remain [pending](#pending-calculation-decisions). Financial credits and debits follow the [Authorization payment contract](#yield-calculation-and-payment). [Study 10](../research/10-interest-capitalization-research.md) records the supporting examples.
+**Source:** [Study 10, monthly payment](../research/10-interest-capitalization-research.md#approved-monthly-payment). A 30-day example maps Days 1 through 6 to 26, 27, 28, 29, 30 and 01. It chooses no actual month, year, jurisdiction or holiday calendar.
+
+### Payment dates and later bases
+
+1. **Ambiguity:** Does capitalization alter the days whose interest it pays?
+2. **Why unclear:** Payment occurs after the accrual period and after its calculation.
+3. **Decision:** Book and value the credit or debit on its actual payment day, after calculation. A Day 6 movement enters Day 6 bases calculated on Day 7; it never changes Day 5 interest.
+4. **Reason:** Settled interest affects later balances without treating pending interest as already paid. Day 6 ordinary interest belongs to the new month and waits for the following month's payment.
+
+**Source:** [Study 10, capitalization date](../research/10-interest-capitalization-research.md#approved-capitalization-date). Financial payments follow [Authorization validation](#yield-calculation-and-payment).
 
 ## Settlements with a Missing Authorization
 
-**Question:** Does SETTLEMENT request a payment, or report a payment that has already settled? The exercise does not define this precisely.
+1. **Ambiguity:** Should E6 be rejected because Auth-Z is absent?
+2. **Why unclear:** SETTLEMENT could request a payment or report one already settled. The mandatory rules do not resolve criterion 4.
+3. **Decision:** Assume a legitimate externally settled payment. Append E6's AED 180.00 debit with Day 4 dates, retain Auth-Z and report the missing match. Create no authorization or hold; preserve order and history.
+4. **Reason:** Omitting a confirmed debit overstates the balance. This assumption supports rejecting criterion 4; it excludes system error corrections.
 
-**Decision and assumption:** Treat SETTLEMENT as a legitimate payment already settled outside the ledger. If the local authorization is missing, append the debit with the supplied dates, preserve the authorization reference, and report the missing match. Do not invent an authorization or hold. Preserve the event order and existing records.
-
-**Rationale:** The ledger must reflect the confirmed payment. Leaving out the debit would overstate the account balance. Under this assumption, E6 debits AED 180.00 on Day 4 and reports that Auth-Z was not found. This is why the project rejects acceptance criterion 4.
-
-The [research](../research/03-unmatched-settlements-research.md) explains the alternatives and the Stripe precedent. Stripe documents such payments, but does not determine the exercise's policy. The [fictional example](../examples/05-unmatched-settlement.md) illustrates the decision. Corrections of system errors are outside this decision's scope.
+**Source:** [Study 03, approved decision](../research/03-unmatched-settlements-research.md#the-approved-decision) and [source limit](../research/03-unmatched-settlements-research.md#sources-and-limits). Stripe illustrates unmatched payments but does not establish E6's legitimacy or the exercise policy.
 
 ## Authorization and Ledger Responsibilities
 
-**Decision:** Authorization guards available balance through its own operational snapshots, including financial state and active holds. Every authorization uses the latest snapshot. An approved hold creates a new snapshot. A declined request records its decision and supplied ID, preserving funds, holds, the current snapshot and its counter.
+### Source of available balance
 
-**Superseded approach and rationale:** This replaces the earlier responsibility choice in which Ledger supplied the balance to Authorization. Authorization now owns the operational snapshot and supplies downstream accounting data. It sends financial data to Ledger and never consumes Ledger data. The available balance equation remains `ledger balance - active holds` for the same set of financial events. A Ledger report may temporarily reflect fewer events while delivery is pending; it is not Authorization's input.
+1. **Ambiguity:** Which module owns the balance used to authorize a hold?
+2. **Why unclear:** The balance equation defines arithmetic, not which module provides current state.
+3. **Decision:** Authorization uses its latest operational snapshot, containing financial state and active holds. Available balance is `ledger balance - active holds` for the same financial events. Authorization sends financial data to Ledger and never reads it.
+4. **Reason:** Authorization owns its decision state. This replaces the Ledger-supplied balance approach; Ledger reports may temporarily lag while delivery is pending.
 
-All financial effects that change available balance, including confirmed payments, reversals, fees, and capitalization, enter through Authorization's snapshot path. Processing a confirmed payment applies its financial effect without the approval check for a new hold. Preserve confirmed debits despite missing authorization or negative availability. Hold release creates no financial entry. Unpaid interest and its corrections remain outside available and ledger balances until capitalization.
+**Source:** [Study 04, responsibilities](../research/04-authorization-decisions-research.md#approved-responsibilities). Stripe does not determine this snapshot ownership.
 
-**Decision after balance corrections:** Preserve the original authorization decision. Do not automatically reevaluate it when the balance changes. A later increase in funds does not activate a declined request. Evaluate a new explicit request against the updated balance and active holds.
+### New holds and confirmed financial movements
 
-**Rationale:** Each decision reflects the information available when the request was processed. The exercise does not specify automatic reevaluation, so this is an approved project choice. The [example](../examples/06-authorization-decisions.md) applies this policy after a reversal.
+1. **Ambiguity:** Does the new-hold funding check also apply to confirmed payments?
+2. **Why unclear:** Both can reduce availability, but only one is a request to reserve funds.
+3. **Decision:** Approve a new hold only if remaining availability is nonnegative. Route confirmed payments, reversals, fees and capitalization through Authorization snapshots; preserve confirmed debits even with missing authorization or negative availability.
+4. **Reason:** Hold approval prevents an unfunded reservation. A confirmed debit must reflect money already settled. Holds change availability without financial postings; unpaid interest remains outside both balances.
+
+**Source:** [Study 04, authorization rule](../research/04-authorization-decisions-research.md#authorization-rule) and [responsibilities](../research/04-authorization-decisions-research.md#approved-responsibilities).
+
+### Decisions after balance corrections
+
+1. **Ambiguity:** Should later funds reactivate a declined authorization?
+2. **Why unclear:** Immutability preserves history but does not decide whether to append a revised decision.
+3. **Decision:** Preserve the recorded decision without automatic reevaluation. A new explicit request is evaluated against the updated snapshot and active holds.
+4. **Reason:** Each decision reflects information available when processed. Later balance changes do not turn an earlier refusal into an approved hold.
+
+**Source:** [Study 04, later corrections](../research/04-authorization-decisions-research.md#approved-policy-later-balance-corrections) and [example 06](../examples/06-authorization-decisions.md).
 
 ## Snapshot Recording and Retries
 
-**Decision:** Transactions arrive with their own IDs; the modules retain those IDs across retry and redelivery rather than generating replacements. Financial events and hold changes are saved with a new snapshot. The event counter is monotonic per account, starting at **1** for its first recorded transaction that creates a snapshot and increasing by one for each subsequent snapshot. The snapshot's `last_event_counter` identifies that account version. Preserve recorded history.
+### Supplied IDs and duplicate messages
 
-**Declined requests:** Record the decision with its supplied ID, without a hold, financial posting, new snapshot or counter increment. Check ID uniqueness and the unchanged calculation base indivisibly with decision recording. If the base changes before recording, reevaluate the uncommitted request against the latest snapshot with the same ID. A recorded decline remains unchanged after later balance changes.
+1. **Ambiguity:** How should retry or redelivery affect a previously processed transaction?
+2. **Why unclear:** Repeating its calculation or financial effect could change state twice.
+3. **Decision:** Retain supplied IDs. Skip a recorded ID, including a decline, before calculation or any amount or content inspection, even if content differs. Compare no payloads and reject no differing content on this path.
+4. **Reason:** One recorded ID has one outcome. A skipped message adds no financial effect, snapshot or counter increment.
 
-If an ID is already recorded, including a declined request's ID, skip the message before repeating calculations or inspecting its amount or content. Do not compare payloads or reject differing content. A skipped message creates no financial effect, snapshot, or counter increment. For an unrecorded transaction that creates a snapshot, calculate from the latest saved account snapshot and assign `candidate.event_counter = base.last_event_counter + 1`. The first such transaction uses the initial account state and candidate **1**, even if requests were declined before it.
+**Source:** [Study 04, responsibilities](../research/04-authorization-decisions-research.md#approved-responsibilities) and [architecture contract](../architecture.md#snapshots-and-concurrency).
 
-For a transaction that creates a snapshot, atomically check ID uniqueness and that the calculation base is unchanged, then record the transaction and resulting snapshot. If `latest_snapshot.last_event_counter >= candidate.event_counter`, another recorded transaction advanced the base. Reread it, reapply the uncommitted transaction with the original supplied ID, and calculate a fresh candidate from the new base. Do not attach a fresh counter to a result calculated from an older base. An uncommitted attempt must not publish a Ledger posting.
+### Snapshot counter allocation
 
-**Revised choice and rationale:** This replaces creating a snapshot and advancing the counter for every decline. A refusal leaves financial state and holds unchanged, so it should not invalidate Yield's source version. Its decision and ID remain in history for audit and duplicate handling. The [abandoned approach](REJECTED.md#snapshots-for-declined-authorizations) records the previous choice.
+1. **Ambiguity:** What does the event counter count, and where does it start?
+2. **Why unclear:** Requests can be declined without changing financial state or holds.
+3. **Decision:** Financial events and hold changes create snapshots. Each account starts at 1 and advances by one per snapshot: `candidate.event_counter = base.last_event_counter + 1`. The first candidate uses initial state and 1, even after earlier declines.
+4. **Reason:** The counter identifies the saved account version used for calculation, rather than counting every received message.
 
-**Rationale and limits:** Tying the candidate to the calculation base makes the comparison detect any advance in that account's snapshot version. Enforcing uniqueness in the same operation prevents concurrent attempts with one ID from both affecting state. The retry limit remains an implementation detail to define. No lock or implementation primitive is selected.
+**Source:** [Architecture, snapshots](../architecture.md#snapshots-and-concurrency) and [recorded snapshot contract](WORKLOG.md#09-september-2026-001355).
+
+### Declined requests
+
+1. **Ambiguity:** Should a decline create a new snapshot and advance the counter?
+2. **Why unclear:** It is a recorded decision, but funds and holds remain unchanged.
+3. **Decision:** Record only the decision and supplied ID. Check ID uniqueness and unchanged calculation base indivisibly with recording. If the base changes, reevaluate the uncommitted request with the same ID against the latest snapshot.
+4. **Reason:** A refusal needs audit and duplicate handling but should not invalidate Yield's financial version. A recorded decline stays unchanged and creates no hold, posting, snapshot or increment.
+
+**Source:** [Study 04, responsibilities](../research/04-authorization-decisions-research.md#approved-responsibilities) and [superseded approach](REJECTED.md#snapshots-for-declined-authorizations).
+
+### Concurrent state changes
+
+1. **Ambiguity:** What if another transaction changes the account before a calculated result is recorded?
+2. **Why unclear:** Assigning a new counter alone would attach an old calculation to new state.
+3. **Decision:** Check ID uniqueness and unchanged base, then record transaction, effects and snapshot indivisibly. If `latest_snapshot.last_event_counter >= candidate.event_counter`, reread and reapply the uncommitted transaction with its original ID before deriving a fresh candidate.
+4. **Reason:** Validation and recording must prevent a competing advance or duplicate from slipping between them. Uncommitted attempts publish no Ledger posting; never attach a fresh counter to an old result.
+
+**Source:** [Architecture, snapshots](../architecture.md#snapshots-and-concurrency). Retry limits, locks and implementation primitives remain open.
 
 ## Yield Calculation and Payment
 
-**Decision and superseded approach:** Authorization sends approved transactions to Yield and Fees after recording the transaction and snapshot. Yield receives no input directly from Transaction and consumes no Ledger or Authorization balance. On a trigger, it uses the approved transactions and opening state to reconstruct the dated interest bases. This replaces the earlier shared transaction-input approach and Ledger balance dependency. Confirmed settlements retain their required financial effect and are forwarded even when authorization is missing or availability is negative; the new-hold approval check does not apply to them.
+### Calculation inputs
 
-Each payment targets an account and carries a `source_event_counter` identifying the account version whose approved transactions are represented completely. Include the relevant approved transactions through that version, with no later transactions mixed in. Gathering customer data does not introduce an aggregate customer counter. The source counter identifies the calculation input version; the payment's own counter identifies the new recorded transaction.
+1. **Ambiguity:** Should Yield use Transaction messages, Ledger balances or approved events?
+2. **Why unclear:** Those inputs can represent different states while transactions are being processed or delivered.
+3. **Decision:** Authorization forwards approved transactions after recording. Yield reconstructs dated bases from that feed and opening state, without direct Transaction input or Ledger or Authorization balances. Confirmed settlements remain included despite missing authorization or negative availability.
+4. **Reason:** Calculate from recorded operational outcomes. This replaces the shared Transaction input and Ledger balance dependencies without applying new-hold approval to confirmed payments.
 
-Authorization skips an already recorded payment ID before inspecting its amount, content, or source counter, even if those values differ. It creates no credit, recalculation request, snapshot, or counter increment. For an unrecorded payment, require `source_event_counter == latest_snapshot.last_event_counter`. Check ID and source version and conditionally record the payment plus snapshot in one indivisible operation. Matching source and current counters of **N** give the payment counter **N+1**. Any mismatch has no payment effect and asks Yield to recalculate with approved transactions for the latest account counter. Because the stale payment was not recorded, that recalculation retains the supplied ID and is evaluated normally.
+**Source:** [Architecture, domains](../architecture.md#domains-and-module-boundaries) and [Study 06, architecture relation](../research/06-daily-closing-research.md#relation-to-the-architecture).
 
-**Rationale and limits:** Authorization keeps processing while Yield calculates. A transaction that creates a snapshot before calculation finishes or while payment is in transit advances the account counter. Indivisible comparison and recording prevent another transaction from intervening between validation and credit. Counter equality does not establish complete input or correct arithmetic.
+### Source account version
 
-Declines do not advance Authorization's counter and are absent from the approved feed. If approved transaction 10 is followed by a decline, the account version remains 10. That decline alone does not invalidate a payment calculated from version 10. Delivery and establishing complete approved inputs for a source account counter remain undefined.
+1. **Ambiguity:** Which state does a calculation's `source_event_counter` identify?
+2. **Why unclear:** Authorization can advance while Yield receives inputs or calculates.
+3. **Decision:** Use one complete approved transaction set through the target account's source counter; mix in no later transactions. The payment's own counter identifies a new transaction. Gathering customer data creates no customer-wide counter.
+4. **Reason:** Each result needs a reproducible account version. Equality of counters alone proves neither input completeness nor correct arithmetic.
 
-Preserve the positive closing accounting-balance interest base, required rate and rounding, and the approved [daily booking cutoff](#daily-calculation-timing). The Day 6 payment uses reference Day 5. All interest adjustments follow the [pending payment treatment](#interest-adjustments-wait-for-payment). Fee submissions use the same source counter validation and approval or recalculation response. Their [assessment base and correction method](#overdraft-fee-assessment-base) are also approved; remaining policy and protocol details stay open.
+**Source:** [Architecture, version validation](../architecture.md#calculation-version-validation). Delivery and establishing complete inputs remain open.
+
+### Recording a payment or fee
+
+1. **Ambiguity:** Can Authorization accept a result calculated before its latest account change?
+2. **Why unclear:** The account may advance during calculation or while the result is in transit.
+3. **Decision:** For an unrecorded ID, require `source_event_counter == latest_snapshot.last_event_counter`. Check ID and version and record the financial effect, payment or fee, and snapshot indivisibly. Matching counters N produce transaction counter N+1.
+4. **Reason:** No state change may intervene between validation and recording. Any mismatch records no payment effect and requests recalculation from complete latest inputs with the same supplied ID.
+
+**Source:** [Architecture, version validation](../architecture.md#calculation-version-validation). Fee submissions use the same approval or recalculation response.
+
+### Duplicate results and unchanged amounts
+
+1. **Ambiguity:** Must a duplicate result or an unchanged numerical amount be recalculated?
+2. **Why unclear:** Identity, financial eligibility and operational version are different checks.
+3. **Decision:** Skip recorded payment IDs before inspecting amount, content or source counter, even if changed; create no payment, recalculation request, snapshot or increment. An unrecorded stale result must recalculate even when an excluded booking leaves its amount unchanged.
+4. **Reason:** Duplicates have already been resolved, while stale results use an old account version. Declines do not advance that version or invalidate a current calculation; they are absent from the approved feed.
+
+**Source:** [Study 06, architecture relation](../research/06-daily-closing-research.md#relation-to-the-architecture). The [booking cutoff](#daily-calculation-timing) remains separate from source validation.
 
 ## Ledger Delivery
 
-**Decision:** Authorization records its transaction and snapshot first, then sends the committed financial data to Ledger. Ledger posting is a separate operation outside the original conditional recording. Ledger identifies repeated forwarded transactions by their stable ID and does not create another balanced journal entry for the same transaction. Hold-only changes retain their IDs and snapshots without financial postings. Declines retain their decision IDs without creating snapshots or financial postings.
+### Recording boundary
 
-If delivery or Ledger posting fails after Authorization records the transaction, retry delivery of that recorded transaction with its original ID. Do not reapply its operational effects or reauthorize it against a newer snapshot. Delivery preserves the supplied booking and value dates.
+1. **Ambiguity:** Must Authorization and Ledger record in one operation?
+2. **Why unclear:** They own separate operational and accounting records.
+3. **Decision:** Authorization records first, then forwards committed financial data. Ledger records separately and uses the stable ID to prevent a second balanced journal entry. Hold changes and declines create no financial postings.
+4. **Reason:** Authorization can finish its operational decision before Ledger processes it. Delivery may be asynchronous, so accounting reports can lag operational snapshots.
 
-**Rationale and tradeoff:** Authorization can record operational decisions before Ledger processes their financial effects. Delivery may be asynchronous. Accounting reports may lag the operational snapshot until the forwarded events are processed. Authorization consumes no Ledger data; Yield calculates from events rather than Ledger reports.
+**Source:** [Architecture, Ledger delivery](../architecture.md#ledger-delivery). Authorization consumes no Ledger data; Yield calculates from events.
 
-**Still unresolved:** Delivery recovery details and the readiness checkpoints for accounting reports. Delivery delay does not itself change the selected calculation bases or financial policies.
+### Retrying committed delivery
+
+1. **Ambiguity:** Should a failed delivery reauthorize or recalculate the original transaction?
+2. **Why unclear:** Authorization may already have recorded it successfully while Ledger has not.
+3. **Decision:** Retry delivery or posting with the recorded transaction's original ID, booking date and value date. Do not reapply operational effects or reauthorize against newer state.
+4. **Reason:** The operational effect is already committed. Reapplying it could duplicate or change that outcome; delivery delay does not change financial policy.
+
+**Source:** [Architecture, Ledger delivery](../architecture.md#ledger-delivery). Recovery details and reporting readiness checkpoints remain open.
 
 ## Hold Settlement and Release
 
-**Question:** Does a settlement below the held amount finish the reservation or leave the unused amount reserved?
+### Auth-A finality
 
-**Decision and assumption:** Treat Auth-A's AED 185.00 settlement as final. Append the actual debit with the supplied Day 4 dates and end its AED 200.00 reservation. The unused AED 15.00 becomes available without a ledger credit.
+1. **Ambiguity:** Does Auth-A's AED 185.00 settlement end its AED 200.00 reservation?
+2. **Why unclear:** A smaller settlement may be partial or final; the absence of later settlements does not prove finality.
+3. **Decision:** Assume final settlement. Append the actual debit with Day 4 dates. If the matching reservation is active, end it and release the unused AED 15.00 without a ledger credit.
+4. **Reason:** Finality is an approved simplification for this scenario. Criterion 3 supports recording the confirmed payment, independently of the reservation's current state.
 
-**Rationale:** Final settlement is an explicit simplifying assumption for this scenario. Neither the lower amount nor the absence of another settlement proves finality. A partial, non-final settlement would instead leave the unused amount reserved.
+**Source:** [Study 05, settlement and release](../research/05-hold-lifecycle-research.md#approved-policy-settlement-and-release). Product and network precedents do not determine Auth-A's finality.
 
-Separate the financial payment from its effect on authorization. A non-final settlement reduces the matching active reservation by the settled portion; a final settlement also releases the remainder. A release without settlement frees the specified reserved amount without a ledger debit or credit. Preserve the original authorization and decision records and append information explaining the reservation changes.
+### Other reservation changes
 
-An absent, released, or expired hold does not prevent recording a legitimate payment already settled externally. Any reservation matching problem is separate from that debit. Under the approved settlement interpretation, criterion 3 is supported because E5 reports such a payment; it does not determine finality.
+1. **Ambiguity:** How do partial settlement and release differ from a financial refund?
+2. **Why unclear:** All can free reserved funds, but only financial movements change the ledger balance.
+3. **Decision:** A non-final settlement reduces an active reservation by the settled portion; a final one also releases the remainder. Release without settlement frees the specified reservation without a debit or credit. Append changes and preserve original decisions.
+4. **Reason:** Separate confirmed financial payments from reservation state. Missing, released or expired holds never prevent recording a legitimate externally settled debit; report matching problems separately.
 
-The [research](../research/05-hold-lifecycle-research.md) explains the Mambu, Stripe, Mastercard, and Visa precedents and their limits. The [fictional example](../examples/07-hold-lifecycle.md) compares the reservation effects. API structure and network integration design remain outside this decision.
+**Source:** [Study 05, policy](../research/05-hold-lifecycle-research.md#approved-policy-settlement-and-release) and [sources and limits](../research/05-hold-lifecycle-research.md#sources-and-limits). External deadlines and record models are not adopted; API and network integration design stay outside scope.
 
 ## Hold Expiration During the Replay
 
-**Decision and assumption:** Generate no automatic hold expiration during Days 1 through 6. The exercise provides neither an expiration policy nor a deadline. The six days define the scenario window, not a hold's lifetime.
+1. **Ambiguity:** Should Auth-B or another hold expire during Days 1 through 6?
+2. **Why unclear:** The exercise supplies no deadline or expiration policy. The replay window is not a hold lifetime.
+3. **Decision:** Generate no automatic expiration in the six-day replay. Auth-B has a hold only if approved; lack of settlement does not prove approval.
+4. **Reason:** Avoid inventing an expiration event. This does not mean holds never expire; a general duration, time reference and update policy remain undefined.
 
-**Rationale:** Avoid introducing an unsupported expiration event into the supplied replay. This does not establish that holds never expire. A general policy would need a duration or deadline, a time reference, and rules for relevant updates; behavior beyond the window remains undefined.
-
-Auth-B has a hold only if its request is approved. The absence of settlement alone does not prove that a reservation exists. The [approved authorization policy](#authorization-and-ledger-responsibilities) preserves earlier decisions after balance corrections and requires a new explicit request for another evaluation.
+**Source:** [Study 05, expiration](../research/05-hold-lifecycle-research.md#approved-policy-expiration). Later corrections preserve the [original authorization decision](#decisions-after-balance-corrections).
 
 ## Daily Calculation Timing
 
-**Decision and assumption:** Process events in the supplied order and update the running balance as financial transactions are recorded. Run one daily job in D for reference day D-1. Select its input entries cumulatively by `booking_date <= D-1`, then use their value dates for the days being calculated. Knowing a later booking does not make it eligible. Pending interest is separate from the ledger balance.
+### Daily reference and eligible entries
 
-**Rationale:** The booking cutoff fixes the accounting input considered by each calculation, independently of execution order. Value dates retain their economic meaning. A cutoff does not guarantee that every eligible event has arrived; general handling of missing eligible records remains unresolved beyond the [approved E10 receipt scenario](#e10-installment-allocation). Record actual receipt separately from booking and value dates; receipt precision, time zone and tie handling remain unspecified.
+1. **Ambiguity:** Which transactions belong to a daily calculation while processing continues?
+2. **Why unclear:** Receipt order, accounting recording day and financial effect day can differ.
+3. **Decision:** Process the supplied order and update operational balances when recorded. Run one job in D for D-1. Select cumulative inputs with `booking_date <= D-1`, then opening balance and effects with `value_date <= calculated day`.
+4. **Reason:** Booking fixes the eligible input set; value dates determine economic effect. Earlier receipt does not admit future bookings. An intraday deficit alone triggers no daily fee.
 
-**Payment boundary:** The Day 6 payment uses reference Day 5. E9 and corrections booked on Day 6 cannot change it, even if processed before that payment. The job's ordinary accrual and resulting payment are outputs, not input transactions excluded by the cutoff. Payment dates and periods follow the [capitalization decision](#interest-payment-schedule-and-capitalization).
+**Source:** [Study 06, agreed operation](../research/06-daily-closing-research.md#agreed-operation). Pending interest is excluded. Holds neither reduce the interest base nor block capitalization.
 
-**Limits:** Scheduling and calculation-record validation remain [pending](#pending-calculation-decisions). The approved [Authorization payment check](#yield-calculation-and-payment) still compares the current account counter, even when a new booking is outside the calculation cutoff. It can require a retry with the same numerical result. The [fictional example](../examples/08-daily-closing.md) separates the cutoff from later historical corrections without defining replay checkpoints.
+### Day 6 payment boundary
 
-**Review status:** Study 06 is approved for now, with its recorded open items and dependencies explicitly pending. Revisit it when a later study affects these decisions.
+1. **Ambiguity:** Can E9 or same-day corrections change the Day 6 payment if processed first?
+2. **Why unclear:** They may already be known but have booking dates later than its Day 5 reference.
+3. **Decision:** Exclude E9 and corrections booked Day 6 from that payment. The job's new ordinary accrual can participate if its period is eligible; its accrual and payment are outputs, not excluded input transactions.
+4. **Reason:** Execution order must not override the booking cutoff. A later booking may still advance Authorization's counter and require a retry with the same numerical amount.
+
+**Source:** [Study 06, agreed operation](../research/06-daily-closing-research.md#agreed-operation) and [Study 10, monthly eligibility](../research/10-interest-capitalization-research.md#approved-monthly-payment).
+
+### Receipt and completeness
+
+1. **Ambiguity:** Does reaching a cutoff prove that all eligible transactions have arrived?
+2. **Why unclear:** E10 can arrive later while retaining an eligible earlier booking date.
+3. **Decision:** Record actual receipt separately and preserve the [approved E10 scenario](#e10-installment-allocation). General missing-input handling, receipt precision, time zone and tie handling remain open. Queries append nothing.
+4. **Reason:** Date eligibility does not prove receipt or completeness. E10 resolves one scenario, not a general protocol.
+
+**Source:** [Study 06, receipt](../research/06-daily-closing-research.md#receipt-and-missing-inputs) and [open decisions](../research/06-daily-closing-research.md#decisions-still-open). Study 06 remains approved with these dependencies pending; revisit it when later decisions affect them.
 
 ## Overdraft Fee Assessment Base
 
-**Decision:** For the daily job in D, select inputs cumulatively with `booking_date <= D-1`. Calculate historical day H's balance from those inputs with `value_date <= H`. Exclude only H's own fee components and their adjustments already included in that balance. Keep other periods' fees and refunds at their actual value dates. A negative assessment base uses the [configured fee in the account's currency](#overdraft-fee-currency); zero or a positive base requires no fee. Holds and pending interest do not enter the base.
+### Excluding the assessed period's own fee
 
-**Ordinary assessment dates:** Assess historical day H's ordinary fee on H+1, with both booking and value dates H+1. H identifies the balance period; the fee affects funds on its actual assessment day. Corrections retain their separate dating rules below. [Study 07](../research/07-overdraft-fees-research.md#approved-assessment-dates) records this approved choice.
+1. **Ambiguity:** Should a fee help keep its own assessment base negative?
+2. **Why unclear:** The reported ledger includes fees, so an earlier fee could sustain itself after a late credit removes the original deficit.
+3. **Decision:** Apply the booking and value filters for historical day H. Remove only H's own fee components and adjustments already included. Keep other periods' charges and refunds at their actual value dates; exclude holds and pending interest.
+4. **Reason:** Prevent a circular assessment without changing the reported ledger balance. Charge the configured fee once per account per negative day; zero and positive bases incur none.
 
-**Assumption and rationale:** A fee should not sustain its own assessment after a legitimate late credit removes the original deficit. Excluding only its own period components prevents that circular result while retaining other periods' dated charges and refunds. This is an approved project interpretation, not an explicit rule in the exercise statement. The reported ledger balance still includes every financial entry passing both date filters.
+**Source:** [Study 07, approved base](../research/07-overdraft-fees-research.md#rule-and-approved-base). This is a project interpretation, not an explicit exercise rule.
 
-**Reconciliation:** Calculate `corrected fee - (original fee + all earlier adjustments)`. All earlier adjustments count in this comparison, even when excluded from the historical balance. Append only a nonzero difference, linked to the triggering transaction with a breakdown by historical day. A positive difference debits the ledger; a negative difference refunds. For legitimate late transactions, both dates remain the actual correction day. Review periods chronologically using each component's applicable dates. [Reversal fee refunds](#reversal-compensation) retain the original charge's value date, including when they affect other periods' bases. The [study 07 examples](../research/07-overdraft-fees-research.md#calculation-snapshots) are isolated scenarios, not final balances or a total assessment count.
+### Ordinary fee dates
 
-**Accepted limits:** The [pending calculation decisions](#pending-calculation-decisions) prevent a final replay fee count. The [source counter check](#yield-calculation-and-payment) still applies to every new fee submission, even when an excluded booking leaves its amount unchanged.
+1. **Ambiguity:** Does an ordinary fee use balance day H or the later assessment day?
+2. **Why unclear:** The exercise says "day assessed" while the daily job evaluates the previous day.
+3. **Decision:** Assess H's ordinary fee on H+1, with both booking and value dates H+1. Keep H as its balance-period reference.
+4. **Reason:** This follows the approved daily schedule and makes the fee affect funds when assessed. Late corrections and reversal refunds retain their separate dates.
+
+**Source:** [Study 07, assessment dates](../research/07-overdraft-fees-research.md#approved-assessment-dates).
+
+### Correcting a fee target
+
+1. **Ambiguity:** Which prior adjustments count when reconciling a revised fee?
+2. **Why unclear:** An adjustment can be excluded from H's dated balance yet already correct H's fee.
+3. **Decision:** Calculate `corrected fee - (original fee + all earlier adjustments)`. Count every prior adjustment; append only a nonzero linked difference with a breakdown by day. Positive differences debit; negative differences refund. Review periods chronologically using applicable dates.
+4. **Reason:** Separate the assessment base from the amount already recorded. Repeated unchanged targets produce zero, without losing other periods' dated effects.
+
+**Source:** [Study 07, corrections](../research/07-overdraft-fees-research.md#corrections) and [isolated examples](../research/07-overdraft-fees-research.md#calculation-snapshots). Late adjustments use correction-day dates; [reversal refunds](#reversal-compensation) retain original fee value dates. Every new fee submission still requires source counter validation; final fee counts remain open.
 
 ## Overdraft Fee Currency
 
-**Requirement and exception:** The exercise requires AED 25.00 per account per negative closing day without exempting BHD accounts. The user explicitly chose a different treatment: configure the daily fee by account type in the account's own currency, with AED 25.00 for the type corresponding to ACC-001 and BHD 0.000 for the type corresponding to ACC-002.
+1. **Ambiguity:** How should the mandatory AED 25.00 fee apply to a BHD account?
+2. **Why unclear:** The exercise exempts no account but supplies no exchange rate, reference date or conversion policy.
+3. **Decision:** Configure fees by account type in its own currency: AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type. The zero BHD fee is an explicit approved exception to the literal mandatory rule.
+4. **Reason:** The user chose simplicity because conversion requirements are missing. Neither BHD precision nor HALF_UP implies this exception.
 
-**Assumption and rationale:** Accept this departure from the literal mandatory rule for simplicity because no conversion requirements are supplied. The zero BHD fee is a project choice, not a consequence of monetary precision or HALF_UP.
-
-**Limits:** A negative BHD base produces the configured zero fee; it does not become nonnegative. Authorization still requires available balance after a new hold to remain at or above zero in the account's currency, and legitimate confirmed debits still enter the ledger. No foreign exchange, separate AED obligation, additional account types or general prohibition on negative balances is adopted. [Study 12](../research/12-fee-currency-research.md) separates the supplied principal example from final balances with interest.
+**Source:** [Study 12, exception](../research/12-fee-currency-research.md#rule-and-approved-exception) and [boundaries](../research/12-fee-currency-research.md#negative-example-and-boundaries). A negative BHD base remains negative after a zero fee. No foreign exchange, separate AED obligation, extra account types or prohibition of negative balances is adopted. New holds still need funds; confirmed debits still post.
 
 ## Reversal Compensation
 
-**Scope and decision:** Every correction in this exercise concerns a legitimate transaction; system error correction is excluded as an explicit simplification. Reverse principal once with its supplied dates. Recalculate all affected fees and daily interest from the affected value day onward, including later periods whose bases change, within the applicable calculation boundary. For each component, append only `corrected amount - (original amount + all earlier adjustments)`, including paid adjustments, linked to the reversal and affected components. Recalculation does not automatically refund every fee.
+### Principal and affected components
 
-**Fee refund dates:** Book each refund caused by reversal on the actual correction day, with value on the original charge's value date. This is method B in [study 08](../research/08-reversals-research.md). It is a limited exception to the current dating of [late transaction adjustments](#late-transaction-adjustments). A fee for balance day H is offset at its original charge's value date, which need not be H or the principal's value date.
+1. **Ambiguity:** Does E9 reverse only E7's principal or also its fee and interest consequences?
+2. **Why unclear:** The exercise names a reversal without defining compensation scope; criterion 6 claims blanket restoration.
+3. **Decision:** Reverse principal once with supplied dates. Recalculate affected fees and interest from the affected value day onward, including later changed bases within the calculation boundary. Append linked `corrected amount - (original amount + all prior adjustments)`, counting paid ones.
+4. **Reason:** Correct the reversed transaction's affected consequences without rewriting history. Recalculation does not automatically refund every fee. Legitimate transactions are assumed; system error correction is excluded.
 
-**Rationale:** Neutralize the reversed transaction's affected fee consequences at their economic dates while retaining when funds were actually returned. Funds become available when the refund is recorded. The historical value date changes reconstructed balances without delivering funds in the past or modifying earlier records. Principal only and current value dates for these refunds were not selected. Preserve every record, the approved fee assessment base and HALF_UP; do not automatically reevaluate authorizations.
+**Source:** [Study 08, scope](../research/08-reversals-research.md#approved-decisions-and-remaining-limits). E9 credits AED 620.00 with booking Day 6 and value Day 2; supplied order remains unchanged.
 
-**Interest and cutoff:** Interest differences retain both dates on the actual correction day and remain pending until an eligible regular payment, even for previously paid periods. Preserve actual payments, count paid adjustments when finding differences, and settle each pending component once. No hypothetical capitalization or interest on pending amounts is introduced. The job in D still requires `booking_date <= D-1`; E9 and adjustments booked on Day 6 cannot alter the Day 6 payment referencing Day 5.
+### Reversal fee refund dates
 
-**Accepted limits:** Study 08 leaves the [pending calculation decisions](#pending-calculation-decisions) open. The [fifteen-day simulation](../research/examples/08-reversal-15-day-simulation.md) uses approved H+1 ordinary fee dates with illustrative checkpoints, a Day 10 payment and a Day 15 consultation. Restoring principal, historical balances, net fees, interest and authorizations are distinct claims; the illustration does not establish criterion 6's blanket restoration or current replay totals.
+1. **Ambiguity:** Should a reversal fee refund use today's value date or the original fee's date?
+2. **Why unclear:** Both return money now but reconstruct different historical balances and interest.
+3. **Decision:** Use approved method B: book on the correction day and value at the original charge's value date. That date need not equal balance day H or the principal's value date.
+4. **Reason:** Neutralize affected fees at their economic dates while retaining when funds were returned. Funds become available when recorded; historical reconstruction does not deliver money in the past.
+
+**Source:** [Study 08, methods](../research/08-reversals-research.md#correcting-fees-and-interest-after-a-reversal) and [source limits](../research/08-reversals-research.md#sources-and-limits). This is a limited exception to late adjustment dates. ISO and Canopy do not mandate the project's policy.
+
+### Interest, payments and earlier decisions
+
+1. **Ambiguity:** Does method B restore every balance, payment and authorization to its earlier state?
+2. **Why unclear:** Principal, historical balances, net fees, pending interest and decisions are different records and outcomes.
+3. **Decision:** Keep interest corrections dated today and pending, including paid periods. Preserve payments and authorizations, count paid adjustments in differences, and settle components once. Apply the booking cutoff, approved fee base and HALF_UP unchanged.
+4. **Reason:** Fee refund dates do not authorize hypothetical capitalization, interest on pending amounts or automatic authorization reevaluation. Criterion 6's blanket restoration remains unsupported; current replay totals remain open.
+
+**Source:** [Study 08, limits](../research/08-reversals-research.md#approved-decisions-and-remaining-limits) and [Study 13, criterion 6](../research/13-acceptance-criteria-research.md#analysis). The [15-day simulation](../research/examples/08-reversal-15-day-simulation.md) uses illustrative checkpoints, Day 10 payment and Day 15 consultation; it establishes no replay totals.
 
 ## E10 Installment Allocation
 
-**Scenario and requirement:** E10 credits ACC-002 with BHD 10.000 in three installments, all booked and valued on Day 5. Preserve E10 after E9. BHD requires three decimal places, giving a minimum stored unit of BHD 0.001. Three equal stored amounts cannot preserve the original credit exactly.
+### Conserving the credit
 
-**Decision and rationale:** Allocate BHD 3.333, 3.333 and 3.334. Assigning the remaining BHD 0.001 to installment 3 is an approved convention: a fixed position makes the allocation reproducible and lets the final installment complete the original total. Assigning it to installment 1 or 2 would also conserve the credit. The approved HALF_UP mode remains unchanged and does not determine the remainder's position.
+1. **Ambiguity:** How can three BHD installments be equal and still total 10.000?
+2. **Why unclear:** BHD 0.001 is the smallest stored unit, and 10,000 units are not divisible by three.
+3. **Decision:** Allocate BHD 3.333, 3.333 and 3.334, giving the remaining 0.001 to installment 3. Keep ACC-002 and both supplied Day 5 dates.
+4. **Reason:** A fixed remainder position is reproducible, and the final installment completes the total. Positions 1 or 2 would also conserve it; HALF_UP does not choose the position.
 
-**Receipt and interest correction:** E10 arrives on Day 6 after E9 and after the daily job has recorded Day 5 interest without it. Preserve both supplied Day 5 dates. ACC-002's corrected Day 5 interest is BHD 0.004 instead of 0.000. Append the +0.004 difference with both dates Day 6; the booking cutoff excludes it from Day 6 payment. It remains pending until the next eligible monthly payment. This is the specific scenario approved in [study 06](../research/06-daily-closing-research.md#receipt-and-missing-inputs), not a general input-completeness policy.
+**Source:** [Study 11, remainder position](../research/11-installments-research.md#approved-remainder-position) and [source limit](../research/11-installments-research.md#source-and-limit). Mambu illustrates a loan convention, not a rule for E10.
 
-**Financial effect:** If the installments are individual financial credits, link them to E10 and do not also credit the full parent amount.
+### Late receipt and interest
 
-**Limits:** The installment representation, IDs, number of events and effect on account counters remain unspecified. This decision introduces no installment calendar, interest between installments or general allocation algorithm. Calculating final results after E10 remains proposed, subject to the [pending calculation decisions](#pending-calculation-decisions).
+1. **Ambiguity:** How does E10 affect Day 5 interest if its credit arrives after that calculation?
+2. **Why unclear:** Its supplied Day 5 dates do not tell when it actually arrives.
+3. **Decision:** E10 arrives on Day 6 after E9 and after Day 5 interest was recorded without it. Correct ACC-002's Day 5 interest from BHD 0.000 to 0.004; append +0.004 with both dates Day 6.
+4. **Reason:** The approved receipt scenario preserves supplied order and dates. The correction misses Day 6's booking cutoff and remains pending until the next eligible monthly payment.
+
+**Source:** [Study 06, approved receipt scenario](../research/06-daily-closing-research.md#receipt-and-missing-inputs). General input completeness and final results after E10 remain open.
+
+### Installment representation
+
+1. **Ambiguity:** Is E10 one event, three credits or another record structure?
+2. **Why unclear:** The exercise requires three installments without specifying their representation or IDs.
+3. **Decision:** **Open:** representation, IDs, event count and counter effects. If installments are individual financial credits, link them to E10 and never credit the full parent amount again.
+4. **Reason:** Allocation alone does not define an event model. No installment calendar, interest between installments or general allocation algorithm has been approved.
+
+**Source:** [Study 11, limits](../research/11-installments-research.md#source-and-limit).
 
 ## Pending Calculation Decisions
 
-The approved decisions above leave these calculation dependencies open.
+### Schedule and review checkpoints
 
-* **Schedule:** Business time zone, clock times and general replay checkpoints remain undecided beyond the approved E10 scenario. Midnight and a 00:30 start are proposals, as are the other review positions in [study 06](../research/06-daily-closing-research.md#decisions-still-open).
-* **Eligible inputs:** General handling of missing records that satisfy the booking cutoff remains unresolved beyond E10. Establishing complete approved inputs for an account counter also remains open under the [Yield contract](#yield-calculation-and-payment).
-* **Calculation records:** Validation of cutoff-relevant inputs and prior results, with indivisible recording, remains proposed. It does not replace the approved Authorization source counter check.
-* **Replay totals:** Final fee counts, capitalization amounts and balances remain unresolved. They depend on the remaining checkpoints and eligible input completeness; calculating final results after E10 remains proposed.
-* **Calendar:** The actual month, year and business day calendar remain unspecified. Day 6's monthly mapping and the payment period for its interest are approved, but actual future payment dates require that calendar.
-* **Zero settlement protocol:** Components settle once without a financial movement, but representation, IDs, validation, snapshots and counter effects remain unspecified. The financial payment contract does not resolve this protocol.
+1. **Ambiguity:** When exactly do jobs and historical reviews run?
+2. **Why unclear:** The daily D-1 rule and E10 receipt scenario do not set all replay checkpoints.
+3. **Decision:** **Open:** business time zone, clock times and general checkpoints. Midnight, a 00:30 start, review after E7 before E8 and review after E9 remain proposals. E8 does not close Day 5.
+4. **Reason:** No complete schedule has been approved. Illustrative examples cannot establish replay timing.
+
+**Source:** [Study 06, open decisions](../research/06-daily-closing-research.md#decisions-still-open).
+
+### Complete eligible inputs
+
+1. **Ambiguity:** How is a complete calculation input set established?
+2. **Why unclear:** A valid date or source counter does not prove all eligible approved events have arrived.
+3. **Decision:** **Open:** general handling of missing cutoff-eligible records and establishing complete approved inputs for each source account counter. E10 resolves only its stated scenario.
+4. **Reason:** Calculation boundaries are approved; a completeness mechanism is not.
+
+**Source:** [Study 06, open decisions](../research/06-daily-closing-research.md#decisions-still-open) and [architecture, input limit](../architecture.md#calculation-version-validation).
+
+### Calculation record validation
+
+1. **Ambiguity:** How are accrual and correction records protected from changes during calculation?
+2. **Why unclear:** Authorization's payment check does not define validation of eligible inputs or previous calculation results.
+3. **Decision:** **Open:** validate cutoff-relevant inputs and prior results, record indivisibly and retry on change. This remains a proposal separate from the approved Authorization source counter check.
+4. **Reason:** The calculation-record mechanism has not been selected. Excluded bookings need not change its financial result but still can invalidate an Authorization payment attempt.
+
+**Source:** [Study 06, calculation-record concurrency](../research/06-daily-closing-research.md#decisions-still-open).
+
+### Final replay totals
+
+1. **Ambiguity:** What are the final fee counts, capitalization amounts and balances?
+2. **Why unclear:** Remaining checkpoints and input completeness affect which corrections and payments are recorded.
+3. **Decision:** **Open:** final replay totals, including E7's fee count and the proposal to calculate final results after E10. Criterion 2's exactly-one-fee claim is unresolved for this replay.
+4. **Reason:** Historical counterfactuals and fictional examples establish no approved replay total.
+
+**Source:** [Study 06, open totals](../research/06-daily-closing-research.md#decisions-still-open) and [Study 13, criterion 2](../research/13-acceptance-criteria-research.md#analysis).
+
+### Actual business calendar
+
+1. **Ambiguity:** Which real dates count as monthly business days?
+2. **Why unclear:** The approved synthetic mapping names no actual month, year, jurisdiction or holidays.
+3. **Decision:** **Open:** actual month, year and business day calendar. Preserve Day 6 as the new month's first business day and its ordinary interest payment in the following month.
+4. **Reason:** The scenario mapping establishes the payment period, not future calendar dates.
+
+**Source:** [Study 10, monthly payment](../research/10-interest-capitalization-research.md#approved-monthly-payment).
+
+### Zero settlement protocol
+
+1. **Ambiguity:** How is a zero interest settlement recorded and validated?
+2. **Why unclear:** Components must settle once without a financial movement, while the payment contract covers credits and debits.
+3. **Decision:** **Open:** representation, IDs, validation, snapshots and counter effects. Keep the approved zero financial movement and component settlement policy.
+4. **Reason:** Financial policy alone does not select this protocol.
+
+**Source:** [Study 10, architecture relation](../research/10-interest-capitalization-research.md#relation-to-the-architecture).
 
 ## System and Domain Boundaries
 
-**Decision and assumption:** Keep Ledger, Authorization, and Yield and Fees in one in-memory system for the exercise. Give each domain a module with explicit interfaces and ownership of its records and behavior. Transaction is a technical entry module that communicates only with Authorization. After recording, Authorization forwards approved transactions to Yield and Fees and committed financial movements to Ledger.
+### One system with explicit modules
 
-The required test suite or script preserves replay order and inspects module outputs for the daily reports. Reporting belongs to that test activity, not the Transaction module. This replaces the earlier replay coordinator depicted as a module with direct access to Ledger and Yield.
+1. **Ambiguity:** Should Ledger, Authorization and Yield and Fees be combined or separate systems?
+2. **Why unclear:** The exercise requires an in-memory core but supplies no module design; detailed Part 2 instructions are unavailable.
+3. **Decision:** Use one in-memory system with three domain modules, explicit interfaces and ownership of their records and behavior. Keep taxes on yield and tax changes outside scope; preserve the supplied interest rate.
+4. **Reason:** Clear responsibilities make balances, holds and calculations easier to explain and test. One system limits coordination overhead.
 
-**Scope:** Tax charges on yield and changes to those taxes are outside scope. The supplied interest-rate rule remains unchanged.
+**Source:** [Architecture, scope](../architecture.md#scope-and-tradeoffs). Process count, primitives, deployment topology, language and technology remain unspecified. Current Part 2 coverage uses only its supplied title and evaluation guidance.
 
-**Rationale:** Separate responsibilities make balances, holds, and calculations easier to explain and test. One system limits coordination overhead; internal interfaces must preserve the domain boundaries. Snapshot validation and retries follow the [recording decision](#snapshot-recording-and-retries). Process count, implementation primitives, deployment topology, language, and technology remain unspecified.
+### Transaction entry and test reporting
 
-The [architecture and component view](../architecture.md) describe the boundaries and interactions. Existing policy decisions still apply, and unresolved research proposals remain open. This is the Part 2 document, based on the supplied section title and evaluation guidance.
+1. **Ambiguity:** Should the Transaction module coordinate replay and query every domain?
+2. **Why unclear:** Submitting a transaction and inspecting daily test results serve different purposes.
+3. **Decision:** Transaction communicates only with Authorization. After recording, Authorization forwards approved transactions to Yield and Fees and committed financial movements to Ledger. A separate test suite or script preserves replay order and inspects daily outputs.
+4. **Reason:** Keep entry, financial ownership and test reporting distinct. This replaces the earlier replay-coordinator module with direct Ledger and Yield access.
+
+**Source:** [Architecture, entry and replay](../architecture.md#transaction-entry-and-test-replay) and [component view](../architecture.md#c3-component-view).
 
 ## Ledger Bookkeeping
 
-**Decision:** Use double-entry bookkeeping for money movements received from Authorization. Record a debit in one book account and an equal credit in another, in the same currency. Keep both postings together as one balanced journal entry; do not record only one side. This project architecture choice is not explicitly required by the supplied exercise statement.
+### Balanced financial entries
 
-**Rationale and meaning:** Make each movement's counterpart and balanced totals explicit. Book accounts are accounting accounts, not necessarily customer accounts. Debit and credit do not universally mean money leaving and entering. The exercise's CREDIT and DEBIT events describe changes to the customer balance; their mapping to book-account postings has not been selected.
+1. **Ambiguity:** How should Ledger represent each received money movement?
+2. **Why unclear:** The exercise specifies customer balance changes but no bookkeeping model.
+3. **Decision:** Use double-entry bookkeeping: equal debit and credit postings in the same currency, kept together as one balanced journal entry. Never record only one side. Ledger records after Authorization's separate operation.
+4. **Reason:** Make each movement's counterpart and balanced totals explicit. This is an approved architecture choice, not an exercise requirement.
 
-**Still unresolved:** The chart of accounts, debit and credit mapping for each event, and how ACC-001 and ACC-002 relate to book accounts. Keeping the postings together does not select an implementation primitive. Ledger records them after Authorization's separate transaction and snapshot operation, as specified in [Ledger Delivery](#ledger-delivery).
+**Source:** [Architecture, domains](../architecture.md#domains-and-module-boundaries) and [OpenStax, section 3.1](https://openstax.org/books/principles-financial-accounting/pages/3-1-describe-principles-assumptions-and-concepts-of-accounting-and-their-relationship-to-financial-statements). OpenStax is a conceptual reference, not a jurisdictional mandate.
 
-[OpenStax, Principles of Accounting, Volume 1: Financial Accounting, section 3.1](https://openstax.org/books/principles-financial-accounting/pages/3-1-describe-principles-assumptions-and-concepts-of-accounting-and-their-relationship-to-financial-statements) explains double-entry bookkeeping and equal debit and credit totals. It is a conceptual reference, not a jurisdictional mandate for this exercise.
+### Book accounts and event mapping
+
+1. **Ambiguity:** Which book accounts and debit or credit postings represent each exercise event?
+2. **Why unclear:** Book accounts need not be customer accounts. Accounting debit and credit do not universally mean money leaving and entering.
+3. **Decision:** **Open:** chart of accounts, event-to-posting mapping and how ACC-001 and ACC-002 relate to book accounts. Keeping both postings together selects no implementation primitive.
+4. **Reason:** The balanced-entry choice does not define those mappings. Exercise CREDIT and DEBIT labels describe customer balance changes only.
+
+**Source:** [Architecture, Ledger ownership](../architecture.md#domains-and-module-boundaries) and the [recorded architecture contract](WORKLOG.md#09-september-2026-001355).
