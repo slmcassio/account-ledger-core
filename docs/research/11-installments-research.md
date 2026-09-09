@@ -2,7 +2,7 @@
 
 **Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
 
-**Integration status:** The allocation and remainder convention are adopted under [AMBIGUITIES](../deliverables/AMBIGUITIES.md#e10-installment-allocation). The source review's Day 6 receipt scenario and ensuing correction still await incorporation into the local deliverables; importing them here does not resolve [the local input-completeness questions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
+**Integration status:** The [allocation, remainder convention and Day 6 receipt scenario](../deliverables/AMBIGUITIES.md#e10-installment-allocation) are incorporated into the deliverables. General [input completeness and final totals](../deliverables/AMBIGUITIES.md#pending-calculation-decisions) remain open.
 
 ## Inputs and requirement
 

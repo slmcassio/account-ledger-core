@@ -2,7 +2,7 @@
 
 **Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
 
-**Integration status:** The source review adopted signed settlement and the Day 6 monthly mapping below. Those updates still await incorporation into this worktree's deliverables. [AMBIGUITIES](../deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) records the locally accepted payment rules, and [Pending Calculation Decisions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions) retains the unresolved local calendar and negative-total decisions.
+**Integration status:** [Signed settlement and the Day 6 monthly mapping](../deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) are incorporated into the deliverables. The actual calendar, final totals and zero-settlement protocol remain [open](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
 
 ## Approved payment and components
 

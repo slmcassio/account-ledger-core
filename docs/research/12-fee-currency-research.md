@@ -2,7 +2,7 @@
 
 **Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`.
 
-**Integration status:** The account type fee configuration and zero BHD fee below are adopted under [Overdraft Fee Currency](../deliverables/AMBIGUITIES.md#overdraft-fee-currency). This is an explicit project exception to the literal fee rule. E10 receipt timing remains part of the source review awaiting incorporation into the local deliverables under [Pending Calculation Decisions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
+**Integration status:** The [account type fee configuration and zero BHD fee](../deliverables/AMBIGUITIES.md#overdraft-fee-currency) and [E10 receipt scenario](../deliverables/AMBIGUITIES.md#e10-installment-allocation) are incorporated into the deliverables. The zero fee remains an explicit project exception to the literal fee rule.
 
 ## Rule and approved exception
 

@@ -4,7 +4,7 @@ Document each refused acceptance criterion with reasons, plus approaches actuall
 
 ## Historical Value Dates for Late Adjustments
 
-For legitimate late transaction adjustments, rejected assigning the corrected historical days as the adjustment's `value_date`. This does not reject the separately approved [reversal fee refund exception](AMBIGUITIES.md#reversal-compensation). In the [reviewed example](../examples/04-backdated-adjustment.md), J uses Day 5 for both dates; Days 2, 3, and 4 only identify the calculation periods.
+For legitimate late transaction adjustments, rejected assigning the corrected historical days as the adjustment's `value_date`. This does not reject the separately approved [reversal fee refund exception](AMBIGUITIES.md#reversal-compensation). In the [reviewed example](../examples/04-backdated-adjustment.md), J uses its Day 6 correction checkpoint for both dates; Days 2, 3, and 4 only identify the calculation periods.
 
 Under the approved project decision, the fee component affects the balance from its recording day. Posting that debit or credit against historical days would also change those days' ledger balances. Interest differences remain pending until the [next eligible regular payment](AMBIGUITIES.md#interest-adjustments-wait-for-payment); their dates do not create a historical ledger credit. The original delayed transaction retains its supplied historical value date.
 

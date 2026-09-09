@@ -2,7 +2,7 @@
 
 **Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
 
-**Integration status:** The ordinary fee dates and E10 receipt scenario below are decisions from the source review that still await incorporation into this worktree's deliverables. [AMBIGUITIES](../deliverables/AMBIGUITIES.md#pending-calculation-decisions) records the current accepted scope and remaining questions. The local architecture and supplied-ID rules are preserved in [Relation to the architecture](#relation-to-the-architecture).
+**Integration status:** [Ordinary fee dates](../deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base) and the [E10 receipt scenario](../deliverables/AMBIGUITIES.md#e10-installment-allocation) are incorporated into the deliverables. General calculation questions remain [open](../deliverables/AMBIGUITIES.md#pending-calculation-decisions). The architecture and supplied-ID rules are preserved below.
 
 ## Agreed operation
 
@@ -47,7 +47,7 @@ E9 can leave the Day 6 payment amount unchanged because its booking is excluded,
 * **Missing inputs:** General input completeness remains open beyond the E10 scenario.
 * **Calculation-record concurrency:** Proposed validation of eligible inputs and prior results, followed by indivisible recording and retry if they changed. At this calculation layer, excluded future bookings alone require no retry. This does not replace Authorization's approved source counter check; the calculation-record mechanism remains undecided.
 
-Final E7 fee counts and replay totals remain open. Legacy examples [04](../examples/04-backdated-adjustment.md) and [08](../examples/08-daily-closing.md) establish no current totals; the [reversal simulation](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) supplies no replay calendar. Apply the approved [fee base](07-overdraft-fees-research.md#rule-and-approved-base) and [monthly payment](10-interest-capitalization-research.md#approved-monthly-payment). [Study 12](12-fee-currency-research.md#rule-and-approved-exception) records the [adopted fee currency decision](../deliverables/AMBIGUITIES.md#overdraft-fee-currency): account type configuration in the account currency, with AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type.
+Final E7 fee counts and replay totals remain open. Fictional examples [04](../examples/04-backdated-adjustment.md) and [08](../examples/08-daily-closing.md) establish no current totals; the [reversal simulation](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) supplies no replay calendar. Apply the approved [fee base](07-overdraft-fees-research.md#rule-and-approved-base) and [monthly payment](10-interest-capitalization-research.md#approved-monthly-payment). [Study 12](12-fee-currency-research.md#rule-and-approved-exception) records the [adopted fee currency decision](../deliverables/AMBIGUITIES.md#overdraft-fee-currency): account type configuration in the account currency, with AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type.
 
 **Review status:** Study 06 remains approved with these dependencies explicitly pending.
 

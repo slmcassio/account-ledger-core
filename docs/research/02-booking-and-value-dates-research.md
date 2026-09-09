@@ -24,7 +24,7 @@ The net amount includes the original result and **all prior adjustments, paid or
 
 ## Example
 
-The [legacy example 04](../examples/04-backdated-adjustment.md), outside research, follows three transactions and their adjustment: AED 75.00 for three negative closing days and an AED 1.20 reduction in unpaid interest. Its AED 0.58 final credit follows its retained earlier schedule, not the [approved booking cutoff](06-daily-closing-research.md#agreed-operation).
+The [fictional example 04](../examples/04-backdated-adjustment.md) uses an illustrative Day 6 review: AED 75.00 in corrective fees and -1.20 in pending interest for three historical days. Under the [approved booking cutoff](06-daily-closing-research.md#agreed-operation), the correction booked Day 6 is excluded from that day's 1.72 payment. Its checkpoint and balances are example data, not replay results.
 
 ## Sources and limits
 

@@ -18,7 +18,7 @@ The [study's independent bases](../research/09-daily-interest-research.md) are e
 
 ## Values Used in the Late Transaction Example
 
-These results retain example 04's earlier closing schedule. Its final payment includes Day 6 interest and awaits alignment with the [approved booking cutoff](AMBIGUITIES.md#daily-calculation-timing); it is not a current expected payment.
+Example 04 applies the [approved booking cutoff](AMBIGUITIES.md#daily-calculation-timing) with an illustrative Day 6 historical review. Its results describe that fixture, not the supplied replay.
 
 The [exercise](../exercise-inputs/exercise-statement.md) supplies the fee, rate, and precision below. The capitalization day is the endpoint of its six-day scenario. Halving a supplied value would change the rule or scenario it defines.
 
@@ -35,12 +35,12 @@ The [fictional example](../examples/04-backdated-adjustment.md) uses these input
 |---|---|
 | AED 0.00 opening balance | Makes every balance traceable to the listed transactions. Half is still zero. |
 | A: AED 1,000.00 credit | Establishes the positive balance before the delayed debit. With 500.00, Day 5 would also be negative. |
-| B: AED 500.00 credit | Keeps Day 5 positive after the adjustment. With 250.00, the balance after the historical fee adjustment would be -25.00. |
+| B: AED 500.00 credit | Keeps the balance positive after the Day 6 fee correction. With 250.00, the balance after the historical fee adjustment and before payment would be -25.00. |
 | C: AED 1,200.00 debit | Makes the historical balance -200.00. A debit of 600.00 would leave it positive and produce no historical fee. |
 
 A has Day 1 booking and value dates. B has both dates on Day 5. C is booked on Day 5 with Day 2 value date, so the example covers three already closed days, Days 2 through 4. These dates illustrate delayed delivery; they are not configurable numeric limits.
 
-Derived results are three fees totaling 75.00, unpaid interest reduced by 1.20, a current balance of 225.00, interest capitalization of 0.58, and a final balance of 225.58. They follow from the example's inputs and adopted adjustment dates; they are not universal expected balances.
+Derived results are three corrective fees totaling 75.00, a pending interest correction of -1.20 and a balance of 225.00 before payment. Both correction dates are Day 6. Day 5's base remains 300.00 and earns 0.12. Day 6 pays the original 1.60 plus 0.12, totaling 1.72, and excludes the correction booked that day. Closing balance is 226.72, with -1.20 pending. Day 7 calculates Day 6 interest: `226.72 * 0.0004 = 0.090688`, rounded to 0.09 for the next month's payment. These are fixture results, not final replay balances.
 
 ## Values Used in the Unmatched Settlement Example
 
@@ -96,22 +96,15 @@ Days 1 through 6 are the supplied replay window. The decision to generate no aut
 
 ## Values Used in the Daily Closing Example
 
-These calculations retain example 08's earlier proposal without the subsequently approved booking cutoff. They await alignment and are not current expected results.
+The [fictional example](../examples/08-daily-closing.md) uses the exercise's 0.04% rate and AED precision. Its inputs are scenario data, not business constants; each comparison below halves one input independently.
 
-The [fictional example](../examples/08-daily-closing.md) uses the exercise's 0.04% daily rate and AED's two decimal places. Its interest amounts are exact at that precision. The following amounts are scenario data; each comparison halves one input while keeping the others unchanged.
+* Opening balance, holds and unpaid interest are 0.00 to isolate the listed events; half remains zero.
+* A credits 100.00, producing Day 1 interest of 0.04. Halving A gives an original 0.02 and a revised 0.06 after both late credits become eligible.
+* B and C each credit 50.00, with distinct IDs. Halving either gives a revised base of 175.00 and daily interest of 0.07. Equal amounts and dates do not make distinct IDs duplicates.
 
-| Input | Purpose and reason for the value |
-|---|---|
-| AED 0.00 opening balance, holds, and unpaid interest | Makes the listed entries explain the entire state. Half remains zero. |
-| A: AED 100.00 credit | Produces an initial interest target of 0.04. Halving A to 50.00 leaves a final balance of 150.00 and unpaid Day 1 interest of 0.06. |
-| B: AED 50.00 credit | Changes the target while the first calculation is running. Halving B to 25.00 makes the first recorded interest 0.05 and the final unpaid interest 0.07. |
-| C: AED 50.00 credit | Changes the target after interest has been recorded. Its equality to B shows why amounts and dates alone cannot identify a duplicate. Halving C to 25.00 makes the adjustment 0.01 and the final unpaid interest 0.07. |
+The Day 2 job uses booking cutoff Day 1 and records 0.04. B and C are booked Day 2 and valued Day 1: they raise current funds to 200.00 but are excluded from that job. At the illustrative Day 3 historical review, each adds 0.02 to the recorded Day 1 interest, totaling `0.04 + 0.02 + 0.02 = 0.08`. Both adjustments have booking and value dates Day 3. These dates expose the cutoff and correction treatment without setting a general checkpoint.
 
-The original 0.04 target is never recorded. I1 records 0.06; J1 adds 0.02, producing 0.08 in unpaid Day 1 interest. The final ledger balance is 200.00. These are derived results, not new constants. Redelivery of C preserves its identity and adds no second 50.00 credit.
-
-Day 1 is the calculation period; B, C, and J1 have Day 2 booking dates. B and C retain Day 1 value dates, while J1 has Day 2 value date under the approved adjustment method. The example ends at 00:37 on Day 2, before that day's close and before capitalization. Its clock times separate reading, arrivals, recording, and repetition; they are not processing deadlines.
-
-The proposed 00:00 boundary and earliest 00:30 job start reflect the user's scheduling proposal. The 30-minute interval is not a measured delivery limit or a guarantee of complete input. Halving it to 15 minutes would change the proposed start time but would not remove the need to handle late arrivals. Clock times, business time zone, and positions of closing calculations in the supplied replay remain unresolved; the previous-day reference and booking cutoff are approved.
+The proposed midnight boundary and 00:30 start remain unresolved alongside the time zone. The 30-minute gap is not a measured delivery limit or completeness guarantee; halving it would change only the proposed start time. The example selects no clock times.
 
 ## Values Used in the Pending Interest Illustration
 
@@ -133,7 +126,7 @@ Both hypothetical accounts open at 0.00 with no holds; half of zero remains zero
 
 The first snapshot's original inputs give Day 1 and Day 2 bases of -10.00 and 10.00. With no previously recorded fees for those periods, their correction amounts are 25.00 and zero. The second gives bases of 10.00 and -15.00. Day 1's target changes from its recorded 25.00 to zero, requiring a 25.00 refund. These are derived historical calculations, not final account balances or a total assessment count.
 
-The snapshots use a Day 6 job and Day 5 booking cutoff so every listed input is eligible. Credits or debits with Day 1 value date illustrate a historical effect. The first snapshot's second credit and the second snapshot's existing fee have Day 2 value dates. That fee's Day 2 assessment and booking are scenario data, not an approved ordinary schedule. Late transaction corrections in these snapshots assessed on Day 6 have both dates on Day 6; the [reversal refund exception](AMBIGUITIES.md#reversal-compensation) does not apply to them. These dates isolate cutoff and adjustment effects; they introduce no business deadline or replay checkpoint.
+The snapshots use a Day 6 job and Day 5 booking cutoff so every listed input is eligible. Credits or debits with Day 1 value date illustrate a historical effect. The first snapshot's second credit and the second snapshot's existing fee have Day 2 value dates. That fee's Day 2 assessment, booking and value dates follow the approved H+1 ordinary schedule for Day 1. Late transaction corrections in these snapshots assessed on Day 6 have both dates on Day 6; the [reversal refund exception](AMBIGUITIES.md#reversal-compensation) does not apply to them. These dates isolate cutoff and adjustment effects; they introduce no business deadline or replay checkpoint.
 
 For the supplied E7 scenario, the Day 2 principal balance is `1,200.00 - 950.00 - 620.00 = -370.00`. Day 3 adds 400.00, giving 30.00; Day 4 subtracts E5's 185.00 and E6's 180.00, giving -335.00. These calculations include E7 and exclude E9, fees, and capitalization. They establish no final number of assessments. See the [open dependencies](AMBIGUITIES.md#overdraft-fee-assessment-base).
 
@@ -146,15 +139,25 @@ The [study 08 comparison](../research/08-reversals-research.md#one-fee-two-outco
 * The exercise supplies the 25.00 fee, 0.04% daily rate and AED's two decimal places; HALF_UP is approved. Each 25.00 fee changes the unrounded daily interest by 0.01. Changing these inputs changes the exercise's rule.
 * No initial holds or pending interest keeps the financial effects traceable. Zero remains zero when halved. Exact multiplication and one daily currency rounding follow the [approved daily interest rule](AMBIGUITIES.md#daily-interest-calculation). The other assumptions remain illustrative.
 
-Day 1 is the opening, Day 5 the debit's booking/value date, Days 9 and 12 alternative reversal bookings, and Day 10 the only payment. Day 15 is consultation after the routine for reference Day 14. These dates compare correction before and after the payment, not a general calendar. The ordinary job precedes financial events, with reference and cumulative booking cutoff D-1. Its fee for H is assessed, booked and valued on H+1; an immediate corrective checkpoint after reversal is illustrative. Neither schedule settles study 06's pending checkpoints or ordinary assessment dates.
+Day 1 is the opening, Day 5 the debit's booking/value date, Days 9 and 12 alternative reversal bookings, and Day 10 the only payment. Day 15 is consultation after the routine for reference Day 14. These dates compare correction before and after the payment, not a general calendar. The ordinary job precedes financial events, with reference and cumulative booking cutoff D-1. Its fee for H is assessed, booked and valued on H+1; an immediate corrective checkpoint after reversal is illustrative. H+1 follows the approved ordinary fee schedule; the corrective checkpoint remains illustrative and does not settle study 06's general checkpoint questions.
 
 The four or seven fees and their 100.00 or 175.00 refunds follow from those inputs. Reversal refunds are booked on the actual correction day and valued on each original charge's date under B; interest corrections keep both dates on the correction day and remain pending. The linked calculation records the derived daily targets, actual payments and final balances, including Day 10's payment in later interest bases. These results establish no current replay total.
+
+## Interest Settlement and Calendar Examples
+
+The [approved payment decision](AMBIGUITIES.md#interest-payment-schedule-and-capitalization) maps Day 6 to the first business day of a new month and Day 5 to the preceding month end. Dates 26, 27, 28, 29, 30 and 01 illustrate a 30-day month; they are scenario labels, not business constants or an actual calendar. Halving them would not preserve this mapping. Day 6 interest is calculated on Day 7 and paid on the first business day of the following month.
+
+[Study 10](../research/10-interest-capitalization-research.md) supplies independent eligible components: `0.10 + 0.20 - 0.02 = 0.28` credits; `0.10 - 0.30 = -0.20` debits and takes a zero balance to -0.20. A zero eligible total settles its components without moving funds. These examples illustrate the sign rule, not final payments. Halving an input changes the total; zero remains zero when halved.
+
+Its capitalization example credits 0.01 to 12.49, giving 12.50. At 0.0004, Day 7 calculates `12.50 * 0.0004 = 0.005`, rounded to 0.01; without the credit, `12.49 * 0.0004 = 0.004996` rounds to 0.00. These inputs expose a rounding boundary; halving them no longer probes that boundary.
 
 ## E10 Installment Values
 
 The [exercise](../exercise-inputs/exercise-statement.md#event-stream) supplies E10's BHD 10.000 credit to ACC-002, three installments and Day 5 booking and value dates. E10 remains after E9 in the supplied replay order. These are scenario inputs, not business constants. Halving the amount or changing the count or dates would change E10.
 
 BHD's required three decimal places give a minimum stored unit of 0.001. Half of that unit is 0.0005, which cannot be stored at that precision. Thus `10,000 = 3 * 3,333 + 1` minimum units. The [approved allocation](AMBIGUITIES.md#e10-installment-allocation) assigns the remaining unit to installment 3, deriving BHD 3.333, 3.333 and 3.334, totaling 10.000. The position is a convention, not a monetary constant. HALF_UP does not determine it.
+
+Under the [approved receipt scenario](AMBIGUITIES.md#e10-installment-allocation), E10 arrives on Day 6 after E9 and after Day 5 interest was recorded as 0.000. The revised target is `10.000 * 0.0004 = 0.004`, so append +0.004 with both dates Day 6. It is excluded from Day 6 payment and remains pending until the next eligible monthly payment. This derived correction does not establish final balances or installment event counts.
 
 Criterion 7 gives `3 * 3.334 = 10.002`, an excess of BHD 0.002. Rounding each exact third independently with HALF_UP gives `3 * 3.333 = 9.999`, leaving BHD 0.001 unallocated. These are derived comparisons, not permitted changes to the original credit.
 

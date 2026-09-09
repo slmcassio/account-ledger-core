@@ -2,7 +2,7 @@
 
 **Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`.
 
-**Integration status:** This assessment retains the source review for reference. [AMBIGUITIES](../deliverables/AMBIGUITIES.md) records this worktree's accepted decisions and remaining questions. The [rejection of criterion 8](../deliverables/REJECTED.md#acceptance-criterion-8) is adopted; [REJECTED](../deliverables/REJECTED.md) remains the record of adopted refusals. This does not adopt other source decisions that remain pending in the local deliverables.
+**Integration status:** [AMBIGUITIES](../deliverables/AMBIGUITIES.md) records the adopted decisions, including ordinary fee dates, E10 receipt, monthly mapping and signed settlement, and remaining questions. [REJECTED](../deliverables/REJECTED.md) records adopted refusals, including [criterion 8](../deliverables/REJECTED.md#acceptance-criterion-8). This assessment establishes no final replay totals.
 
 ## Reference and scope
 

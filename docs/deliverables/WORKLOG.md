@@ -10,6 +10,15 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 09 September 2026, 00:38:38
+
+Recorded in America/Sao_Paulo. This timestamp records the entry, not execution start, completion time or duration.
+
+* Reconciled the deliverables with four previously approved research decisions: ordinary fees assessed, booked and valued on H+1; E10 received on Day 6 after E9 and the Day 5 calculation, with its +0.004 correction pending; Day 6 as the first business day of the new month; and settlement by the eligible total's sign, including debits and zero totals. Updated [AMBIGUITIES](AMBIGUITIES.md), [corrected business rules](../exercise-inputs/business-rules-corrected.md), [architecture](../architecture.md), [NUMBERS](NUMBERS.md) and research integration notes. This closes the documentation gap recorded in the preceding entry.
+* Aligned examples [04](../examples/04-backdated-adjustment.md) and [08](../examples/08-daily-closing.md) with the booking cutoff. Example 04 now uses an illustrative Day 6 correction checkpoint, pays AED 1.72, closes at 226.72 and leaves -1.20 pending. Example 08 records Day 1 interest of 0.04, then two 0.02 corrections at an illustrative Day 3 review. Updated the related numerical notes, study 02 reference and REJECTED example dates. These fixtures establish no replay checkpoints or final replay totals.
+* Preserved general input completeness, clock and time zone, other replay checkpoints, actual future calendar dates, calculation-record validation, and final replay totals as open questions. Zero settlement's financial policy is approved; its representation, IDs, validation, snapshots and counter effects remain unspecified. E10 installment representation and counters also remain open.
+* Reviewed the diff and whitespace, checked all local Markdown links and anchors, and passed 35 exact decimal arithmetic checks. Verified unchanged snapshot contracts, C3 diagram, account counter section, fee configuration, original exercise statement and historical worklog entries. No executable ledger or test suite exists; no implementation was added. The user authorized a local signed commit; no push is included in this task.
+
 ### 09 September 2026, 00:13:55
 
 Recorded in America/Sao_Paulo. This timestamp records the entry, not execution start, completion time or duration.

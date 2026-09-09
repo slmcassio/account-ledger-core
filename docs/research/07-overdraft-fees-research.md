@@ -2,7 +2,7 @@
 
 **Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
 
-**Integration status:** The assessment base is adopted in [AMBIGUITIES](../deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base). The ordinary assessment dates below are decisions from the source review that still await incorporation into this worktree's deliverables. The [account type fee configuration and zero BHD fee](../deliverables/AMBIGUITIES.md#overdraft-fee-currency) are adopted.
+**Integration status:** The [assessment base and ordinary H+1 dates](../deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base) and [account type fee configuration](../deliverables/AMBIGUITIES.md#overdraft-fee-currency) are incorporated into the deliverables.
 
 ## Rule and approved base
 

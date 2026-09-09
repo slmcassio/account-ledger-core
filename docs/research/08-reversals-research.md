@@ -2,7 +2,7 @@
 
 **Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
 
-**Integration status:** Method B and pending interest corrections remain adopted under [AMBIGUITIES](../deliverables/AMBIGUITIES.md#reversal-compensation). References below to the source review's ordinary fee dates, Day 6 calendar mapping and signed settlement do not incorporate those updates into the local deliverables; their current status remains in [Pending Calculation Decisions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
+**Integration status:** [Method B](../deliverables/AMBIGUITIES.md#reversal-compensation), [ordinary fee dates](../deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base), and [monthly mapping and signed settlement](../deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) are incorporated into the deliverables. Illustrative checkpoints establish no final replay totals.
 
 <a id="what-a-and-b-do"></a>
 

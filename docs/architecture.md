@@ -46,17 +46,17 @@ The financial booking cutoff does not replace this operational check. An exclude
 
 Under the [daily timing decision](deliverables/AMBIGUITIES.md#daily-calculation-timing), the job in day D references D-1. Select cumulative inputs with `booking_date <= D-1`, then effects with `value_date <= calculated day`. The job's accrual and payment are outputs. Operational effects remain immediate.
 
-Keep unpaid accruals and adjustments separate from posted money. Under the [component settlement decision](deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment), link each eligible component to exactly one payment, preserve earlier payments, and retain settled components for later difference calculations. Pending interest is outside ledger and available balances and earns no interest.
+Keep unpaid accruals and adjustments separate from posted money. Under the [component settlement decision](deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment), link each eligible component to exactly one settlement, preserve earlier payments, and retain settled components for later difference calculations. Pending interest is outside ledger and available balances and earns no interest.
 
-The [payment decision](deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) separates the accrual period from the booking cutoff. Record each credit with its actual payment dates, after its calculation. Subsequent balance calculations include it according to those dates. [Study 10](research/10-interest-capitalization-research.md) explains the schedule and examples.
+The [payment decision](deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) separates the accrual period from the booking cutoff. Settle positive totals as credits and negative totals as debits, even into a negative balance. Record each financial payment with its actual dates, after calculation. Subsequent balance calculations include financial payments according to those dates. A zero total settles components without moving funds; its protocol remains open. [Study 10](research/10-interest-capitalization-research.md) explains the schedule and examples.
 
-Apply the [daily interest rule](exercise-inputs/business-rules-corrected.md#approved-interpretation-daily-interest-calculation) and [payment rules](exercise-inputs/business-rules-corrected.md#approved-interpretation-active-calculations). [Pending decisions](deliverables/AMBIGUITIES.md#pending-calculation-decisions) include calendar and payment limits, negative totals, and calculation-record validation.
+Apply the [daily interest rule](exercise-inputs/business-rules-corrected.md#approved-interpretation-daily-interest-calculation) and [payment rules](exercise-inputs/business-rules-corrected.md#approved-interpretation-active-calculations). [Pending decisions](deliverables/AMBIGUITIES.md#pending-calculation-decisions) include the actual business day calendar, zero-settlement protocol and calculation-record validation.
 
 ## Overdraft fee assessment and corrections
 
 Apply the [daily input selection](#daily-calculation-and-capitalization-rules). For historical day H, exclude only H's own fee components and adjustments from its dated balance; retain other periods' fees and refunds at their actual value dates. Holds and pending interest do not enter the base. This [assessment method](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base) prevents a fee from sustaining itself without changing the reported ledger balance.
 
-Configure fees by account type in its own currency under the [approved currency exception](exercise-inputs/business-rules-corrected.md#approved-exception-overdraft-fee-currency).
+Assess the ordinary fee for H on H+1, with both booking and value dates H+1. Configure fees by account type in its own currency under the [approved currency exception](exercise-inputs/business-rules-corrected.md#approved-exception-overdraft-fee-currency).
 
 Calculate `corrected fee - (original fee + all earlier adjustments)`, including adjustments excluded from the assessment base. Append only a nonzero difference, linked to its trigger with a breakdown by day. Positive differences debit; negative differences refund. Review periods chronologically.
 
@@ -86,7 +86,7 @@ Use [study 13](research/13-acceptance-criteria-research.md#analysis) for criteri
 
 ### E10 installment allocation
 
-The [approved allocation](deliverables/AMBIGUITIES.md#e10-installment-allocation) preserves E10's credit exactly. [Study 11](research/11-installments-research.md#small-example) explains the remainder convention; [NUMBERS](deliverables/NUMBERS.md#e10-installment-values) records the inputs and calculations.
+The [approved allocation and receipt scenario](deliverables/AMBIGUITIES.md#e10-installment-allocation) preserve E10's credit and Day 5 dates. It arrives on Day 6 after E9 and the Day 5 calculation; its interest correction remains pending until the next eligible monthly payment. [Study 11](research/11-installments-research.md#small-example) explains the remainder convention; [NUMBERS](deliverables/NUMBERS.md#e10-installment-values) records the inputs and calculations.
 
 If installments are individual financial credits, link them to E10 without also crediting the parent. Representation, IDs, event count and counter effects remain unspecified.
 
