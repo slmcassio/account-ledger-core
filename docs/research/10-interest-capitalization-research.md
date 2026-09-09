@@ -10,9 +10,9 @@ Sum eligible unpaid daily accruals and positive or negative interest adjustments
 
 ## Why pending interest earns nothing
 
-Pending interest stays outside the ledger and available balances, so it earns nothing until paid, including hypothetical returns from earlier payment dates. This project choice keeps daily calculations easy to explain. The exercise supplies 0.04% per day; we are not choosing a different rate.
+Pending interest stays outside ledger and available balances and earns nothing until paid, including hypothetical returns from earlier payment dates. This project choice simplifies daily calculations without changing the exercise's 0.04% daily rate.
 
-A real provider defines its offered rate and terms within applicable regulatory constraints. We are not certain this simplified choice suits every regulated product. [CBUAE Consumer Protection Standards](https://www.centralbank.ae/media/5crd24gm/cp-standards-pdf.pdf#page=26), 2.1.2.4 and 2.3.2.2(d) and (e), require disclosure of payment frequency and the compounding basis; they do not establish our method. Applicability and compliance have not been established, and currency alone does not determine jurisdiction. Payment frequency alone does not determine compounding.
+A real provider defines its rate and terms within applicable regulation; this simplified choice may not suit every regulated product. [CBUAE Consumer Protection Standards](https://www.centralbank.ae/media/5crd24gm/cp-standards-pdf.pdf#page=26), 2.1.2.4 and 2.3.2.2(d) and (e), require disclosure of payment frequency and the compounding basis, but do not establish our method. Applicability and compliance remain unestablished. Currency alone does not determine jurisdiction; payment frequency alone does not determine compounding.
 
 ## Approved capitalization date
 
@@ -28,6 +28,6 @@ This is an explicit exercise choice. No business day calendar or mapping of synt
 
 ## Remaining questions
 
-[Study 06](06-daily-closing-research.md#receipt-and-missing-inputs) covers receipt, missing eligible inputs and checkpoints. If correction follows payment, preserve that payment and keep interest differences pending until the next eligible monthly payment. Final replay amounts remain open.
+[Study 06](06-daily-closing-research.md#receipt-and-missing-inputs) covers receipt, missing eligible inputs and checkpoints; final replay amounts remain open. A correction after payment waits for the next eligible monthly payment under the component rules above.
 
 **Negative total:** eligible AED accrual 0.10 and correction -0.30 give -0.20. Carrying this against future interest or debiting the account requires a policy. Recommend carrying it to preserve payment as a credit; neither option is approved.

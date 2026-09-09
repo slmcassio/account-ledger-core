@@ -2,9 +2,9 @@
 
 ## Rule and approved calculation
 
-For each account and day, multiply its positive closing ledger balance by `0.0004`, then round once with HALF_UP to two decimal places for AED or three for BHD. Zero and negative balances earn nothing. Keep the product exact until daily rounding, with no intermediate rounding or fractions carried between days. Each daily amount is reproducible from its own base.
+For each account and day, multiply its positive closing ledger balance by `0.0004`, then round once using [HALF_UP and the currency's precision](01-rounding-research.md#scope). Zero and negative balances earn nothing. Keep the product exact until daily rounding, with no intermediate rounding or fractions carried between days. Each daily amount is reproducible from its own base.
 
-The [exercise](../exercise-statement.md#nonnegotiable-rules) supplies the daily rate and currency precisions. The [approved calculation](../deliverables/AMBIGUITIES.md#daily-interest-calculation) separates monetary precision from calculation precision: exact products need at most six fractional places for AED or seven for BHD, with no limit implied on integer digits. No language is selected.
+The [exercise](../exercise-statement.md#nonnegotiable-rules) supplies the daily rate and currency precisions. Exact products need at most six fractional places for AED or seven for BHD, distinct from stored monetary precision, with no limit implied on integer digits. No language is selected.
 
 ## Why the stages matter
 
@@ -17,19 +17,17 @@ Two days at AED 465.00 each give `0.186000 → 0.19` daily. Pay their sum, `0.38
 
 ## Corrections and payment
 
-`new adjustment = corrected daily interest - interest already recorded for that day`
-
-“Already recorded” means the original accrual plus every earlier adjustment, including paid ones. Both sides are monetary amounts rounded for that day.
+Apply [study 02's incremental comparison](02-booking-and-value-dates-research.md#approved-adjustment-method) to monetary amounts rounded for that day.
 
 **Example:** assume a day originally accrued AED 1.00 and received an earlier adjustment of +0.20. Its recorded total is 1.20. If its corrected daily interest is now 1.30, append only `1.30 - 1.20 = +0.10`. Paying the earlier 0.20 does not remove it from this comparison. Repeating gives `1.30 - (1.00 + 0.20 + 0.10) = 0.00`.
 
 Compare rounded targets, not raw differences: changing the base from 12.49 to 12.50 changes daily interest from 0.00 to 0.01, although the raw difference `0.000004` rounds to zero.
 
-Every interest adjustment uses the actual correction day for both dates and [stays pending](../deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment), even for paid periods. Pending interest changes neither ledger nor available balance and earns nothing. Preserve earlier payments; settle each eligible unpaid component once.
+Interest adjustments retain the correction dates defined in study 02 and [remain pending until eligible payment](10-interest-capitalization-research.md#approved-payment-and-components), even for paid periods.
 
 ## Remaining dependencies
 
-The [D−1 booking cutoff](06-daily-closing-research.md#agreed-operation) and [reversal fee refund dates](08-reversals-research.md#approved-decisions-and-remaining-limits) remain approved. Study 06's checkpoints, ordinary assessment dates, missing inputs and final E7 fee count remain open, so actual bases and totals are unresolved. [Study 10](10-interest-capitalization-research.md) now defines payment dates and a monthly schedule, with calendar mapping and negative totals unresolved. Older examples establish no current replay results.
+The [booking cutoff](06-daily-closing-research.md#agreed-operation) and [reversal fee refund dates](08-reversals-research.md#approved-decisions-and-remaining-limits) remain approved. Actual bases and totals depend on [study 06's open decisions](06-daily-closing-research.md#decisions-still-open) and [study 10's payment questions](10-interest-capitalization-research.md#approved-monthly-payment). Older examples establish no current replay results.
 
 ## Technical reference
 

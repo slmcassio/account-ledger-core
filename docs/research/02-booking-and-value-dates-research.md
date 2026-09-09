@@ -11,20 +11,20 @@ This report covers legitimate transactions delivered after they occurred, such a
 
 Neither date necessarily identifies when an event occurred or arrived. Preserve the supplied dates and event order. Append records without changing earlier records.
 
-The [exercise](../exercise-statement.md) requires a fee's `value_date` to equal the "day assessed". The project interprets this as the current assessment day for an adjustment. Historical days identify the calculation periods.
+The [exercise](../exercise-statement.md) requires a fee's `value_date` to equal the "day assessed". For late transaction adjustments, the project uses the current assessment day; historical days identify calculation periods. [Reversal fee refunds](08-reversals-research.md#approved-decisions-and-remaining-limits) are a narrow exception: current booking, original fee value date.
 
 ## Approved adjustment method
 
 1. Append the original transaction with its supplied dates.
 2. Recalculate the affected fees and interest. For each component, calculate `adjustment = corrected amount - net amount already recorded`.
-3. Append a separate adjustment linked to the transaction. Use the correction day for both `booking_date` and `value_date`.
+3. Append only a nonzero adjustment, separately linked to the transaction, using the correction day for both dates except for reversal fee refunds above.
 4. Keep a breakdown by historical day and component.
 
-The net amount includes the original result and all prior adjustments, paid or unpaid. The adjustment never repeats the principal. Fee differences debit or credit the ledger. Every interest difference remains pending until the next regular payment whose booking cutoff includes it, even when correcting a previously paid period. It is unavailable and earns no interest before capitalization. Preserve earlier payments and settle each unpaid component only once. See the [decision, rationale, and limits](../deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment).
+The net amount includes the original result and **all prior adjustments, paid or unpaid**. Never repeat the principal. Fee differences debit or credit the ledger. Interest differences, including corrections of paid periods, [remain pending until eligible payment](10-interest-capitalization-research.md#approved-payment-and-components); that study defines their balance treatment, rationale and payment limits.
 
 ## Example
 
-The [fictional example](../examples/04-backdated-adjustment.md) follows three transactions and their adjustment. The adjustment charges AED 75.00 for three negative closing days and reduces unpaid interest by AED 1.20. Its AED 0.58 final credit follows the earlier schedule explicitly retained in that example, not the currently approved booking cutoff.
+The [legacy example 04](../examples/04-backdated-adjustment.md), outside research, follows three transactions and their adjustment: AED 75.00 for three negative closing days and an AED 1.20 reduction in unpaid interest. Its AED 0.58 final credit follows its retained earlier schedule, not the [approved booking cutoff](06-daily-closing-research.md#agreed-operation).
 
 ## Sources and limits
 

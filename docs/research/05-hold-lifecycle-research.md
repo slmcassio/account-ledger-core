@@ -6,7 +6,7 @@ This study covers settlement, release, and expiration of holds within the in-mem
 
 ## Settlement rule
 
-Under the [approved interpretation](03-unmatched-settlements-research.md), SETTLEMENT reports a legitimate payment already settled externally. Append its actual debit with the supplied dates, even if the local hold is missing, released, or expired. This supports criterion 3.
+Under the [approved interpretation](03-unmatched-settlements-research.md#the-approved-decision), SETTLEMENT reports a legitimate payment already settled externally. Append its actual debit with the supplied dates, even if the local hold is missing, released, or expired. This supports criterion 3.
 
 ## Approved policy: settlement and release
 
@@ -24,7 +24,7 @@ Preserve the original authorization and decision records. Append reservation cha
 
 Generate no automatic expiration during Days 1 through 6 because the scenario supplies no policy or deadline. This does not mean holds never expire. Beyond the replay, duration, time reference, and update rules remain undefined.
 
-Auth-B has a hold only if approved. Later balance corrections follow the [approved authorization policy](04-authorization-decisions-research.md).
+Auth-B has a hold only if approved. Later balance corrections follow the [authorization policy](04-authorization-decisions-research.md#approved-policy-later-balance-corrections).
 
 ## Example
 

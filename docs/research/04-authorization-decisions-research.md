@@ -26,7 +26,7 @@ Process each request in the supplied event order. Use the ledger balance and act
 
 Updating the balance and reconsidering a decision are separate actions.
 
-**Approved decision:** Preserve the original decision and do not automatically reevaluate it after a balance correction. A later increase in funds does not activate a declined request. Evaluate a new explicit request against the updated balance and active holds.
+**Approved decision:** Preserve the original decision without automatic reevaluation after a balance correction. More funds do not activate a declined request. Evaluate a new explicit request against the updated balance and active holds.
 
 This policy keeps each decision tied to the information available when the request was processed. It is a project choice. Immutability alone does not determine whether to append a corrective decision.
 

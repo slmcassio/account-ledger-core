@@ -10,6 +10,14 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 22:34:56
+
+* Completed REVIEW-RESEARCH using only the contents of research as substantive sources. Consolidated repeated policy descriptions into direct study references and replaced the duplicate simulation result table with a link to [study 08](../research/08-reversals-research.md#before-or-after-payment).
+* Aligned [study 13](../research/13-acceptance-criteria-research.md) criteria 3, 4 and 6 with the approved settlement, hold and reversal decisions. Conditioned hold release on a matching active reservation. Retained criterion 2's arithmetic as a historical counterfactual; the current replay's final fee count remains open.
+* Preserved approved choices, assumptions, rationale, examples and pending questions. The 14 research documents decreased from 7,443 to 7,008 words, a reduction of 435 words (5.8%). The primary checkout and its unrelated changes were preserved.
+* Independent semantic review and documentation-only checks passed: diff and whitespace review, 81 local targets, 56 research anchors, 23 preserved external citation URLs and four Decimal reversal scenarios. No heading anchors were removed.
+* This entry records the current America/Sao_Paulo recording time, not execution start, completion time or duration. The user authorized a commit and push; neither is claimed complete here.
+
 ### 08 September 2026, 22:15:42
 
 * The user approved overdraft fees configured by account type in the account's own currency: AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type. Recorded the zero BHD fee as an explicit exception to the exercise's literal mandatory fee, chosen for simplicity because conversion requirements are missing. Updated [study 12](../research/12-fee-currency-research.md), ambiguity decisions, business rules, numerical notes, README and references in studies 06/07.

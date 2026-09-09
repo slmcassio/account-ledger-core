@@ -20,7 +20,7 @@ For BHD 10.000 and three installments:
 
 The allocation therefore gives **BHD 3.333, 3.333, and 3.334**, totaling **BHD 10.000**. The parts differ by only BHD 0.001, the closest possible equality at this precision.
 
-The [approved HALF_UP mode](../deliverables/AMBIGUITIES.md#rounding-mode) does not choose the remainder's position. Rounding each exact third separately gives `3 * 3.333 = 9.999`, leaving BHD 0.001 unallocated.
+[HALF_UP](01-rounding-research.md#analysis) does not choose the remainder's position. Rounding each exact third separately gives `3 * 3.333 = 9.999`, leaving BHD 0.001 unallocated.
 
 **Criterion 7 is incorrect:** `3 * 3.334 = 10.002`, creating BHD 0.002 beyond the original credit. This contradiction is independent of which installment receives the remainder.
 

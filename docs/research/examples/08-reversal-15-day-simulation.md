@@ -87,11 +87,4 @@ A's correction is `1.00 + 0.99 + 0.98 + 0.97 + 0.96 + 0.95 + 0.94 = 6.79`; B's i
 
 ### Results at the two checkpoints
 
-Balances are actual end-of-day funds. Day 10 pending is zero after payment; Day 15 pays nothing.
-
-| Reversal / method | Paid Day 10 | Balance Day 10 | Balance Day 15 | Pending Day 15 |
-|---|---|---|---|---|
-| Day 9 / A | 8.94 | 2,508.94 | 2,508.94 | 5.00 |
-| Day 9 / B | 9.00 | 2,509.00 | 2,509.00 | 5.00 |
-| Day 12 / A | 4.00 | -621.00 | 2,504.00 | 9.79 |
-| Day 12 / B | 4.00 | -621.00 | 2,504.00 | 10.00 |
+See the [result comparison in study 08](../08-reversals-research.md#before-or-after-payment). Balances are actual end-of-day funds. Day 10 pending is zero after payment; Day 15 pays nothing.

@@ -6,7 +6,7 @@ The [exercise](../exercise-statement.md#nonnegotiable-rules) requires AED 25.00 
 
 **Approved decision:** Configure the daily overdraft fee by account type, in that account's own currency. For the types corresponding to the supplied accounts, use AED 25.00 for ACC-001 and BHD 0.000 for ACC-002. No additional account types are defined here.
 
-The user chose the zero BHD fee for simplicity and because conversion requirements are missing. This is an explicit project exception to the literal mandatory fee rule, not a conclusion supplied by the exercise or by [HALF_UP](../deliverables/AMBIGUITIES.md#rounding-mode). BHD's three decimal places specify representation; they do not establish a conversion.
+The user chose the zero BHD fee for simplicity and because conversion requirements are missing. This is an explicit project exception to the literal mandatory fee rule; neither the exercise nor [HALF_UP](01-rounding-research.md#analysis) supplies this conclusion. BHD's three decimal places specify representation, not conversion.
 
 ## Supplied example
 
@@ -24,6 +24,6 @@ Principal never becomes negative. These figures exclude interest and are not fin
 
 For a hypothetical assessment base of BHD -1.000, the configured fee is BHD 0.000. Considering only the fee's effect, `-1.000 - 0.000 = -1.000`. No conversion occurs. A zero fee neither floors the balance at zero nor prohibits negative balances.
 
-Authorization still requires available balance after a new hold to remain at or above zero, using amounts in the account's currency. The fee setting neither authorizes an unfunded hold nor prevents recording a legitimate confirmed debit.
+The fee setting preserves the [authorization rule](04-authorization-decisions-research.md#authorization-rule), using the account's currency, and the [recording of legitimate confirmed debits](03-unmatched-settlements-research.md#the-approved-decision). It authorizes no unfunded hold.
 
 Making an account incapable of becoming negative was considered and not selected. No foreign exchange, separate AED obligation or additional account is introduced.

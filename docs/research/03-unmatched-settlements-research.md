@@ -4,9 +4,9 @@
 
 In the [exercise](../exercise-statement.md), E6 is a settlement of AED 180.00 for ACC-001. It references Auth-Z, but the event stream contains no earlier authorization for Auth-Z.
 
-Acceptance criterion 4 says to reject a settlement when its authorization cannot be found. BR06 originally repeated this criterion. The exercise warns that some acceptance criteria are wrong.
+Criterion 4 says to reject a settlement whose authorization cannot be found. BR06 originally repeated it, although the exercise warns that some criteria are wrong.
 
-The nonnegotiable rules do not specify how to handle this case. The key question is what SETTLEMENT represents: a request to make a payment, or notice of a payment that has already settled.
+The nonnegotiable rules leave this case undefined. Does SETTLEMENT request a payment or report one already settled?
 
 ## The alternatives
 
@@ -15,7 +15,7 @@ The nonnegotiable rules do not specify how to handle this case. The key question
 
 ## The approved decision
 
-**For this project, SETTLEMENT reports a legitimate payment that has already settled outside the ledger.** This approved assumption resolves the undefined meaning of SETTLEMENT.
+**Approved assumption: SETTLEMENT reports a legitimate payment already settled outside the ledger.**
 
 When the authorization is missing:
 
