@@ -92,7 +92,7 @@ This schedule is a project choice. The exercise's fixed Day 6 credit remains req
 
 ## Open Questions
 
-* **Other rounding questions:** Intermediate precision and stages outside daily interest are not established by study 09. Installment allocation remains for study 11.
+* **Other rounding questions:** Intermediate precision and stages outside daily interest are not established by study 09. E10 allocation is defined in the [approved decision](deliverables/AMBIGUITIES.md#e10-installment-allocation).
 * **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
 * **Closing checkpoints:** Which clock times, business time zone, and replay checkpoints should apply, and how should missing eligible records be handled?
 * **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?

@@ -10,6 +10,14 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 22:07:50
+
+* Reviewed and simplified [study 11](../research/11-installments-research.md), separating exact conservation of E10's BHD 10.000 credit from the convention for placing the remaining BHD 0.001. The user approved installment 3, giving BHD 3.333, 3.333 and 3.334; the other positions remain valid alternatives.
+* Preserved ACC-002, both Day 5 dates and E10 after E9. Explained that individual installment credits must not be followed by another credit for the full parent amount. No installment calendar or interest between installments was introduced. The Mambu loan example remains illustrative, not a mandatory rule for E10.
+* Prepared integration in fresh isolation from the verified study 10 commit. Added the approved decision, numerical inputs and derived results, criterion 7's contradiction (`3 * 3.334 = 10.002`), the README link and a narrow business-rule reference update. Used current common documents and preserved the earlier studies, preexisting AGENTS.md change and unrelated untracked files.
+* Independent review found no actionable issues. Verified exact arithmetic, local links and anchors, whitespace and the focused diff; coordination also checked preservation of the primary checkout. No executable ledger or test suite exists, and no implementation was introduced.
+* The user authorized a signed commit and push to main. This entry records completed preparation before those actions, not their completion. Recording time is America/Sao_Paulo; no execution duration is inferred.
+
 ### 08 September 2026, 21:58:21
 
 * Reviewed [study 10](../research/10-interest-capitalization-research.md) against the committed studies 06 through 09. The user approved booking and valuing interest credits on the actual payment day, and monthly payment on the first business day for the previous month's ordinary accruals plus eligible unpaid adjustments. A payment does not change the previous day's interest calculated on that payment day.

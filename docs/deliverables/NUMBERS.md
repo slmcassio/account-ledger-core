@@ -156,4 +156,12 @@ Day 1 is the opening, Day 5 the debit's booking/value date, Days 9 and 12 altern
 
 The four or seven fees and their 100.00 or 175.00 refunds follow from those inputs. Reversal refunds are booked on the actual correction day and valued on each original charge's date under B; interest corrections keep both dates on the correction day and remain pending. The linked calculation records the derived daily targets, actual payments and final balances, including Day 10's payment in later interest bases. These results establish no current replay total.
 
+## E10 Installment Values
+
+The [exercise](../exercise-statement.md#event-stream) supplies BHD 10.000, three installments and Day 5 booking and value dates. These are scenario inputs, not business constants. Halving the amount or changing the count or dates would change E10.
+
+BHD's required three decimal places give a minimum stored unit of 0.001. Half, 0.0005, cannot be stored at that precision. Thus `10,000 = 3 * 3,333 + 1` minimum units. The [approved allocation](AMBIGUITIES.md#e10-installment-allocation) places the remaining unit in installment 3, deriving BHD 3.333, 3.333 and 3.334, totaling 10.000. The position is a convention, not a monetary constant.
+
+Criterion 7 instead gives `3 * 3.334 = 10.002`, an excess of BHD 0.002. Rounding each exact third independently with HALF_UP gives `3 * 3.333 = 9.999`, leaving BHD 0.001 unallocated. These are derived comparisons, not permitted changes to the original credit.
+
 TODO: Record additional constants and numerical decisions as their reviews are approved.

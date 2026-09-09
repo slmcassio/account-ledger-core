@@ -36,6 +36,12 @@ Method A in [study 08](../research/08-reversals-research.md) books and values fe
 
 Neither decision backdates interest payments: all interest differences retain current correction dates and wait for an eligible regular payment. This record does not establish criterion 6's blanket restoration or final replay totals; daily calculation stages are now defined in study 09, while the unresolved bases and study 10 payment dependencies remain open.
 
+## Acceptance Criterion 7
+
+**Rejected:** requiring all three E10 installments to be BHD 3.334. Their sum is `3 * 3.334 = 10.002`, exceeding the original BHD 10.000 credit by BHD 0.002.
+
+This contradiction does not depend on which installment receives the remaining minimum unit. The [approved allocation](AMBIGUITIES.md#e10-installment-allocation) puts it in installment 3; the first or second position would also preserve the original credit.
+
 ## Acceptance Criterion 8
 
 **Rejected:** discarding a remainder when rounded daily accruals differ from the capitalized total. The exercise requires those amounts to agree exactly.

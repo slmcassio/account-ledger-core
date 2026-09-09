@@ -157,3 +157,11 @@ Auth-B has a hold only if its request is approved. The absence of settlement alo
 **Interest and cutoff:** Interest differences retain both dates on the actual correction day and remain pending until an eligible regular payment, even for previously paid periods. Preserve actual payments, count paid adjustments when finding differences, and settle each pending component once. No hypothetical capitalization or interest on pending amounts is introduced. The job in D still requires `booking_date <= D-1`; E9 and adjustments booked on Day 6 cannot alter the Day 6 payment referencing Day 5.
 
 **Accepted limits:** Study 08 is approved with study 06's checkpoints, ordinary assessment dates, missing eligible inputs and final E7 fee count still open. Study 09 now defines the [daily calculation stages](#daily-interest-calculation); exact replay interest still depends on the unresolved bases. [Study 10](../research/10-interest-capitalization-research.md) now defines payment dates and the monthly schedule; calendar mapping, capitalization amounts and final balances remain open. No negative total payable policy is adopted. Restoring principal, historical balances, net fees and interest are distinct claims; the illustration does not establish criterion 6's blanket restoration or current replay totals.
+
+## E10 Installment Allocation
+
+**Requirement:** Preserve E10's BHD 10.000 credit exactly at BHD's three decimal places. Three equal stored amounts are impossible; conservation does not determine which installment receives the remaining BHD 0.001.
+
+**Decision, assumption and rationale:** Assign that remainder to installment 3, giving BHD 3.333, 3.333 and 3.334. A fixed final position makes the allocation reproducible and lets the last installment complete the original total. This is an approved convention for E10; assigning it to installment 1 or 2 would also conserve the credit.
+
+All installments belong to ACC-002 with booking and value dates on Day 5. Preserve E10 after E9; no installment calendar is introduced. If installments are individual financial credits, link them to E10 and do not credit its full amount again. See [study 11](../research/11-installments-research.md) for the calculation and source limits.

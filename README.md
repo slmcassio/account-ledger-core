@@ -37,3 +37,4 @@ TODO: Explain the daily closing ledger balances, fee assessments, authorization 
 * [08: Principal reversals and financial corrections](docs/research/08-reversals-research.md)
 * [09: Daily interest calculation](docs/research/09-daily-interest-research.md)
 * [10: Interest capitalization](docs/research/10-interest-capitalization-research.md)
+* [11: Installment allocation with an exact total](docs/research/11-installments-research.md)
