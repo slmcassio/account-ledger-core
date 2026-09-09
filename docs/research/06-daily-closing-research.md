@@ -4,51 +4,41 @@
 
 Financial transactions update the current ledger balance when processed. An intraday deficit alone triggers no daily fee.
 
-**Project choice:** Run one daily job for the previous day, selecting input entries with `booking_date <= reference day`:
+Run one daily job in D for reference D-1: Day 2 references Day 1, through Day 6 referencing Day 5. Select inputs cumulatively with `booking_date <= D-1`. Calculate a day's balance from the opening balance and selected entries with `value_date <= that day`. Pending interest is excluded. Booking selects eligible inputs; value date determines economic effect. Earlier receipt never admits a future booking.
 
-* Day 2: reference Day 1.
-* Day 3: reference Day 2.
-* Day 4: reference Day 3.
-* Day 5: reference Day 4.
-* Day 6: reference Day 5.
+Preserve supplied dates and event order: E6's confirmed AED 180.00 debit affects Day 4 onward once included; E9 credits AED 620.00 with booking Day 6 and value Day 2; E10 follows E9 with both dates Day 5. Principal transactions still update the current balance normally. Holds neither reduce the interest base nor block capitalization; settlement debits and hold changes remain separate.
 
-Include earlier bookings. Calculate a day's closing ledger balance from the opening balance and selected financial entries with `value_date <= that day`. Pending interest does not enter that balance. Booking selects the accounting cutoff; value date determines economic effect. Knowing an entry does not override the cutoff.
+The Day 6 payment references Day 5. E9 and corrections booked Day 6 cannot change it, even if processed first. The job's ordinary accrual and payment are outputs, not excluded inputs; this exception does not admit those corrections. Day 7 calculates Day 6. [Study 10](10-interest-capitalization-research.md) covers payment composition, dates and the monthly schedule.
 
-Preserve supplied dates and event order. E6's confirmed AED 180.00 debit affects Day 4 onward once included. E9 remains booked on Day 6 with Day 2 value date. E10 remains after E9, with both dates on Day 5. The cutoff does not prevent principal transactions from updating the current balance.
+## Receipt and missing inputs
 
-Interest accrues daily at 0.04% on positive closing ledger balances, using approved HALF_UP currency rounding. Holds neither reduce the interest base nor block capitalization. Confirmed settlement debits and matching hold changes remain separate.
+Record actual system receipt separately from booking and value dates, without inventing receipt moments for the replay. Precision, time zone and tie handling remain unspecified. [Receipt metadata](../deliverables/AMBIGUITIES.md#booking-and-value-dates) explains which events arrived; it neither overrides the cutoff nor resolves input completeness.
 
-**Payment choice:** Pay by the end of Day 6 using reference Day 5. Exclude E9 and adjustments booked on Day 6 even if already processed. Their position before or after the interest payment does not change this credit. The job's daily accrual and resulting payment are outputs, not input transactions subject to that cutoff. The payment is recorded on Day 6. The Day 7 job calculates Day 6 using Day 6's cumulative booking cutoff.
+E10 can arrive after the job despite its eligible Day 5 booking. Recommend placing the replay's final calculation after E10 while preserving earlier active calculations. Alternatively, calculate available inputs and correct later. Neither checkpoint is approved. Waiting only to pay cannot admit a correction booked Day 6. Receipt and validation during processing remain separate concerns.
 
 ## Correcting a recorded day
 
-For legitimate late transactions, keep the [difference method](02-booking-and-value-dates-research.md#approved-adjustment-method). Compare revised fees and interest separately with their original amounts plus **all previous adjustments**, including those already paid. Append only a nonzero difference; never repeat the principal.
+For legitimate late transactions, compare revised fees and [rounded daily interest](09-daily-interest-research.md) separately with originals plus **all earlier adjustments, including paid ones**. Append only a nonzero difference, never the principal again. Preserve records and payments; link adjustments to the transaction with a breakdown by historical day and type.
 
-For those late transaction adjustments, use the actual correction day for both dates. The [study 08 reversal refund exception](../deliverables/AMBIGUITIES.md#reversal-compensation) instead uses the original fee charge's value date and current booking; interest correction dates and pending treatment remain unchanged. Link it to the original transaction and retain a breakdown by historical day and type. Preserve earlier records and payments. Positive fee differences debit the ledger; negative differences refund.
+Use the actual correction day for both adjustment dates. [Reversal fee refunds](../deliverables/AMBIGUITIES.md#reversal-compensation) are the exception: current booking, original fee value date. Interest correction dates are unchanged. Positive fee differences debit; negative differences refund. Interest differences, including corrections of paid periods, [remain pending until eligible payment](10-interest-capitalization-research.md), without immediate ledger effects.
 
-**Approved interest treatment:** Keep the entire interest adjustment unpaid until the next regular payment whose booking cutoff includes it. This includes corrections for previously paid periods. Positive differences increase pending interest; negative differences reduce it. Neither creates an immediate ledger credit or debit.
+**Small check:** An AED daily amount revised from 1.50 to 2.00 creates +0.50. Repeating gives `2.00 - (1.50 + 0.50) = 0.00`, even after that adjustment is paid.
 
-Pending interest is unavailable and earns no interest. Do not calculate hypothetical interest on an adjustment as though it had been credited earlier. At payment, credit the exact sum of eligible unpaid daily accruals and adjustments, then record which components were paid. Exclude those components from later payments, but retain them when calculating future differences. This [decision](../deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment) replaces immediate balance corrections for previously credited interest.
-
-**Small check:** Revising 1.50 to 2.00 creates a pending 0.50 difference. Repeating gives `2.00 - (1.50 + 0.50) = 0.00`. The linked decision works through D30 and the next payment.
-
-Queries append nothing. Corrections do not [automatically reevaluate authorizations](04-authorization-decisions-research.md#approved-policy-later-balance-corrections).
+Queries append nothing. Corrections never [automatically reevaluate authorizations](04-authorization-decisions-research.md#approved-policy-later-balance-corrections).
 
 ## Decisions still open
 
-* **Reviews:** Proposed: after E7's late AED 620.00 debit, review ACC-001 Days 2 through 4 before E8; after E9's reversal, Days 2 through 5; after E10's BHD 10.000 credit, ACC-002 Day 5. Routine positions remain undecided. E8 does not close Day 5.
-* **Completeness:** E10 can be processed after the job despite booking on Day 5. Handling missing eligible records is unresolved.
-* **Payment limits:** Handling a negative total payable remains unresolved; no direct debit or carry rule is adopted. The [exercise](../exercise-statement.md) requires one credit at the end of Day 6. Day 6 interest is assumed payable later under the chosen cutoff; study 10 must define that payment and document the interpretation.
-* **Clock and dates:** 00:00 boundary and 00:30 start remain proposals; time zone and ordinary assessment dates are unresolved.
-* **Duplicate delivery:** Proposed: use the same event ID to prevent repeated financial or hold effects. Equal amounts and dates are insufficient.
-* **Concurrency:** Proposed: validate entries and prior results relevant to the cutoff, then record indivisibly; retry if those changed. Excluded future bookings alone require no retry. Mechanism undecided.
+* **Reviews:** Proposed after E7: ACC-001 Days 2 through 4 before E8; after E9: Days 2 through 5; after E10: ACC-002 Day 5. Ordinary checkpoints remain open. E8 does not close Day 5.
+* **Clock and dates:** Midnight and 00:30 start remain proposals; time zone and ordinary fee assessment dates are unresolved.
+* **Duplicates:** Proposed same event ID for repeat detection; equal amounts and dates are insufficient.
+* **Concurrency:** Proposed validation of eligible inputs and prior results, followed by indivisible recording and retry if they changed. Excluded future bookings alone require no retry. Mechanism undecided.
 
-Study 07 defines the approved fee assessment base. Study 08 approves recalculating all fees and interest affected by reversal and dates fee refunds at their original charge's value date, with current booking. Final fee results still depend on the unresolved recording points and ordinary assessment dates above and capitalization order in study 10. The negative BHD case remains for study 12. [Study 09](09-daily-interest-research.md#rule-and-approved-calculation) now defines exact multiplication and one daily currency rounding, without carrying fractions between days; it does not resolve the open bases or payment details.
+[Study 07](07-overdraft-fees-research.md) defines fee bases; [08](08-reversals-research.md) defines reversal compensation; [09](09-daily-interest-research.md) defines exact daily calculation. Final E7 fee counts and replay totals remain open. Old examples 04 and 08 establish no current totals. Study 08's simulation establishes no calendar. Payment limits remain in [10](10-interest-capitalization-research.md), and negative BHD fees in study 12.
 
-**Review status:** Study 06 is approved for now, with its recorded open items and dependencies explicitly pending. Revisit it when a later study affects these decisions.
+**Review status:** Study 06 remains approved with these dependencies explicitly pending.
 
 ## Sources and limits
 
-[Microsoft's Event Sourcing pattern][events], “Pattern advantages,” covers validation and retry; “Versioning events” and “Idempotency requirements” cover compensation and duplicate effects. These technical precedents impose neither financial policy nor event sourcing infrastructure.
+[Microsoft's Event Sourcing pattern][events], “Pattern advantages,” covers validation and retry; “Versioning events” and “Idempotency requirements” cover compensation and duplicates. These technical precedents impose neither financial policy nor event sourcing infrastructure.
 
 [events]: https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing

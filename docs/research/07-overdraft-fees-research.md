@@ -32,7 +32,7 @@ Day 1's base is `-10.00 + 20.00 = 10.00`: the fee's value date already excludes 
 
 Study 06 leaves checkpoints, ordinary assessment dates, and missing eligible inputs unresolved. The final fee count after E7 remains open; its principal calculations are in [NUMBERS](../deliverables/NUMBERS.md#values-used-in-the-overdraft-fee-snapshots). E9's Day 6 booking excludes it from the Day 5 cutoff; E10 stays after E9.
 
-Study 08 now defines reversal compensation. Accepted dependencies remain open: capitalization order in study 10 and fees on negative BHD balances in study 12. These snapshots establish neither final balances nor total fees.
+Study 08 now defines reversal compensation. [Study 10](10-interest-capitalization-research.md) now defines payment dates and their effect on later bases. Fees on negative BHD balances remain for study 12. These snapshots establish neither final balances nor total fees.
 
 ## Sources and limits
 

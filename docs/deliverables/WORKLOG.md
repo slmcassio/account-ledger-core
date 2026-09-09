@@ -10,6 +10,15 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 21:58:21
+
+* Reviewed [study 10](../research/10-interest-capitalization-research.md) against the committed studies 06 through 09. The user approved booking and valuing interest credits on the actual payment day, and monthly payment on the first business day for the previous month's ordinary accruals plus eligible unpaid adjustments. A payment does not change the previous day's interest calculated on that payment day.
+* Recorded actual system receipt separately from supplied booking and value dates, without inventing receipt moments. Added the pragmatic rationale for excluding pending interest from earning interest, with explicit regulatory uncertainty and the limits of the CBUAE disclosure source. The exercise's 0.04% daily rate remains a supplied requirement.
+* At the user's request, removed duplicated explanations: study 06 now covers receipt, processing, late inputs and corrections; study 10 covers payment, capitalization and financial limits. Study 06 changed from 884 to 635 words and study 10 from 822 to 518. Aligned ambiguity decisions, business rules, numerical notes, study dependencies and the README link.
+* Preserved unresolved E10 completeness and checkpoint choices, negative payable settlement, business day calendar and mapping of synthetic Days 1 through 6 to the monthly schedule. The fixed Day 6 credit remains required. Study 06's ordinary checkpoints, fee assessment dates and final E7 fee counts remain open. Authorization to publish this documentary state does not approve those proposals.
+* Independent review found no actionable issues. Coordination verified 193 local links and anchors, nine arithmetic checks, the diff and whitespace, and preservation of the original checkout's 31-file snapshot. No executable ledger or test suite exists; these were documentation and arithmetic checks. No ledger implementation or study 11 work was performed.
+* The user explicitly authorized a signed commit and push to main. This entry records completed preparation before commit and publication, not their completion. Recording time is America/Sao_Paulo; no execution duration is inferred.
+
 ### 08 September 2026, 20:43:13
 
 * The user approved exact daily interest multiplication followed by one HALF_UP currency rounding, with no intermediate rounding or fractions carried between days. Updated [study 09](../research/09-daily-interest-research.md) and aligned ambiguity decisions, business rules, numerical notes, rejected criterion 8 and alternatives, README and references in studies 01/06/08.

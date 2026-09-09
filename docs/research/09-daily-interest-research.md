@@ -29,7 +29,7 @@ Every interest adjustment uses the actual correction day for both dates and [sta
 
 ## Remaining dependencies
 
-The [D−1 booking cutoff](06-daily-closing-research.md#agreed-operation) and [reversal fee refund dates](08-reversals-research.md#approved-decisions-and-remaining-limits) remain approved. Study 06's checkpoints, ordinary assessment dates, missing inputs and final E7 fee count remain open, so actual bases and totals are unresolved. Study 10 retains capitalization ordering, later payment details and negative totals. Older examples establish no current replay results.
+The [D−1 booking cutoff](06-daily-closing-research.md#agreed-operation) and [reversal fee refund dates](08-reversals-research.md#approved-decisions-and-remaining-limits) remain approved. Study 06's checkpoints, ordinary assessment dates, missing inputs and final E7 fee count remain open, so actual bases and totals are unresolved. [Study 10](10-interest-capitalization-research.md) now defines payment dates and a monthly schedule, with calendar mapping and negative totals unresolved. Older examples establish no current replay results.
 
 ## Technical reference
 

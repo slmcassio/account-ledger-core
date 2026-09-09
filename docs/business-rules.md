@@ -74,13 +74,21 @@ For the job in D, select inputs with cumulative `booking_date <= D-1`. For each 
 
 Assess AED 25.00 when the resulting base is negative, otherwise zero. Reconcile that target with the original fee plus all earlier fee adjustments and append only the difference on the actual correction day. The reported ledger balance still includes every eligible financial entry with an applicable value date; the exclusion changes fee eligibility, not history.
 
-This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06. Study 08 defines reversal compensation; capitalization order and the negative BHD case remain for studies 10 and 12. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
+This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06. Study 08 defines reversal compensation; study 10 defines payment dates and their effect on later bases. The negative BHD case remains for study 12. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
 
 ## Approved Interpretation: Daily Interest Calculation
 
 For each account and day, preserve the exact product `max(daily_base, 0) * 0.0004`, then round once with HALF_UP to that currency's precision. Do not round intermediate interest or carry fractions between days. Reconcile corrections against rounded daily targets, including all earlier adjustments, even paid ones. At payment, sum eligible unpaid daily accruals and adjustments exactly and settle each once; do not round their aggregated raw products or discard a difference.
 
 This approved interpretation of BR09 and BR11 leaves the daily bases and payment details subject to the existing open decisions. It changes neither the booking cutoff nor adjustment dates and pending treatment. See the [decision and limits](deliverables/AMBIGUITIES.md#daily-interest-calculation) and [small examples](research/09-daily-interest-research.md).
+
+## Approved Interpretation: Interest Payment
+
+Book and value interest credits on the actual payment day. A Day 6 credit joins Day 6 bases calculated on Day 7; it changes neither the Day 5 input base nor the payment already calculated from it.
+
+Pay monthly on the first business day for the previous month's ordinary accruals, plus eligible unpaid adjustments, including those for older paid periods. Keep the monthly accrual period separate from the cumulative booking cutoff. Current month accruals remain pending; the job's newly calculated ordinary accrual can participate in payment for its month, but corrections booked on payment day cannot.
+
+This schedule is a project choice. The exercise's fixed Day 6 credit remains required; calendar mapping, the applicable business days and the resulting later payment date for Day 6 interest remain unresolved. Missing eligible inputs and negative totals remain open. See the [decisions and rationale](deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization).
 
 ## Open Questions
 

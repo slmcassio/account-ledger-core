@@ -16,6 +16,12 @@ The exercise supplies 0.04% per day, or `0.0004`. Halving it changes the require
 
 The study's independent bases are example inputs, not replay balances or new business constants. AED 12.49 and 12.50 and BHD 1.249 expose daily rounding boundaries. Halving them no longer probes those boundaries and can produce a base outside currency precision. Two days at AED 465.00 expose the difference between daily rounding and rounding after aggregation; using one day removes that comparison. Halving the base to 232.50 retains a discrepancy but reverses its direction. The correction example supplies daily amounts 1.00, +0.20 and 1.30 to distinguish the original, prior adjustment and revised target; halving an input changes the difference, not that method. These are illustrative monetary amounts, not new constants. The small calculations stay in the study; these examples determine no final payment.
 
+## Interest Payment Period and Examples
+
+[Study 10](../research/10-interest-capitalization-research.md) adopts one monthly payment on the first business day for the previous month's ordinary accruals, plus eligible unpaid adjustments. This groups a completed month's interest; a half-month period would change that approved schedule. Actual month dates and the business day calendar remain unspecified. The required Day 6 credit is scenario data, with its calendar mapping still open.
+
+Its independent amounts are examples, not new constants. Unpaid accruals 0.10 and 0.20 plus correction -0.02 give AED 0.28; changing an amount changes the sum, not eligibility. A base of 12.49 and payment 0.01 demonstrate crossing the daily rounding boundary at 12.50; half a cent is outside AED precision. Accrual 0.10 plus correction -0.30 gives -0.20, illustrating an unresolved settlement policy. Halving all these example amounts changes the totals, not the decisions they illustrate.
+
 ## Values Used in the Late Transaction Example
 
 These results retain example 04's earlier closing schedule. Its final payment includes Day 6 interest and awaits alignment with the [approved booking cutoff](AMBIGUITIES.md#daily-calculation-timing); it is not a current expected payment.
