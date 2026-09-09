@@ -1,0 +1,22 @@
+
+Testing account-ledger.authorization.db.memory-test
+
+Testing account-ledger.authorization.ports.api-client-test
+
+Testing account-ledger.authorization.ports.api-server-test
+
+Testing account-ledger.integration.system-test
+
+Testing account-ledger.ledger.db.memory-test
+
+Testing account-ledger.ledger.ports.api-server-test
+
+Testing account-ledger.yield-fees.db.memory-test
+
+Testing account-ledger.yield-fees.ports.api-client-test
+
+Testing account-ledger.yield-fees.ports.api-server-test
+
+Ran 58 tests containing 543 assertions.
+0 failures, 0 errors.
+Normal suite: {:test 58, :pass 543, :fail 0, :error 0, :type :summary}

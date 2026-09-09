@@ -1,0 +1,200 @@
+[
+  {
+    "name": "normal-1",
+    "arguments": [
+      "clojure",
+      "-M:test"
+    ],
+    "started_at": "2026-09-09T10:00:08.879338-03:00",
+    "finished_at": "2026-09-09T10:00:10.163478-03:00",
+    "exit": 0,
+    "summary": [
+      "Ran 117 tests containing 1197 assertions.",
+      "0 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "normal-2",
+    "arguments": [
+      "clojure",
+      "-M:test"
+    ],
+    "started_at": "2026-09-09T10:00:10.163643-03:00",
+    "finished_at": "2026-09-09T10:00:11.422530-03:00",
+    "exit": 0,
+    "summary": [
+      "Ran 117 tests containing 1197 assertions.",
+      "0 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "normal-3",
+    "arguments": [
+      "clojure",
+      "-M:test"
+    ],
+    "started_at": "2026-09-09T10:00:11.422731-03:00",
+    "finished_at": "2026-09-09T10:00:12.691565-03:00",
+    "exit": 0,
+    "summary": [
+      "Ran 117 tests containing 1197 assertions.",
+      "0 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "unit",
+    "arguments": [
+      "clojure",
+      "-M:test",
+      "unit"
+    ],
+    "started_at": "2026-09-09T10:00:12.691758-03:00",
+    "finished_at": "2026-09-09T10:00:13.594524-03:00",
+    "exit": 0,
+    "summary": [
+      "Ran 51 tests containing 550 assertions.",
+      "0 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "integration",
+    "arguments": [
+      "clojure",
+      "-M:test",
+      "integration"
+    ],
+    "started_at": "2026-09-09T10:00:13.594759-03:00",
+    "finished_at": "2026-09-09T10:00:14.558838-03:00",
+    "exit": 0,
+    "summary": [
+      "Ran 58 tests containing 543 assertions.",
+      "0 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "e2e",
+    "arguments": [
+      "clojure",
+      "-M:test",
+      "e2e"
+    ],
+    "started_at": "2026-09-09T10:00:14.559060-03:00",
+    "finished_at": "2026-09-09T10:00:15.318784-03:00",
+    "exit": 0,
+    "summary": [
+      "Ran 8 tests containing 104 assertions.",
+      "0 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "demo",
+    "arguments": [
+      "clojure",
+      "-M:demo"
+    ],
+    "started_at": "2026-09-09T10:00:15.319033-03:00",
+    "finished_at": "2026-09-09T10:00:15.977010-03:00",
+    "exit": 0,
+    "summary": []
+  },
+  {
+    "name": "design-challenge",
+    "arguments": [
+      "clojure",
+      "-M:design-challenge"
+    ],
+    "started_at": "2026-09-09T10:00:15.977557-03:00",
+    "finished_at": "2026-09-09T10:00:16.482305-03:00",
+    "exit": 1,
+    "summary": [
+      "Ran 1 tests containing 1 assertions.",
+      "1 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "negative-ledger",
+    "arguments": [
+      "clojure",
+      "-Sdeps",
+      "{:paths [\"src\" \"test\"]}",
+      "-M",
+      "docs/deliverables/evidence/bank-spec-module-structure/review-mutations.clj",
+      "negative-ledger"
+    ],
+    "started_at": "2026-09-09T10:00:16.482660-03:00",
+    "finished_at": "2026-09-09T10:00:17.736043-03:00",
+    "exit": 1,
+    "summary": [
+      "Ran 117 tests containing 1197 assertions.",
+      "11 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "duplicate-response",
+    "arguments": [
+      "clojure",
+      "-Sdeps",
+      "{:paths [\"src\" \"test\"]}",
+      "-M",
+      "docs/deliverables/evidence/bank-spec-module-structure/review-mutations.clj",
+      "duplicate-response"
+    ],
+    "started_at": "2026-09-09T10:00:17.736304-03:00",
+    "finished_at": "2026-09-09T10:00:18.988002-03:00",
+    "exit": 1,
+    "summary": [
+      "Ran 117 tests containing 1197 assertions.",
+      "13 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "bhd-availability",
+    "arguments": [
+      "clojure",
+      "-Sdeps",
+      "{:paths [\"src\" \"test\"]}",
+      "-M",
+      "docs/deliverables/evidence/bank-spec-module-structure/review-mutations.clj",
+      "bhd-availability"
+    ],
+    "started_at": "2026-09-09T10:00:18.988289-03:00",
+    "finished_at": "2026-09-09T10:00:20.264924-03:00",
+    "exit": 1,
+    "summary": [
+      "Ran 117 tests containing 1197 assertions.",
+      "14 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "fabricated-occurrences",
+    "arguments": [
+      "clojure",
+      "-Sdeps",
+      "{:paths [\"src\" \"test\"]}",
+      "-M",
+      "docs/deliverables/evidence/bank-spec-module-structure/review-mutations.clj",
+      "fabricated-occurrences"
+    ],
+    "started_at": "2026-09-09T10:00:20.265269-03:00",
+    "finished_at": "2026-09-09T10:00:21.576345-03:00",
+    "exit": 1,
+    "summary": [
+      "Ran 117 tests containing 1197 assertions.",
+      "7 failures, 0 errors."
+    ]
+  },
+  {
+    "name": "preservation-replay",
+    "arguments": [
+      "clojure",
+      "-Sdeps",
+      "{:paths [\"src\" \"test\"]}",
+      "-M",
+      "/tmp/bank-spec-structure-compare.clj"
+    ],
+    "started_at": "2026-09-09T10:00:21.576662-03:00",
+    "finished_at": "2026-09-09T10:00:22.762385-03:00",
+    "exit": 0,
+    "summary": []
+  }
+]

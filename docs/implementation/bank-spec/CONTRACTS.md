@@ -1,12 +1,14 @@
 # BANK-SPEC frozen interfaces
 
-Read SPEC section 7 first. These concrete map choices refine its shared schemas. The coordinator owns this file and `src/account_ledger/contracts.clj`; tell the coordinator before changing a shared field. Constructors validate config and return opaque handles, never a public atom. Domain helpers may consume persistent maps; only adapters own mutable storage.
+Read SPEC section 7 first. These concrete map choices refine its shared schemas. The coordinator owns this file, shared boundary validation in `src/account_ledger/shared/logic/contracts.clj`, and schemas in `src/account_ledger/shared/model/contracts.clj`; tell the coordinator before changing a shared field. Constructors validate config and return opaque handles, never a public atom. Pure logic consumes persistent data; only `db/memory.clj` owns mutable storage.
+
+Module entry points are `account-ledger.authorization.ports.api-server`, `account-ledger.ledger.ports.api-server` and `account-ledger.yield-fees.ports.api-server`. Function signatures and map contracts below are unchanged by the structure refactor. Each module has pure `logic`, outgoing `ports/api_client.clj`, local `db/memory.clj` and declarative internal `model/models.clj`. Logic performs no API or storage calls. Authorization delivers saved envelopes through its client; Yield submits financial commands and flushes delivery through its client. Ledger has no outgoing dependency. Tests mirror these directories; application integration and replay remain separate. See [module structure](MODULE-STRUCTURE.md).
 
 ## Configuration
 
 `{:accounts {"ACC-001" {:money/currency :AED :opening-balance 0.00M :account/type :aed-standard}, "ACC-002" {:money/currency :BHD :opening-balance 0.000M :account/type :bhd-exempt}}, :account-types {:aed-standard {:money/currency :AED :daily-fee 25.00M}, :bhd-exempt {:money/currency :BHD :daily-fee 0.000M}}}`.
 
-`contracts/normalize-config` validates and normalizes config, copying each type's configured `:daily-fee` into its account map for domain use. `contracts/validate-command` returns `{:valid? true :command normalized}` or `{:valid? false :reason keyword}`. Authorization calls it only after duplicate lookup. Reversals derive their amount from the referenced principal movement; no reversal amount is required. If supplied, it must agree exactly with the original. Reference existence and lifecycle validation belong to Authorization.
+`contracts` below aliases `account-ledger.shared.logic.contracts`. `contracts/normalize-config` validates and normalizes config, copying each type's configured `:daily-fee` into its account map for domain use. `contracts/validate-command` returns `{:valid? true :command normalized}` or `{:valid? false :reason keyword}`. Authorization calls it only after duplicate lookup. Reversals derive their amount from the referenced principal movement; no reversal amount is required. If supplied, it must agree exactly with the original. Reference existence and lifecycle validation belong to Authorization.
 
 ## Events and results
 
@@ -46,6 +48,6 @@ Use SPEC's pending-delivery, acknowledgement, drain and Yield port signatures ex
 
 ## Reviewed refinements
 
-New commands reject `contracts/computed-event-fields`; committed recipients preserve and validate those generated fields separately. Three positive installment postings require at least three minor units. Ledger returns a fixed current journal position when omitted and rejects future positions.
+New commands reject `schemas/computed-event-fields` from `account-ledger.shared.model.contracts`; committed recipients preserve and validate those generated fields separately. Three positive installment postings require at least three minor units. Ledger returns a fixed current journal position when omitted and rejects future positions.
 
 Example 08 alone uses optional `:input-through-event-counter` on historical requests, which requires `:interest-only? true`. It bounds principal inputs for an explicit earlier historical view, retains eligible derived financial effects, and creates no fee proposals. Every receipt is still recorded on its supplied day. Per-reference review bounds cannot decrease. Default historical jobs continue to use the entire eligible feed. See [decision rationale](../../../agent-decisions.md#boundary-and-review-refinements).

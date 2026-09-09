@@ -1,6 +1,6 @@
 (ns account-ledger.design-challenge
   (:require [clojure.test :as test :refer [deftest is]]
-            [account-ledger.authorization.api :as authorization]))
+            [account-ledger.authorization.ports.api-server :as authorization]))
 
 (deftest known-id-does-not-detect-content-collision
   (let [module (authorization/create

@@ -63,3 +63,13 @@ The copied PLAN checkboxes record verified work. Final executed evidence will be
 
 * Confirmation recovery uses only received accepted events: fee metadata is indexed idempotently on receipt, and the stable original interest payment is checked before any new/zero settlement selection. Completing an interrupted first daily job can link its fee correction to a newly eligible principal cause after the original fee's source version; if none exists, it returns an explicit unresolved outcome. This preserves confirmed money without a generic retry framework. Verification: both lost-response regressions and independent scoped review.
 * G3/G5/G6: All required module behavior, contract scenarios, deliberate challenge, independent review, CLI commands and API example are verified. [VERIFICATION](docs/deliverables/VERIFICATION.md) contains the requirement/function audit and actual command evidence. No required implementation remains pending.
+
+## Module structure and public validation
+
+The user requested pure `logic`, incoming/outgoing `ports`, `db/memory`, internal `model/models` and matching test directories for each domain. Public namespaces move to `ports.api-server`; function arguments, results and financial behavior remain unchanged. No compatibility forwarding files or generic adapter framework are added. Ledger has no outgoing dependency, so its client namespace documents that fact without an invented operation.
+
+The shared area separates pure arithmetic, validation, identifiers and reporting from contract schemas. Mutable access stays in the memory adapters, and outgoing calls stay in clients. Pure callbacks run atomically before external effects. Every previous test is preserved; extra tests protect storage atomicity, models, public metadata and the dependency boundary.
+
+Review exposed a Clojure spec interaction: globally registering extra payload keywords in internal models changes open `s/keys` validation elsewhere. New model specs therefore use their own namespaces, with explicit predicates for qualified fields. Model declarations do not add runtime validation to storage creation. This keeps internal documentation from changing accepted commands based on namespace load order.
+
+At the user's subsequent request, the repo also includes a concise architecture summary, tradeoffs and production considerations, with one combined PDF limited to four pages. The detailed architecture remains a separate engineering reference. Production recommendations and the cited CBUAE consumer disclosure/statement requirements are explicitly separated from implemented behavior and the exercise's adopted numerical rules.

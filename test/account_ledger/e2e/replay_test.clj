@@ -2,7 +2,7 @@
   (:require [clojure.test :refer [deftest is testing]]
             [account-ledger.replay :as replay]
             [account-ledger.system :as system]
-            [account-ledger.ledger.api :as ledger]
+            [account-ledger.ledger.ports.api-server :as ledger]
             [account-ledger.fixtures :as fixtures]))
 
 (defn- interest-minor-units

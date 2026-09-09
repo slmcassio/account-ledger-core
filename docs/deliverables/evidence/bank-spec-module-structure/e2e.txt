@@ -1,0 +1,8 @@
+
+Testing account-ledger.e2e.examples-test
+
+Testing account-ledger.e2e.replay-test
+
+Ran 8 tests containing 104 assertions.
+0 failures, 0 errors.
+Normal suite: {:test 8, :pass 104, :fail 0, :error 0, :type :summary}

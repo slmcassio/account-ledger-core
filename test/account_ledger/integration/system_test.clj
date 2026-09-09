@@ -1,8 +1,8 @@
 (ns account-ledger.integration.system-test
   (:require [clojure.test :refer [deftest is testing]]
-            [account-ledger.authorization.api :as auth]
-            [account-ledger.ledger.api :as ledger]
-            [account-ledger.yield-fees.api :as yield]
+            [account-ledger.authorization.ports.api-server :as auth]
+            [account-ledger.ledger.ports.api-server :as ledger]
+            [account-ledger.yield-fees.ports.api-server :as yield]
             [account-ledger.system :as system]
             [account-ledger.fixtures :as fixtures]))
 

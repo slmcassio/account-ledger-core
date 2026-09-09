@@ -1,0 +1,75 @@
+Review mutation: fabricated-occurrences
+
+Testing account-ledger.architecture.dependencies-test
+
+Testing account-ledger.authorization.db.memory-test
+
+Testing account-ledger.authorization.logic.core-test
+
+Testing account-ledger.authorization.model.models-test
+
+Testing account-ledger.authorization.ports.api-client-test
+
+Testing account-ledger.authorization.ports.api-server-test
+
+Testing account-ledger.e2e.examples-test
+
+FAIL in (example-05-unmatched-settlement) (examples_test.clj:61)
+expected: (= [{:type :missing-authorization, :authorization/id "Auth-Missing"}] (:occurrences state))
+  actual: (not (= [{:type :missing-authorization, :authorization/id "Auth-Missing"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}]))
+
+Testing account-ledger.e2e.replay-test
+
+FAIL in (complete-six-day-replay) (replay_test.clj:46)
+expected: (= [[] [] [] [{:type :missing-authorization, :authorization/id "Auth-Z"}] [{:type :missing-authorization, :authorization/id "Auth-Z"}] [{:type :missing-authorization, :authorization/id "Auth-Z"}]] (mapv :occurrences aed))
+  actual: (not (= [[] [] [] [{:type :missing-authorization, :authorization/id "Auth-Z"}] [{:type :missing-authorization, :authorization/id "Auth-Z"}] [{:type :missing-authorization, :authorization/id "Auth-Z"}]] [[{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}]]))
+
+FAIL in (complete-six-day-replay) (replay_test.clj:51)
+expected: (= [[] [] [] [] [] []] (mapv :occurrences bhd))
+  actual: (not (= [[] [] [] [] [] []] [[{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}]]))
+
+FAIL in (complete-six-day-replay) (replay_test.clj:64)
+expected: (= [{:type :missing-authorization, :authorization/id "Auth-Z"}] (get-in summary ["ACC-001" :occurrences]))
+  actual: (not (= [{:type :missing-authorization, :authorization/id "Auth-Z"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}]))
+
+FAIL in (complete-six-day-replay) (replay_test.clj:66)
+expected: (= [] (get-in summary ["ACC-002" :occurrences]))
+  actual: (not (= [] [{:type :wrong-error, :authorization/id "Wrong-ID"}]))
+
+FAIL in (separate-day-seven-and-accounting-boundaries) (replay_test.clj:96)
+expected: (= [{:type :missing-authorization, :authorization/id "Auth-Z"}] (:occurrences aed))
+  actual: (not (= [{:type :missing-authorization, :authorization/id "Auth-Z"}] [{:type :wrong-error, :authorization/id "Wrong-ID"}]))
+
+FAIL in (separate-day-seven-and-accounting-boundaries) (replay_test.clj:98)
+expected: (= [] (:occurrences bhd))
+  actual: (not (= [] [{:type :wrong-error, :authorization/id "Wrong-ID"}]))
+
+Testing account-ledger.integration.system-test
+
+Testing account-ledger.ledger.db.memory-test
+
+Testing account-ledger.ledger.logic.core-test
+
+Testing account-ledger.ledger.model.models-test
+
+Testing account-ledger.ledger.ports.api-server-test
+
+Testing account-ledger.shared.logic.contracts-test
+
+Testing account-ledger.shared.logic.money-test
+
+Testing account-ledger.yield-fees.db.memory-test
+
+Testing account-ledger.yield-fees.logic.core-test
+
+Testing account-ledger.yield-fees.logic.transitions-test
+
+Testing account-ledger.yield-fees.model.models-test
+
+Testing account-ledger.yield-fees.ports.api-client-test
+
+Testing account-ledger.yield-fees.ports.api-server-test
+
+Ran 117 tests containing 1197 assertions.
+7 failures, 0 errors.
+Normal suite: {:test 117, :pass 1190, :fail 7, :error 0, :type :summary}

@@ -1,0 +1,6 @@
+Documented API example executed: financial250.10, paid0.10, pending0, complete; exit0.
+Demo output exactly matches baseline, excluding only historical recording header: 12 six-day reports plus 2 separate Day7 reports.
+Runner invalid-group and zero-discovery both fail explicitly with exit2; assertion-failure exit1 verified by four mutations.
+Whitespace and 222 local targets / 61 anchors passed across 12 changed/new Markdown documents.
+Primary checkout currently clean main8530deb; original exercise, prior WORKLOG entries and all 4 review hashes preserved.
+Combined PDF regenerated from architecture-summary.md, trade-offs.md and production-considerations.md: 3 pages, all pages rendered and visually inspected; source links retained for official CBUAE references.

@@ -1,0 +1,91 @@
+Review mutation: negative-ledger
+
+Testing account-ledger.architecture.dependencies-test
+
+Testing account-ledger.authorization.db.memory-test
+
+Testing account-ledger.authorization.logic.core-test
+
+Testing account-ledger.authorization.model.models-test
+
+Testing account-ledger.authorization.ports.api-client-test
+
+Testing account-ledger.authorization.ports.api-server-test
+
+Testing account-ledger.e2e.examples-test
+
+Testing account-ledger.e2e.replay-test
+
+Testing account-ledger.integration.system-test
+
+Testing account-ledger.ledger.db.memory-test
+
+Testing account-ledger.ledger.logic.core-test
+
+Testing account-ledger.ledger.model.models-test
+
+Testing account-ledger.ledger.ports.api-server-test
+
+Testing account-ledger.shared.logic.contracts-test
+
+Testing account-ledger.shared.logic.money-test
+
+Testing account-ledger.yield-fees.db.memory-test
+
+Testing account-ledger.yield-fees.logic.core-test
+
+Testing account-ledger.yield-fees.logic.transitions-test
+
+Testing account-ledger.yield-fees.model.models-test
+
+Testing account-ledger.yield-fees.ports.api-client-test
+
+FAIL in (delivered-negative-payment-confirms-its-signed-amount-without-another-request) (api_client_test.clj:283)
+expected: (= [0.04M -0.04M] (mapv :financial/effect journal))
+  actual: (not (= [0.04M -0.04M] [0.04M]))
+
+Testing account-ledger.yield-fees.ports.api-server-test
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:156)
+expected: (true? (:complete? result))
+  actual: (not (true? false))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:157)
+expected: (= {:pending-count 0, :errors []} (:delivery result))
+  actual: (not (= {:pending-count 0, :errors []} {:pending-count 1, :errors []}))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:160)
+expected: (= -0.20M (:money/amount (ledger/balance ledger {:account/id "ACC-001", :value-through-day 5, :booking-through-day 5})))
+  actual: (not (= -0.20M 0.00M))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:162)
+expected: (empty? (authorization/pending-deliveries authorization))
+  actual: (not (empty? [{:delivery/id ["system/interest-payment/[\"ACC-001\" \"negative\"]" :ledger], :destination :ledger, :event {:money/amount 0.20M, :booking-cutoff 4, :financial/effect -0.20M, :account/id "ACC-001", :purpose :interest, :transaction/type :debit, :settlement/id "negative", :period/end-day 2, :value-day 5, :occurrences [], :reference-day 2, :component/ids ["system/interest-component/[\"ACC-001\" 2 nil 0]" "system/interest-component/[\"ACC-001\" 1 \"C\" 1]"], :money/currency :AED, :received-day 5, :booking-day 5, :source-event-counter 5, :transaction/id "system/interest-payment/[\"ACC-001\" \"negative\"]", :event-counter 6}}]))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:165)
+expected: (= 1 (count debits))
+  actual: (not (= 1 0))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:166)
+expected: (= {:financial/effect -0.20M, :booking-day 5, :value-day 5} (select-keys (first debits) [:financial/effect :booking-day :value-day]))
+  actual: (not (= {:financial/effect -0.20M, :booking-day 5, :value-day 5} {}))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:168)
+expected: (= 2 (count (:postings (first debits))))
+  actual: (not (= 2 0))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:169)
+expected: (= #{{:book/account "clearing/AED", :side :credit, :money/amount 0.20M, :money/currency :AED} {:book/account "customer/ACC-001", :side :debit, :money/amount 0.20M, :money/currency :AED}} (set (:postings (first debits))))
+  actual: (not (= #{{:book/account "clearing/AED", :side :credit, :money/amount 0.20M, :money/currency :AED} {:book/account "customer/ACC-001", :side :debit, :money/amount 0.20M, :money/currency :AED}} #{}))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:174)
+expected: (= :recorded (:outcome review))
+  actual: (not (= :recorded :retry-required))
+
+FAIL in (negative-settlement-debits-zero-balance-and-counts-paid-adjustments) (api_server_test.clj:175)
+expected: (true? (:complete? review))
+  actual: (not (true? nil))
+
+Ran 117 tests containing 1197 assertions.
+11 failures, 0 errors.
+Normal suite: {:test 117, :pass 1186, :fail 11, :error 0, :type :summary}

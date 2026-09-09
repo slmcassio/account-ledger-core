@@ -1,20 +1,22 @@
 (ns account-ledger.system
   "Composition, deterministic delivery and reporting for tests and replay."
-  (:require [account-ledger.authorization.api :as authorization]
-            [account-ledger.ledger.api :as ledger]
-            [account-ledger.yield-fees.api :as yield-fees]
+  (:require [account-ledger.shared.logic.identifiers :as identifiers]
+            [account-ledger.authorization.ports.api-server :as authorization]
+            [account-ledger.authorization.ports.api-client :as authorization-client]
+            [account-ledger.shared.logic.reporting :as reporting]
+            [account-ledger.ledger.ports.api-server :as ledger]
+            [account-ledger.yield-fees.ports.api-server :as yield-fees]
             [account-ledger.transaction :as transaction]
-            [account-ledger.contracts :as contracts]))
+            [account-ledger.shared.logic.contracts :as contracts]))
 
 (defn- drain-modules! [authorization ledger yield]
-  (let [errors
+  (let [recipients {:ledger #(ledger/post! ledger %) :yield #(yield-fees/receive! yield %)}
+        errors
         (reduce
-         (fn [errors {:keys [destination event] :as envelope}]
+         (fn [errors envelope]
            (let [id (:delivery/id envelope)]
              (try
-               (let [result (case destination
-                              :ledger (ledger/post! ledger event)
-                              :yield (yield-fees/receive! yield event))]
+               (let [result (authorization-client/deliver! recipients envelope)]
                  (if (#{:recorded :duplicate} (:outcome result))
                    (do (authorization/ack-delivery! authorization id) errors)
                    (conj errors {:delivery/id id :reason (or (:reason result) :recipient-rejected)})))
@@ -51,21 +53,11 @@
 (defn settle! [system request]
   (after-drain! system #(yield-fees/settle! (:yield-fees system) request)))
 
-(defn- authorization-states [history]
-  (reduce (fn [states record]
-            (let [command (:command record)
-                  event (:recorded/event record)
-                  id (:authorization/id command)]
-              (cond
-                (and id (= :declined (:outcome record))) (assoc states id :declined)
-                (and id (:authorization/state event)) (assoc states id (:authorization/state event))
-                :else states))) {} history))
-
 (defn report
-  "A pure current operational report with an explicitly bounded accounting view."
+  "A read-only current operational report with an explicitly bounded accounting view."
   [system {:keys [day] :as query}]
   (let [id (:account/id query)]
-    (when-not (and (contracts/day? day) (get-in system [:config :accounts id]))
+    (when-not (and (identifiers/day? day) (get-in system [:config :accounts id]))
       (throw (ex-info "Report requires known account and positive day" {:reason :invalid-report-query})))
     (let [snapshot (authorization/snapshot (:authorization system) id)
           history (authorization/history (:authorization system) id)
@@ -80,7 +72,7 @@
              {:day day :view :operational-at-capture
               :complete? (and (empty? pending) (:complete? yield))
               :pending-delivery-count (count pending)
-              :authorization-states (authorization-states history)
+              :authorization-states (reporting/authorization-states history)
               :occurrences (vec (mapcat #(or (:occurrences %) (get-in % [:recorded/event :occurrences]) []) history))
               :accounting (ledger/balance (:ledger system) accounting-query)
               :journal journal}))))

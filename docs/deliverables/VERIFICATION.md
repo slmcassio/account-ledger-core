@@ -1,5 +1,33 @@
 # BANK-SPEC Verification
 
+## Module structure refactor
+
+Refactored from `8530deb` into per-module `logic`, `ports`, `db` and `model` directories, with mirrored tests. Public operations retain their argument and result maps under the new `ports.api-server` namespaces. All **98 original test names remain discovered exactly once**, and every previous assertion was retained. Pure logic contains no API or storage calls; an architecture regression checks local dependencies and known effectful operations. The static guard is not a general proof of purity for arbitrary Java interop or dynamically constructed code.
+
+| Executed check | Actual result | Evidence |
+|---|---|---|
+| Complete normal suite, three fresh JVMs | **117 tests / 1,197 assertions**, zero failures/errors each, exit 0 | [run 1](evidence/bank-spec-module-structure/normal-1.txt), [run 2](evidence/bank-spec-module-structure/normal-2.txt), [run 3](evidence/bank-spec-module-structure/normal-3.txt) |
+| Unit group | 51 tests / 550 assertions, zero failures/errors | [unit](evidence/bank-spec-module-structure/unit.txt) |
+| Integration group | 58 tests / 543 assertions, zero failures/errors | [integration](evidence/bank-spec-module-structure/integration.txt) |
+| End-to-end group | 8 tests / 104 assertions, zero failures/errors | [end-to-end](evidence/bank-spec-module-structure/e2e.txt) |
+| Full immutable replay comparison | All six-day reports, summary and separate Day 7 continuation equal the pre-refactor capture; every original test retained | [comparison](evidence/bank-spec-module-structure/preservation-replay.txt) |
+| Demo | Exact original output after removing only the historical recording header | [demo](evidence/bank-spec-module-structure/demo.txt) |
+| Separate design challenge | **1 test / 1 assertion, 1 deliberate failure, zero errors, exit 1** | [challenge](evidence/bank-spec-module-structure/design-challenge.txt) |
+
+The replay comparison is an additional refactor preservation check, not the financial oracle. The independent integer oracle and manually specified business outcomes remain in the normal suite. The group discovery check confirms that unit/integration/e2e partition all discovered namespaces.
+
+The four controlled review mutations still fail against the current full suite: negative-interest Ledger rejection produces **11** assertion failures; ignored confirmed duplicate responses **13**; bypassed BHD availability **14**; fabricated occurrences **7**. Each has zero errors and exits 1. [Command arguments, timestamps and summaries](evidence/bank-spec-module-structure/commands.json) record every execution. The [current mutation probe](evidence/bank-spec-module-structure/review-mutations.clj) uses the new namespaces:
+
+```sh
+clojure -Sdeps '{:paths ["src" "test"]}' -M docs/deliverables/evidence/bank-spec-module-structure/review-mutations.clj negative-ledger
+```
+
+Replace the last argument with `duplicate-response`, `bhd-availability` or `fabricated-occurrences`. These probes intentionally fail and remain separate from the normal suite and the exercise challenge.
+
+Independent review found one refactor regression before delivery: registering new model specs under public payload keywords incidentally narrowed Clojure `s/keys` validation when a model namespace was loaded. Model-local specs and explicit field predicates remove that interference. Three regressions preserve public metadata while model tests still reject malformed internal records. The isolated red run had 8 assertion failures and no errors; the final model group had 7 tests / 76 assertions, zero failures/errors. The independent reviewer reproduced the original public command before and after loading all three corrected models and observed `:recorded` both times, with no remaining actionable finding.
+
+The API example, document links, three-page PDF rendering and preservation checks are recorded in [artifact checks](evidence/bank-spec-module-structure/artifact-checks.txt). The primary checkout is clean on `main` at `8530deb` at final verification; it was not modified by this refactor. The original exercise, earlier WORKLOG entries and all four local review reports are preserved. `docs/reviews` remains excluded from the requested commit.
+
 ## Regression protection follow-up
 
 The user's follow-up required closure of all five concerns in the test-quality review and a signed commit including WORKLOG. This verification covers the combined financial-intent fixes and the completed regression protection. `docs/reviews` remains unchanged and excluded from the commit.
@@ -13,7 +41,7 @@ The final normal command `clojure -M:test` passed **98 tests / 1,033 assertions*
 | BHD authorization bypasses available funds | 14 | 0 | 1 | [BHD availability](evidence/bank-spec-regression-gaps/bhd-availability.txt) |
 | Every report fabricates occurrence content | 7 | 0 | 1 | [occurrence content](evidence/bank-spec-regression-gaps/fabricated-occurrences.txt) |
 
-[Command arguments, timestamps and results](evidence/bank-spec-regression-gaps/commands.json) and the [exact mutation probe](evidence/bank-spec-regression-gaps/review-mutations.clj) make the checks reproducible. From the worktree root, run:
+[Command arguments, timestamps and results](evidence/bank-spec-regression-gaps/commands.json) and the [exact mutation probe](evidence/bank-spec-regression-gaps/review-mutations.clj) record the historical checks at commit `8530deb`. That archived probe uses the original namespaces. On that commit, from the worktree root, run:
 
 ```sh
 clojure -Sdeps '{:paths ["src" "test"]}' -M docs/deliverables/evidence/bank-spec-regression-gaps/review-mutations.clj negative-ledger
@@ -50,7 +78,7 @@ The two reviewed duplication defects are corrected:
 * Yield saves the entire command and calculation links before submission. The unknown outcome retains the exact pending map. A later settlement cannot select the same components while that operation is unresolved. Delivered confirmation records the original receipt independently of a subsequent caller's settlement ID.
 * The shared boundary rejects a missing or inconsistent fee assessment before recording money. Its confirmed source counter is copied from the accepted command. The analogous incomplete-interest contract also rejects commands without coherent receipt ID, period and dates.
 
-[Financial intent integration tests](../../test/account_ledger/integration/financial_intents_test.clj) cover saved state visible inside the outgoing port, loss before and after Authorization recording, immutable retries after new accruals and changed request dates, confirmed duplicate results, different settlement IDs, zero settlement blocked by an unknown payment, definitive invalid/stale rejection, negative interest and reversal refunds. [System integration tests](../../test/account_ledger/integration/system_test.clj) verify that malformed financial commands change no snapshot, journal, delivery or calculation report, and that accepted records prevent another charge/payment. Existing [Yield tests](../../test/account_ledger/integration/yield_fees_test.clj) additionally check an unknown fee is retried before replacing its calculation, even when a later input changes the target to zero.
+[Financial intent integration tests](../../test/account_ledger/yield_fees/ports/api_client_test.clj) cover saved state visible inside the outgoing port, loss before and after Authorization recording, immutable retries after new accruals and changed request dates, confirmed duplicate results, different settlement IDs, zero settlement blocked by an unknown payment, definitive invalid/stale rejection, negative interest and reversal refunds. [System integration tests](../../test/account_ledger/integration/system_test.clj) verify that malformed financial commands change no snapshot, journal, delivery or calculation report, and that accepted records prevent another charge/payment. Existing [Yield tests](../../test/account_ledger/yield_fees/ports/api_server_test.clj) additionally check an unknown fee is retried before replacing its calculation, even when a later input changes the target to zero.
 
 Regression evidence before the relevant fixes:
 
@@ -106,14 +134,14 @@ Tests below refer to actual `deftest` names. Module integration tests use real a
 
 | Requirement | Executable evidence |
 |---|---|
-| M1: exact money/scales/ties | [money tests](../../test/account_ledger/money_test.clj): `exact-inputs-and-scales`, `daily-rounding-boundaries`; [contract tests](../../test/account_ledger/contracts_test.clj): `command-boundaries`. |
+| M1: exact money/scales/ties | [money tests](../../test/account_ledger/shared/logic/money_test.clj): `exact-inputs-and-scales`, `daily-rounding-boundaries`; [contract tests](../../test/account_ledger/shared/logic/contracts_test.clj): `command-boundaries`. |
 | M2: round daily, preserve E10 | Money `three-installments-conserve-money`; Yield integration `positive-accrual-reaches-financial-port-and-settles-original-components`; Ledger installment tests; replay integer oracle. |
-| A1: hold boundary and immutable decline | [Authorization unit](../../test/account_ledger/unit/authorization_test.clj): `hold-boundary-and-decline-recording`, `known-identity-precedes-every-payload-check`; example 06 and complete replay preserve declined B. |
+| A1: hold boundary and immutable decline | [Authorization unit](../../test/account_ledger/authorization/logic/core_test.clj): `hold-boundary-and-decline-recording`, `known-identity-precedes-every-payload-check`; example 06 and complete replay preserve declined B. |
 | A2: final/partial/release/unmatched | Authorization `principal-hold-and-final-settlement`, `partial-settlement-and-explicit-release`, `release-can-free-a-partial-amount-without-posting-money`, `confirmed-settlement-debits-without-sufficient-funds-or-live-hold`; examples 05 and 07. |
-| A3: duplicate before validation | Authorization `known-identity-precedes-every-payload-check`, `source-version-is-account-specific-and-unrecorded-attempts-retain-identity`; [Ledger integration](../../test/account_ledger/integration/ledger_test.clj) `duplicate-id-precedes-payload-validation`; Yield original-payment confirmation tests. |
-| A4: atomic identity/base/outcome | [Authorization integration](../../test/account_ledger/integration/authorization_test.clj): `competing-holds-cannot-spend-the-same-availability`, `concurrent-reused-identity-records-only-one-entire-outcome`, `source-movement-between-calculation-and-submission-requires-new-calculation`, `competing-financial-proposals-cannot-both-record-from-one-source`; account-specific source unit regression includes decline/other account. |
-| L1: balanced immutable temporal journal | [Ledger unit](../../test/account_ledger/unit/ledger_test.clj) covers all posting/domain functions; Ledger integration `historical-views-retain-economic-booking-and-arrival-boundaries`, `installment-arrival-has-one-global-position-and-no-extra-parent-credit`, `concurrent-redelivery-atomically-records-one-whole-entry`, `invalid-last-installment-cannot-leave-the-earlier-pairs-recorded`. |
-| Y1: cutoff and complete prefix | [Yield unit](../../test/account_ledger/unit/yield_fees_test.clj) `contiguous-prefix-does-not-confuse-highest-observed-with-complete`, `closing-base-uses-both-dates-and-opening-state`; [Yield integration](../../test/account_ledger/integration/yield_fees_test.clj) `gap-blocks-calculation-until-hold-only-event-arrives`, `stale-payment-settles-nothing-and-retry-retains-identity`; example 08 records B during calculation. |
+| A3: duplicate before validation | Authorization `known-identity-precedes-every-payload-check`, `source-version-is-account-specific-and-unrecorded-attempts-retain-identity`; [Ledger integration](../../test/account_ledger/ledger/ports/api_server_test.clj) `duplicate-id-precedes-payload-validation`; Yield original-payment confirmation tests. |
+| A4: atomic identity/base/outcome | [Authorization integration](../../test/account_ledger/authorization/ports/api_server_test.clj): `competing-holds-cannot-spend-the-same-availability`, `concurrent-reused-identity-records-only-one-entire-outcome`, `source-movement-between-calculation-and-submission-requires-new-calculation`, `competing-financial-proposals-cannot-both-record-from-one-source`; account-specific source unit regression includes decline/other account. |
+| L1: balanced immutable temporal journal | [Ledger unit](../../test/account_ledger/ledger/logic/core_test.clj) covers all posting/domain functions; Ledger integration `historical-views-retain-economic-booking-and-arrival-boundaries`, `installment-arrival-has-one-global-position-and-no-extra-parent-credit`, `concurrent-redelivery-atomically-records-one-whole-entry`, `invalid-last-installment-cannot-leave-the-earlier-pairs-recorded`. |
+| Y1: cutoff and complete prefix | [Yield unit](../../test/account_ledger/yield_fees/logic/core_test.clj) `contiguous-prefix-does-not-confuse-highest-observed-with-complete`, `closing-base-uses-both-dates-and-opening-state`; [Yield integration](../../test/account_ledger/yield_fees/ports/api_server_test.clj) `gap-blocks-calculation-until-hold-only-event-arrives`, `stale-payment-settles-nothing-and-retry-retains-identity`; example 08 records B during calculation. |
 | Y2: fees/cross-period bases/corrections | Yield `fee-base-excludes-only-its-own-included-components`, `fee-target-is-negative-only-and-respects-explicit-zero-configuration`, `ordinary-fees-use-next-day-dates-and-refreshed-source-counters`, `historical-fees-refresh-and-recompute-each-next-proposal`, `reversal-refunds-use-original-charge-dates-and-preserve-other-period-fees`, stale-fee regression. |
 | Y3: pending/sign/once/paid corrections | Yield `pending-interest-is-neither-spendable-nor-an-input-to-next-day-interest`, `negative-settlement-debits-zero-balance-and-counts-paid-adjustments`, `zero-settlement-links-zero-components-without-financial-effect`, `zero-cancellation-settles-positive-and-negative-components-once`, original-link/lost-response regressions. |
 | Y4: principal/reversal dates/decisions | Authorization reversal tests; Yield reversal-refund test; [replay tests](../../test/account_ledger/e2e/replay_test.clj) `separate-day-seven-and-accounting-boundaries`; example 06 and Auth-B state at both replay boundaries. |

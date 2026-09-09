@@ -1,0 +1,117 @@
+Review mutation: bhd-availability
+
+Testing account-ledger.architecture.dependencies-test
+
+Testing account-ledger.authorization.db.memory-test
+
+Testing account-ledger.authorization.logic.core-test
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:51)
+:BHD uses its own minor unit at the availability boundary
+expected: (= :declined (:outcome refused))
+  actual: (not (= :declined :recorded))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:52)
+:BHD uses its own minor unit at the availability boundary
+expected: (= :insufficient-available-balance (:reason refused))
+  actual: (not (= :insufficient-available-balance nil))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:53)
+:BHD uses its own minor unit at the availability boundary
+expected: (= (:accounts funded) (update-in (:accounts declined) [account-id :history] pop))
+  actual: (not (= {"ACC-001" {:snapshot {:account/id "ACC-001", :money/currency :AED, :financial-balance 0.00M, :held-amount 0.00M, :available-balance 0.00M, :last-event-counter 0, :holds {}}, :history []}, "ACC-002" {:snapshot {:account/id "ACC-002", :money/currency :BHD, :financial-balance 20.000M, :held-amount 0.000M, :available-balance 20.000M, :last-event-counter 1, :holds {}}, :history [{:outcome :recorded, :transaction/id "fund", :account/id "ACC-002", :occurrences [], :recorded/event {:money/amount 20.000M, :financial/effect 20.000M, :account/id "ACC-002", :purpose :principal, :transaction/type :credit, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "fund", :event-counter 1}, :recorded/snapshot {:account/id "ACC-002", :money/currency :BHD, :financial-balance 20.000M, :held-amount 0.000M, :available-balance 20.000M, :last-event-counter 1, :holds {}}, :command {:transaction/id "fund", :transaction/type :credit, :account/id "ACC-002", :money/currency :BHD, :money/amount 20.000M, :booking-day 1, :value-day 1, :received-day 1}}]}} {"ACC-001" {:snapshot {:account/id "ACC-001", :money/currency :AED, :financial-balance 0.00M, :held-amount 0.00M, :available-balance 0.00M, :last-event-counter 0, :holds {}}, :history []}, "ACC-002" {:snapshot {:account/id "ACC-002", :money/currency :BHD, :financial-balance 20.000M, :held-amount 20.001M, :available-balance -0.001M, :last-event-counter 2, :holds {"over-hold" 20.001M}}, :history [{:outcome :recorded, :transaction/id "fund", :account/id "ACC-002", :occurrences [], :recorded/event {:money/amount 20.000M, :financial/effect 20.000M, :account/id "ACC-002", :purpose :principal, :transaction/type :credit, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "fund", :event-counter 1}, :recorded/snapshot {:account/id "ACC-002", :money/currency :BHD, :financial-balance 20.000M, :held-amount 0.000M, :available-balance 20.000M, :last-event-counter 1, :holds {}}, :command {:transaction/id "fund", :transaction/type :credit, :account/id "ACC-002", :money/currency :BHD, :money/amount 20.000M, :booking-day 1, :value-day 1, :received-day 1}}]}}))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:54)
+:BHD uses its own minor unit at the availability boundary
+expected: (nil? (:recorded/snapshot refused))
+  actual: (not (nil? {:account/id "ACC-002", :money/currency :BHD, :financial-balance 20.000M, :held-amount 20.001M, :available-balance -0.001M, :last-event-counter 2, :holds {"over-hold" 20.001M}}))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:55)
+:BHD uses its own minor unit at the availability boundary
+expected: (nil? (:recorded/event refused))
+  actual: (not (nil? {:money/amount 20.001M, :financial/effect 0.000M, :account/id "ACC-002", :purpose :principal, :authorization/state :approved, :transaction/type :authorization, :hold/remaining 20.001M, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "over", :authorization/id "over-hold", :event-counter 2}))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:59)
+:BHD uses its own minor unit at the availability boundary
+expected: (= (select-keys funded [:deliveries :delivery-order :acknowledged]) (select-keys declined [:deliveries :delivery-order :acknowledged]))
+  actual: (not (= {:deliveries {["fund" :ledger] {:delivery/id ["fund" :ledger], :destination :ledger, :event {:money/amount 20.000M, :financial/effect 20.000M, :account/id "ACC-002", :purpose :principal, :transaction/type :credit, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "fund", :event-counter 1}}, ["fund" :yield] {:delivery/id ["fund" :yield], :destination :yield, :event {:money/amount 20.000M, :financial/effect 20.000M, :account/id "ACC-002", :purpose :principal, :transaction/type :credit, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "fund", :event-counter 1}}}, :delivery-order [["fund" :ledger] ["fund" :yield]], :acknowledged #{}} {:deliveries {["fund" :ledger] {:delivery/id ["fund" :ledger], :destination :ledger, :event {:money/amount 20.000M, :financial/effect 20.000M, :account/id "ACC-002", :purpose :principal, :transaction/type :credit, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "fund", :event-counter 1}}, ["fund" :yield] {:delivery/id ["fund" :yield], :destination :yield, :event {:money/amount 20.000M, :financial/effect 20.000M, :account/id "ACC-002", :purpose :principal, :transaction/type :credit, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "fund", :event-counter 1}}, ["over" :yield] {:delivery/id ["over" :yield], :destination :yield, :event {:money/amount 20.001M, :financial/effect 0.000M, :account/id "ACC-002", :purpose :principal, :authorization/state :approved, :transaction/type :authorization, :hold/remaining 20.001M, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "over", :authorization/id "over-hold", :event-counter 2}}}, :delivery-order [["fund" :ledger] ["fund" :yield] ["over" :yield]], :acknowledged #{}}))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:67)
+:BHD uses its own minor unit at the availability boundary
+expected: (= 120M (get-in unchanged [:accounts account-id :snapshot :available-balance]))
+  actual: (not (= 120M 99.999M))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:74)
+:BHD uses its own minor unit at the availability boundary zero funds cannot support even the smallest hold
+expected: (= :declined (:outcome result))
+  actual: (not (= :declined :recorded))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:75)
+:BHD uses its own minor unit at the availability boundary zero funds cannot support even the smallest hold
+expected: (= :insufficient-available-balance (:reason result))
+  actual: (not (= :insufficient-available-balance nil))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:76)
+:BHD uses its own minor unit at the availability boundary zero funds cannot support even the smallest hold
+expected: (= (:accounts before) (update-in (:accounts after) [account-id :history] pop))
+  actual: (not (= {"ACC-001" {:snapshot {:account/id "ACC-001", :money/currency :AED, :financial-balance 0.00M, :held-amount 0.00M, :available-balance 0.00M, :last-event-counter 0, :holds {}}, :history []}, "ACC-002" {:snapshot {:account/id "ACC-002", :money/currency :BHD, :financial-balance 0.000M, :held-amount 0.000M, :available-balance 0.000M, :last-event-counter 0, :holds {}}, :history []}} {"ACC-001" {:snapshot {:account/id "ACC-001", :money/currency :AED, :financial-balance 0.00M, :held-amount 0.00M, :available-balance 0.00M, :last-event-counter 0, :holds {}}, :history []}, "ACC-002" {:snapshot {:account/id "ACC-002", :money/currency :BHD, :financial-balance 0.000M, :held-amount 0.001M, :available-balance -0.001M, :last-event-counter 1, :holds {"unfunded-hold" 0.001M}}, :history []}}))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:77)
+:BHD uses its own minor unit at the availability boundary zero funds cannot support even the smallest hold
+expected: (= [{:outcome :declined, :reason :insufficient-available-balance, :transaction/id "unfunded", :account/id account-id, :authorization/state :declined, :occurrences [], :command command}] (get-in after [:accounts account-id :history]))
+  actual: (not (= [{:outcome :declined, :reason :insufficient-available-balance, :transaction/id "unfunded", :account/id "ACC-002", :authorization/state :declined, :occurrences [], :command {:money/amount 0.001M, :account/id "ACC-002", :transaction/type :authorization, :value-day 1, :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "unfunded", :authorization/id "unfunded-hold"}}] [{:outcome :recorded, :transaction/id "unfunded", :account/id "ACC-002", :occurrences [], :recorded/event {:money/amount 0.001M, :financial/effect 0.000M, :account/id "ACC-002", :purpose :principal, :authorization/state :approved, :transaction/type :authorization, :hold/remaining 0.001M, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "unfunded", :authorization/id "unfunded-hold", :event-counter 1}, :recorded/snapshot {:account/id "ACC-002", :money/currency :BHD, :financial-balance 0.000M, :held-amount 0.001M, :available-balance -0.001M, :last-event-counter 1, :holds {"unfunded-hold" 0.001M}}, :command {:money/amount 0.001M, :account/id "ACC-002", :transaction/type :authorization, :value-day 1, :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "unfunded", :authorization/id "unfunded-hold"}}]))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:81)
+:BHD uses its own minor unit at the availability boundary zero funds cannot support even the smallest hold
+expected: (= (select-keys before [:deliveries :delivery-order :acknowledged]) (select-keys after [:deliveries :delivery-order :acknowledged]))
+  actual: (not (= {:deliveries {}, :delivery-order [], :acknowledged #{}} {:deliveries {["unfunded" :yield] {:delivery/id ["unfunded" :yield], :destination :yield, :event {:money/amount 0.001M, :financial/effect 0.000M, :account/id "ACC-002", :purpose :principal, :authorization/state :approved, :transaction/type :authorization, :hold/remaining 0.001M, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "unfunded", :authorization/id "unfunded-hold", :event-counter 1}}}, :delivery-order [["unfunded" :yield]], :acknowledged #{}}))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:84)
+:BHD uses its own minor unit at the availability boundary zero funds cannot support even the smallest hold
+expected: (nil? (:recorded/event result))
+  actual: (not (nil? {:money/amount 0.001M, :financial/effect 0.000M, :account/id "ACC-002", :purpose :principal, :authorization/state :approved, :transaction/type :authorization, :hold/remaining 0.001M, :value-day 1, :occurrences [], :money/currency :BHD, :received-day 1, :booking-day 1, :transaction/id "unfunded", :authorization/id "unfunded-hold", :event-counter 1}))
+
+FAIL in (hold-boundary-and-decline-recording) (core_test.clj:85)
+:BHD uses its own minor unit at the availability boundary zero funds cannot support even the smallest hold
+expected: (nil? (:recorded/snapshot result))
+  actual: (not (nil? {:account/id "ACC-002", :money/currency :BHD, :financial-balance 0.000M, :held-amount 0.001M, :available-balance -0.001M, :last-event-counter 1, :holds {"unfunded-hold" 0.001M}}))
+
+Testing account-ledger.authorization.model.models-test
+
+Testing account-ledger.authorization.ports.api-client-test
+
+Testing account-ledger.authorization.ports.api-server-test
+
+Testing account-ledger.e2e.examples-test
+
+Testing account-ledger.e2e.replay-test
+
+Testing account-ledger.integration.system-test
+
+Testing account-ledger.ledger.db.memory-test
+
+Testing account-ledger.ledger.logic.core-test
+
+Testing account-ledger.ledger.model.models-test
+
+Testing account-ledger.ledger.ports.api-server-test
+
+Testing account-ledger.shared.logic.contracts-test
+
+Testing account-ledger.shared.logic.money-test
+
+Testing account-ledger.yield-fees.db.memory-test
+
+Testing account-ledger.yield-fees.logic.core-test
+
+Testing account-ledger.yield-fees.logic.transitions-test
+
+Testing account-ledger.yield-fees.model.models-test
+
+Testing account-ledger.yield-fees.ports.api-client-test
+
+Testing account-ledger.yield-fees.ports.api-server-test
+
+Ran 117 tests containing 1197 assertions.
+14 failures, 0 errors.
+Normal suite: {:test 117, :pass 1183, :fail 14, :error 0, :type :summary}

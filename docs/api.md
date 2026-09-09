@@ -1,14 +1,18 @@
 # Public APIs
 
-Run these APIs in one JVM. Module constructors return opaque handles. Application callers use each module's `api` namespace; `domain` contains pure rules and `memory` is the local adapter. `!` denotes an effect. All queries return immutable values and cause no delivery, recalculation or posting.
+Run these APIs in one JVM. Module constructors return opaque handles. Application callers use each module's `ports.api-server` namespace. Pure rules and state transitions live in `logic`, internal map schemas in `model.models`, and local storage in `db.memory`. Outgoing calls belong to `ports.api-client`; logic calls neither APIs nor storage. `!` denotes an effect. All queries return immutable values and cause no delivery, recalculation or posting.
+
+The module structure refactor moves namespaces while preserving function names, arguments, result maps, validation and financial behavior. There are no HTTP endpoints; these are ordinary Clojure function boundaries.
 
 ## Configuration and money
 
 `account-ledger.replay/config` contains the two exercise accounts and their account types. A config has `:accounts`, keyed by account ID, and `:account-types`, keyed by type. Each account supplies `:money/currency`, `:opening-balance` and `:account/type`. Each type supplies its own matching currency and `:daily-fee`. AED uses 25.00 and BHD uses the explicit zero-fee exception. Constructors reject unknown types, mismatched currencies, missing values and invalid precision. Opening state is version/journal position zero, not a transaction.
 
-`account-ledger.money/amount [currency decimal]` requires a BigDecimal exactly representable at the currency scale. Use `250.00M` in Clojure, never `250.00` binary floating point. `daily-interest [currency base]` applies the exact 0.0004 product and one HALF_UP rounding; nonpositive balances earn zero. `allocate-three [currency total]` puts the remainder into the third installment; all three must be positive.
+`account-ledger.shared.logic.money/amount [currency decimal]` requires a BigDecimal exactly representable at the currency scale. Use `250.00M` in Clojure, never `250.00` binary floating point. `daily-interest [currency base]` applies the exact 0.0004 product and one HALF_UP rounding; nonpositive balances earn zero. `allocate-three [currency total]` puts the remainder into the third installment; all three must be positive.
 
 ## Authorization
+
+Namespace: `account-ledger.authorization.ports.api-server`.
 
 | Function | Contract |
 |---|---|
@@ -51,6 +55,8 @@ Source version checking and recording are one local atomic operation. A decline 
 
 ## Ledger
 
+Namespace: `account-ledger.ledger.ports.api-server`.
+
 | Function | Contract |
 |---|---|
 | `(create config)` | Creates an empty journal and opening state. |
@@ -63,6 +69,8 @@ A balance query requires `:account/id`, `:value-through-day` and `:booking-throu
 Entries preserve original metadata and add `:journal/position` and `:postings`. Postings identify `:book/account`, `:side`, positive `:money/amount`, currency and, for E10, `:installment/position`. Customer liabilities are `customer/<id>`; clearing is `clearing/<currency>`. Every pair balances in its currency. E10 contains six postings, three customer credits, and no parent credit. Holds/releases cannot post a journal. Invalid constructor/query inputs throw `ExceptionInfo`; an invalid financial delivery returns `:invalid` without appending anything.
 
 ## Yield and Fees
+
+Namespace: `account-ledger.yield-fees.ports.api-server`.
 
 | Function | Contract |
 |---|---|
@@ -119,7 +127,7 @@ Expected validation, stale-view and delivery outcomes are data. Broken invariant
 
 `account-ledger.system` exposes `create [config]`, `submit! [system command]`, `drain! [system]`, `run-day! [system request]`, `settle! [system request]` and `report [system query]`. The system map contains opaque module handles for test/replay composition. It never edits module state.
 
-Drain tries each pending recipient once, acknowledges only recorded/duplicate receipt and returns `{:pending-count n :errors [...]}`. Errors identify delivery IDs. Explicit retry resends original recorded events. `run-day!` and `settle!` drain before invoking Yield and refuse incomplete input. `report` requires `{:account/id id :day day}`, optionally with Ledger temporal fields. It is a pure operational view at capture time and includes a separately bounded `:accounting` result; supplying an earlier `:day` does not reconstruct an earlier operational snapshot. Preserve captured reports for that purpose.
+Drain uses `account-ledger.authorization.ports.api-client/deliver!` to call the injected Ledger or Yield recipient with the saved event. It tries each pending recipient once, acknowledges only recorded/duplicate receipt and returns `{:pending-count n :errors [...]}`. Errors identify delivery IDs. Explicit retry resends original recorded events. `run-day!` and `settle!` drain before invoking Yield and refuse incomplete input. `report` requires `{:account/id id :day day}`, optionally with Ledger temporal fields. It is a pure operational view at capture time and includes a separately bounded `:accounting` result; supplying an earlier `:day` does not reconstruct an earlier operational snapshot. Preserve captured reports for that purpose.
 
 Working example from the worktree root:
 

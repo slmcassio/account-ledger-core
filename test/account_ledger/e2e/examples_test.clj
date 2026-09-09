@@ -1,10 +1,10 @@
 (ns account-ledger.e2e.examples-test
   (:require [clojure.test :refer [deftest is testing]]
             [account-ledger.system :as system]
-            [account-ledger.money :as money]
+            [account-ledger.shared.logic.money :as money]
             [account-ledger.fixtures :as fixtures]
-            [account-ledger.authorization.api :as authorization]
-            [account-ledger.ledger.api :as ledger]))
+            [account-ledger.authorization.ports.api-server :as authorization]
+            [account-ledger.ledger.ports.api-server :as ledger]))
 
 (defn- create-demo [id]
   (system/create (assoc fixtures/config :accounts

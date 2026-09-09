@@ -4,7 +4,9 @@
             [clojure.test :as test]))
 
 (defn- group-of [path]
-  (cond (str/includes? path "/integration/") "integration"
+  (cond (or (str/includes? path "/integration/")
+            (str/includes? path "/ports/")
+            (str/includes? path "/db/")) "integration"
         (str/includes? path "/e2e/") "e2e"
         :else "unit"))
 

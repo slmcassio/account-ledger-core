@@ -1,0 +1,46 @@
+
+Testing account-ledger.architecture.dependencies-test
+
+Testing account-ledger.authorization.db.memory-test
+
+Testing account-ledger.authorization.logic.core-test
+
+Testing account-ledger.authorization.model.models-test
+
+Testing account-ledger.authorization.ports.api-client-test
+
+Testing account-ledger.authorization.ports.api-server-test
+
+Testing account-ledger.e2e.examples-test
+
+Testing account-ledger.e2e.replay-test
+
+Testing account-ledger.integration.system-test
+
+Testing account-ledger.ledger.db.memory-test
+
+Testing account-ledger.ledger.logic.core-test
+
+Testing account-ledger.ledger.model.models-test
+
+Testing account-ledger.ledger.ports.api-server-test
+
+Testing account-ledger.shared.logic.contracts-test
+
+Testing account-ledger.shared.logic.money-test
+
+Testing account-ledger.yield-fees.db.memory-test
+
+Testing account-ledger.yield-fees.logic.core-test
+
+Testing account-ledger.yield-fees.logic.transitions-test
+
+Testing account-ledger.yield-fees.model.models-test
+
+Testing account-ledger.yield-fees.ports.api-client-test
+
+Testing account-ledger.yield-fees.ports.api-server-test
+
+Ran 117 tests containing 1197 assertions.
+0 failures, 0 errors.
+Normal suite: {:test 117, :pass 1197, :fail 0, :error 0, :type :summary}

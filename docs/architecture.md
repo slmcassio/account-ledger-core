@@ -10,7 +10,7 @@ The scope excludes a web layer, persistence, database, UI, system error correcti
 
 ## Domains and module boundaries
 
-The public modules are `account-ledger.authorization.api`, `account-ledger.ledger.api` and `account-ledger.yield-fees.api`. [API documentation](api.md) describes their contracts.
+The public modules are `account-ledger.authorization.ports.api-server`, `account-ledger.ledger.ports.api-server` and `account-ledger.yield-fees.ports.api-server`. [API documentation](api.md) describes their contracts.
 
 * **Authorization (`authorization`)** owns operational transactions, snapshots, holds, and decisions. A new hold requires nonnegative remaining availability. After recording, it sends approved transactions to Yield and Fees and committed financial movements to Ledger.
 * **Ledger (`ledger`)** owns financial entries and current and historical accounting balances. Each movement becomes one balanced journal entry with equal debit and credit postings in the same currency. Book accounts need not be customer accounts. It preserves booking and value dates and owns no authorization, interest, or fee policy.
@@ -128,9 +128,18 @@ Yield and fee assessment share dated inputs and correction mechanisms, so one mo
 
 ## Executable boundaries and tradeoffs
 
-Each domain has pure rules in `domain.clj`, a public `api.clj` facade and an opaque in-memory handle in `memory.clj`. Authorization keeps a local lock around calculation and replacement, making identity, source version and outcome indivisible. Ledger appends the whole balanced entry in one local atomic update. Yield jobs are serial; zero settlement selection and receipt recording are one local transition. No module lock is held while calling another module.
+Each domain uses four directories with matching test locations:
 
-`system.clj` injects two function ports into Yield: `:submit-financial!` and `:flush-deliveries!`. The dispatcher routes immutable pending envelopes to Ledger or Yield and acknowledges each successful/duplicate destination. A lost recipient acknowledgement can cause redelivery but cannot repeat money. Runtime state disappears on process exit; restart recovery and distributed delivery are intentionally absent.
+* `logic` contains pure business calculations, query projections, initial state construction and persistent state transitions. Functions receive data and return data; they call no API, read no storage and perform no mutable update. Yield separates its financial preparation and confirmation transitions into `logic/transitions.clj`.
+* `ports/api_server.clj` exposes module operations and coordinates state reads, pure transitions, atomic recording and outgoing calls. `ports/api_client.clj` owns calls to injected external recipients.
+* `db/memory.clj` owns the opaque mutable cell, immutable reads and local atomic replacement. Transaction callbacks are pure functions from the previous state to the next state and a result.
+* `model/models.clj` declares the existing internal map and state schemas. These declarations document shapes; they do not add new business validation or replace maps with a new runtime representation.
+
+Shared arithmetic, identifiers, boundary validation and report projection live in `shared/logic`. Shared command/event schemas live in `shared/model/contracts.clj`. Shared code has no storage or outgoing ports. Architecture tests check that logic depends only on pure logic/model namespaces within the application and contains no API or storage calls. [README](../README.md#module-structure) shows one complete source/test layout.
+
+Authorization keeps a local lock around calculation and replacement, making identity, source version and outcome indivisible. Ledger appends the whole balanced entry in one local atomic update. Yield jobs are serial; zero settlement selection and receipt recording are one local transition. No module lock is held while calling another module.
+
+`system.clj` injects two function ports into Yield: `:submit-financial!` and `:flush-deliveries!`. Yield's `ports.api-client` calls these functions after local recording where an effect requires an intent. The dispatcher uses Authorization's `ports.api-client/deliver!` to route immutable saved envelopes to injected Ledger or Yield recipients, then acknowledges each successful/duplicate destination. Ledger has no outgoing application dependency; its `ports.api-client` namespace documents that without defining an unused operation. A lost recipient acknowledgement can cause redelivery but cannot repeat money. Runtime state disappears on process exit; restart recovery and distributed delivery are intentionally absent.
 
 A financial source mismatch leaves its ID unrecorded in Authorization and retains the rejected proposal in Yield's intent history. Each fee component is confirmed and delivered before the next versioned proposal is calculated. Reports expose saved intents and unresolved commands; completeness requires a contiguous local input prefix, no pending financial command and, in the composed system, no pending delivery. This coordination is specific to serial fee and interest jobs and introduces no general retry queue.
 

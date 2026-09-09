@@ -14,7 +14,7 @@ clojure -M:test e2e
 clojure -M:demo
 ```
 
-The default suite discovers every normal test namespace. Failures, errors, invalid groups and zero discovered tests produce a nonzero exit. Unit tests exercise pure rules; integration tests use real module adapters and controlled delivery/concurrency; end-to-end tests execute E1 through E10 and the five separate documented examples. The numerical oracle uses integer minor units independently of production calculation functions.
+The default suite discovers every normal test namespace. Failures, errors, invalid groups and zero discovered tests produce a nonzero exit. Unit tests exercise pure rules, model shapes and architecture boundaries; integration tests exercise ports, storage and composed modules with controlled delivery/concurrency; end-to-end tests execute E1 through E10 and the five separate documented examples. The numerical oracle uses integer minor units independently of production calculation functions.
 
 The required deliberate design challenge runs separately:
 
@@ -23,6 +23,23 @@ clojure -M:design-challenge
 ```
 
 It must exit 1 with exactly one assertion failure and no runtime errors. It demands a payload-conflict response for a known transaction ID, exposing that the adopted duplicate policy trusts producer identity uniqueness and does not inspect changed content. The normal suite verifies the approved duplicate response. See [test explanation](tests/README.md) and [executed verification evidence](docs/deliverables/VERIFICATION.md).
+
+## Module structure
+
+Authorization, Ledger, and Yield and Fees each use the same layout. For example:
+
+```text
+src/account_ledger/authorization/       test/account_ledger/authorization/
+  logic/core.clj                         logic/core_test.clj
+  ports/api_server.clj                   ports/api_server_test.clj
+  ports/api_client.clj                   ports/api_client_test.clj
+  db/memory.clj                          db/memory_test.clj
+  model/models.clj                       model/models_test.clj
+```
+
+`logic` contains pure calculations and state transitions over immutable data. It calls no API and reads no storage. `ports/api_server.clj` exposes the module's operations; `ports/api_client.clj` calls its injected recipients. `db/memory.clj` owns the opaque mutable state and atomic updates. `model/models.clj` declares the internal map shapes. Yield also separates its pure payment transitions into `logic/transitions.clj`. Ledger has no outgoing application dependency, so its client namespace documents that fact without an unused operation.
+
+Shared arithmetic, identifiers, validation and report projection live in `shared/logic`; shared contract schemas live in `shared/model`. Application composition and replay remain in `system.clj`, `transaction.clj` and `replay.clj`. See the [architecture boundaries](docs/architecture.md#executable-boundaries-and-tradeoffs) and [test organization](tests/README.md#normal-test-organization).
 
 ## Reading the Output
 
@@ -49,7 +66,11 @@ Yield saves each fee or interest command locally before submitting it. An uncert
 * [Rejected criteria and approaches](docs/deliverables/REJECTED.md)
 * [Worklog](docs/deliverables/WORKLOG.md)
 * [Annotated failing test requirement](tests/README.md)
-* [Part 2: Architecture and Tradeoffs](docs/architecture.md)
+* [Part 2: Architecture summary](docs/architecture-summary.md)
+* [Detailed architecture reference](docs/architecture.md)
+* [Tradeoffs](docs/trade-offs.md)
+* [Production considerations](docs/production-considerations.md)
+* [Architecture, tradeoffs and production PDF](docs/deliverables/architecture-tradeoffs-production.pdf)
 
 ### Working Notes
 
