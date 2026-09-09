@@ -15,6 +15,31 @@
   (if (some #(= (:component/id component) (:component/id %)) records)
     records (conj records component)))
 
+(defn- append-receipt [state receipt]
+  (if-let [original (get-in state [:settlement-ids (:settlement/id receipt)])]
+    [state {:outcome :duplicate :original/receipt original}]
+    [(-> state
+         (assoc-in [:settlement-ids (:settlement/id receipt)] receipt)
+         (update-in [:accounts (:account/id receipt) :settlements] conj receipt))
+     {:outcome :recorded :settlement/receipt receipt}]))
+
+(defn- receipt-from-event [event]
+  (assoc (select-keys event [:account/id :settlement/id :transaction/id :component/ids
+                            :period/end-day :booking-cutoff])
+         :money/amount (:financial/effect event) :run-day (:booking-day event)))
+
+(defn- confirm-financial [state event]
+  (let [account-id (:account/id event)
+        state (case (:purpose event)
+                :fee (update-in state [:accounts account-id :fees] append-unique
+                                (assoc (:fee/assessment event)
+                                       :transaction/id (:transaction/id event)
+                                       :source-event-counter (:source-event-counter event)))
+                :interest (first (append-receipt state (receipt-from-event event)))
+                state)]
+    (update-in state [:accounts account-id :pending-financial-commands]
+               dissoc (:transaction/id event))))
+
 (defn receive! [module event]
   (memory/transact!
    module
@@ -33,12 +58,10 @@
          [state {:outcome :invalid :transaction/id id :reason :counter-conflict}]
 
          :else
-         [(cond-> (-> state
-                      (assoc-in [:input-ids id] event)
-                      (assoc-in [:accounts account-id :events counter] event))
-            (and (= :fee (:purpose event)) (map? (:fee/assessment event)))
-            (update-in [:accounts account-id :fees] append-unique
-                       (assoc (:fee/assessment event) :transaction/id id)))
+         [(-> state
+              (assoc-in [:input-ids id] event)
+              (assoc-in [:accounts account-id :events counter] event)
+              (confirm-financial event))
           {:outcome :recorded :transaction/id id}])))))
 
 (defn report [module account-id]
@@ -52,7 +75,8 @@
       (or (pos? (:pending-count delivery)) (seq (:errors delivery)))
       {:outcome :retry-required :reason :incomplete-delivery :delivery delivery}
 
-      (not (:complete? (report module account-id)))
+      (not (:complete? (domain/input-view
+                         (vals (get-in (memory/read-state module) [:accounts account-id :events])))))
       {:outcome :retry-required :reason :incomplete-input}
 
       :else nil)))
@@ -64,6 +88,48 @@
     :recorded (:recorded/event result)
     :duplicate (get-in result [:original/result :recorded/event])
     nil))
+
+(defn- pending-command [module account-id]
+  (first (vals (get-in (memory/read-state module) [:accounts account-id :pending-financial-commands]))))
+
+(defn- pending-result [command]
+  (merge {:outcome :retry-required :reason :pending-financial-command :complete? false}
+         (select-keys command [:transaction/id :settlement/id])))
+
+(defn- save-command! [module command]
+  (memory/transact!
+   module
+   (fn [state]
+     (let [path [:accounts (:account/id command)]
+           pending (first (vals (:pending-financial-commands (get-in state path))))]
+       (if pending
+         [state (if (= (:transaction/id pending) (:transaction/id command)) pending (pending-result pending))]
+         [(-> state
+              (update-in (conj path :financial-intents) conj command)
+              (assoc-in (conj path :pending-financial-commands (:transaction/id command)) command))
+          command])))))
+
+(defn- submit-command! [module command]
+  (let [saved (save-command! module command)]
+    (if (:outcome saved)
+      saved
+      ;; The exact command is already recorded locally. Exceptions leave it pending.
+      (let [result ((:submit-financial! (memory/ports module)) saved)]
+        (if-let [event (original-event result)]
+          (memory/transact! module (fn [state] [(confirm-financial state event) nil]))
+          (when (or (= :invalid (:outcome result))
+                    (and (= :retry-required (:outcome result)) (= :stale-source (:reason result))))
+            (memory/transact! module
+                              (fn [state]
+                                [(update-in state [:accounts (:account/id saved) :pending-financial-commands]
+                                            dissoc (:transaction/id saved)) nil]))))
+        result))))
+
+(defn- resume-fee! [module account-id]
+  (when-let [command (pending-command module account-id)]
+    (when (= :fee (:purpose command))
+      (let [result (submit-command! module command)]
+        (if (original-event result) (ready module account-id) result)))))
 
 (defn- record-fee! [module account-id component]
   (memory/transact! module
@@ -112,13 +178,8 @@
                             :fee/assessment component}
                            (when cause {:cause/transaction-id cause})
                            (when reversal-refund? {:fee/original-value-day value-day}))
-            result ((:submit-financial! (memory/ports module)) command)]
-        (if-let [event (original-event result)]
-          (do
-            (record-fee! module account-id
-                         (assoc (:fee/assessment event) :transaction/id (:transaction/id event)))
-            (ready module account-id))
-          result)))))
+            result (submit-command! module command)]
+        (if (original-event result) (ready module account-id) result)))))
 
 (defn- record-interest! [module account request reference]
   (memory/transact!
@@ -167,6 +228,7 @@
       (nil? account) {:outcome :invalid :reason :unknown-account}
       :else
       (or (ready module account-id)
+          (resume-fee! module account-id)
           (let [days (if (= :daily (:mode request)) [(:reference-day request)]
                          (vec (range (:from-day request) (inc (:through-day request)))))
                 account-state (get-in (memory/read-state module) [:accounts account-id])]
@@ -174,7 +236,8 @@
               {:outcome :invalid :reason reason}
               (loop [[reference & remaining] days, finished []]
                 (if (nil? reference)
-                  {:outcome :recorded :account/id account-id :assessed-days finished :complete? true}
+                  {:outcome :recorded :account/id account-id :assessed-days finished
+                   :complete? (:complete? (report module account-id))}
                   (let [current (get-in (memory/read-state module) [:accounts account-id])
                         assessment (domain/assessment account current request reference)
                         previous-boundary (get-in current [:review-boundaries reference])
@@ -194,17 +257,6 @@
                         (do (record-interest! module account request reference)
                             (recur remaining (conj finished reference))))))))))))))
 
-(defn- append-receipt [state receipt]
-  (if-let [original (get-in state [:settlement-ids (:settlement/id receipt)])]
-    [state {:outcome :duplicate :original/receipt original}]
-    [(-> state
-         (assoc-in [:settlement-ids (:settlement/id receipt)] receipt)
-         (update-in [:accounts (:account/id receipt) :settlements] conj receipt))
-     {:outcome :recorded :settlement/receipt receipt}]))
-
-(defn- record-receipt! [module receipt]
-  (memory/transact! module #(append-receipt % receipt)))
-
 (defn- settle-zero! [module account request]
   ;; Selection and the zero receipt are one local transition, without any port call.
   (memory/transact!
@@ -217,51 +269,48 @@
          (throw (ex-info "Settlement jobs must run serially" {:reason :concurrent-settlement})))
        (append-receipt state (assoc request :money/amount amount :component/ids (mapv :component/id components)))))))
 
-(defn- receipt-from-event [request event]
-  (merge request
-         (select-keys event [:account/id :settlement/id :transaction/id :component/ids :period/end-day :booking-cutoff])
-         {:money/amount (:financial/effect event) :run-day (:booking-day event)}))
+(defn- duplicate-receipt [receipt]
+  (cond-> {:outcome :duplicate :original/receipt receipt :settlement/receipt receipt}
+    (:transaction/id receipt) (assoc :recovered-from-event (:transaction/id receipt))))
+
+(defn- pay-command! [module command]
+  (let [result (submit-command! module command)]
+    (if-let [event (original-event result)]
+      (let [delivery ((:flush-deliveries! (memory/ports module)))]
+        {:outcome :recorded :settlement/receipt (receipt-from-event event)
+         :financial/result result :delivery delivery
+         :complete? (and (zero? (:pending-count delivery)) (empty? (:errors delivery))
+                         (:complete? (report module (:account/id command))))})
+      result)))
 
 (defn settle! [module request]
   (let [account-id (:account/id request)
         account (get-in (memory/configuration module) [:accounts account-id])
-        original (get-in (memory/read-state module) [:settlement-ids (:settlement/id request)])]
+        receipt #(get-in (memory/read-state module) [:settlement-ids (:settlement/id request)])]
     (cond
-      original {:outcome :duplicate :original/receipt original}
+      (receipt) (duplicate-receipt (receipt))
       (not (s/valid? ::contracts/settlement request)) {:outcome :invalid :reason :invalid-settlement}
       (nil? account) {:outcome :invalid :reason :unknown-account}
       :else
       (or (ready module account-id)
-          (let [view (report module account-id)
-                payment-id (identifier :interest-payment [account-id (:settlement/id request)])
-                prior-payment (get-in (memory/read-state module) [:input-ids payment-id])
-                components (domain/eligible-components (:interest/components view) (:settlements view) request)
-                amount (domain/total (:money/currency account) components)
-                receipt (assoc request :money/amount amount :component/ids (mapv :component/id components))]
-            (cond
-              prior-payment
-              (assoc (record-receipt! module (receipt-from-event request prior-payment))
-                     :recovered-from-event payment-id :complete? true)
-
-              (zero? amount)
-              (assoc (settle-zero! module account request) :complete? true)
-
-              :else
-              (let [command (merge (select-keys request [:account/id :settlement/id :period/end-day :booking-cutoff])
-                                   {:transaction/id payment-id
-                                    :transaction/type (if (pos? amount) :credit :debit)
-                                    :money/currency (:money/currency account) :money/amount (abs amount)
-                                    :purpose :interest :reference-day (:period/end-day request)
-                                    :booking-day (:run-day request) :value-day (:run-day request) :received-day (:run-day request)
-                                    :component/ids (:component/ids receipt)
-                                    :source-event-counter (:source-event-counter view)})
-                    result ((:submit-financial! (memory/ports module)) command)]
-                (if-let [event (original-event result)]
-                  (let [recorded-receipt (receipt-from-event request event)
-                        recorded (record-receipt! module recorded-receipt)
-                        delivery ((:flush-deliveries! (memory/ports module)))]
-                    (assoc recorded :financial/result result :delivery delivery
-                                    :complete? (and (zero? (:pending-count delivery))
-                                                    (empty? (:errors delivery))
-                                                    (:complete? (report module account-id)))))
-                  result))))))))
+          (when-let [confirmed (receipt)] (duplicate-receipt confirmed))
+          (if-let [pending (pending-command module account-id)]
+            (if (and (= :interest (:purpose pending))
+                     (= (:settlement/id pending) (:settlement/id request)))
+              (pay-command! module pending)
+              (pending-result pending))
+            (let [view (report module account-id)
+                  components (domain/eligible-components (:interest/components view) (:settlements view) request)
+                  amount (domain/total (:money/currency account) components)]
+              (if (zero? amount)
+                (assoc (settle-zero! module account request) :complete? true)
+                (pay-command!
+                 module
+                 (merge (select-keys request [:account/id :settlement/id :period/end-day :booking-cutoff])
+                        {:transaction/id (identifier :interest-payment [account-id (:settlement/id request)])
+                         :transaction/type (if (pos? amount) :credit :debit)
+                         :money/currency (:money/currency account) :money/amount (abs amount)
+                         :purpose :interest :reference-day (:period/end-day request)
+                         :booking-day (:run-day request) :value-day (:run-day request) :received-day (:run-day request)
+                         :component/ids (mapv :component/id components)
+                         :source-event-counter (:source-event-counter view)})))))))))

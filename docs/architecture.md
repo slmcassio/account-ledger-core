@@ -14,7 +14,7 @@ The public modules are `account-ledger.authorization.api`, `account-ledger.ledge
 
 * **Authorization (`authorization`)** owns operational transactions, snapshots, holds, and decisions. A new hold requires nonnegative remaining availability. After recording, it sends approved transactions to Yield and Fees and committed financial movements to Ledger.
 * **Ledger (`ledger`)** owns financial entries and current and historical accounting balances. Each movement becomes one balanced journal entry with equal debit and credit postings in the same currency. Book accounts need not be customer accounts. It preserves booking and value dates and owns no authorization, interest, or fee policy.
-* **Yield and Fees (`interest_and_fees`)** owns daily assessments, accruals, and calculation records. It reconstructs dated bases from approved transactions and initial account state.
+* **Yield and Fees (`interest_and_fees`)** owns daily assessments, accruals, calculation records and financial intents. It reconstructs dated bases from approved transactions and initial account state, then saves each command before submitting its financial effect.
 
 Authorization never reads Ledger; Yield consumes no balances. Each module changes only its own state through explicit interfaces.
 
@@ -30,13 +30,21 @@ Check ID uniqueness and the unchanged calculation base indivisibly with recordin
 
 ## Calculation version validation
 
-Authorization can advance while Yield receives transactions, calculates, or sends a payment. Each attempt uses one complete account version, identified by `source_event_counter`. New transactions that advance that account's snapshot version require a new attempt; they are not mixed into the running calculation.
+Authorization can advance while Yield receives transactions, calculates, or sends a payment. Each proposal uses one complete account version, identified by `source_event_counter`. New transactions are not mixed into an already saved command. A definite source mismatch allows a fresh calculation; an unknown submission outcome first requires confirmation or retry of the original command.
 
 For example, Yield has the approved transactions through counter **10** and starts calculating. Authorization has recorded approved transaction **11**, but it has not reached Yield yet. Yield sends its result with `source_event_counter = 10`. Authorization's snapshot is already at **11**, so it records no payment and requests recalculation. Yield must receive transaction **11** before recalculating this result.
 
 In addition to [snapshot validation](#snapshots-and-concurrency), a new payment with `event_counter = N` requires both Authorization's current snapshot counter and `source_event_counter` to equal **N-1**. Check the ID and both counters, apply the credit or debit, and save payment plus snapshot indivisibly. A mismatch records no payment and requests recalculation with the same supplied ID.
 
 The recorded-ID rule also applies to payments: redelivery requests no recalculation. Fee submissions use the same source counter check. A declined authorization leaves the account version unchanged and does not invalidate an otherwise current calculation.
+
+### Save before submission
+
+Yield saves the full fee or interest command locally before calling Authorization. Its append-only `:financial-intents` history retains the original ID, amount, component links, dates and source version. Interest calculations already exist as components; fee commands embed their calculated assessment. A separate pending index retains the exact command while its outcome is unknown. This local write completes before the cross-module call and holds no lock during that call.
+
+An exception or unknown response leaves the command pending. The same settlement ID resends that map; calculation resumes a pending fee before replacing its proposal. A different financial command or new zero settlement waits until the pending command is resolved. Pure accruals may continue, but cannot change the earlier intent. A definite invalid or stale-source rejection clears the pending entry while retaining the proposal history. Only then may fresh input produce a new proposal with the same unrecorded ID.
+
+Saving an intent does not mean the payment succeeded. A confirmed response, confirmed duplicate or committed event records the original fee assessment or interest receipt and clears its pending entry atomically. Interest event delivery links the paid components to the event's original settlement ID and signed amount, independently of any later caller's ID. The interest command contract requires settlement ID, period end and booking cutoff coherent with its reference and booking days, so every accepted interest event contains the receipt metadata. This closes the response-loss interval in which a different settlement could otherwise select already paid interest.
 
 The financial booking cutoff does not replace this operational check. An excluded booking may leave the amount unchanged while invalidating its source counter. Yield verifies the contiguous received account prefix, including hold-only counters; the dispatcher drains known pending envelopes before complete calculations. This does not promise receipt of all future external events.
 
@@ -59,6 +67,8 @@ Apply the [daily input selection](#daily-calculation-and-capitalization-rules). 
 Assess the ordinary fee for H on H+1, with both booking and value dates H+1. Configure fees by account type in its own currency under the [approved currency exception](exercise-inputs/business-rules-corrected.md#approved-exception-overdraft-fee-currency).
 
 Calculate `corrected fee - (original fee + all earlier adjustments)`, including adjustments excluded from the assessment base. Append only a nonzero difference, linked to its trigger with a breakdown by day. Positive differences debit; negative differences refund. Review periods chronologically.
+
+Every accepted fee command must carry a consistent assessment: component identity and type, signed obligation/refund, reference day, booking/value dates and any correction cause. The single component link and signed `:fee/difference` must agree with it. Optional nested source/cutoff metadata is checked when supplied; the confirmed command supplies the source counter for the recorded fee. This prevents money from being posted without the assessment that later fee comparisons need. Normal generated fee commands already contain these fields.
 
 For legitimate late adjustments, both dates are the correction day. Reversal refunds use the exception below. [Study 07](research/07-overdraft-fees-research.md#calculation-snapshots) provides worked examples.
 
@@ -122,7 +132,7 @@ Each domain has pure rules in `domain.clj`, a public `api.clj` facade and an opa
 
 `system.clj` injects two function ports into Yield: `:submit-financial!` and `:flush-deliveries!`. The dispatcher routes immutable pending envelopes to Ledger or Yield and acknowledges each successful/duplicate destination. A lost recipient acknowledgement can cause redelivery but cannot repeat money. Runtime state disappears on process exit; restart recovery and distributed delivery are intentionally absent.
 
-A financial source mismatch leaves its proposal ID unrecorded, allowing an explicit retry after fresh input. Each fee component is confirmed, delivered and recalculated before the next versioned proposal. A recorded payment duplicate supplies its original amount and component links; a changed new selection cannot replace them. This coordination is specific to fees and interest.
+A financial source mismatch leaves its ID unrecorded in Authorization and retains the rejected proposal in Yield's intent history. Each fee component is confirmed and delivered before the next versioned proposal is calculated. Reports expose saved intents and unresolved commands; completeness requires a contiguous local input prefix, no pending financial command and, in the composed system, no pending delivery. This coordination is specific to serial fee and interest jobs and introduces no general retry queue.
 
 `transaction.clj` submits only to Authorization. `replay.clj` contains the supplied fixture and logical checkpoints, using `system.clj` to run jobs, drain delivery and capture reports. It returns twelve persistent snapshots before running the separately requested Day 7 continuation. Operational reports and historical accounting queries have distinct temporal meanings. Ledger returns the actual local journal position even when the caller omits it, so a query can be reproduced later.
 

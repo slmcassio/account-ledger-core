@@ -41,7 +41,13 @@ Results have `:outcome`:
 
 Approved events retain ID/dates/purpose, assigned `:event-counter`, signed `:financial/effect`, occurrences and relevant links. Hold-only events have zero financial effect and go only to Yield. E10 adds `:installments`; it remains one event. Operational balances are not in the event feed.
 
-Internal fee/interest commands use reserved `system/` IDs, `:credit` or `:debit`, `:purpose :fee` or `:interest`, current `:source-event-counter`, `:reference-day` and nonempty `:component/ids`. They still require the ordinary amount/currency/dates. Source version checking and recording are one local atomic operation. A decline or a different account's event does not change that account version.
+Internal fee/interest commands use reserved `system/` IDs, `:credit` or `:debit`, `:purpose :fee` or `:interest`, current `:source-event-counter`, `:reference-day` and nonempty `:component/ids`. They still require the ordinary amount/currency/dates.
+
+Fee commands additionally require `:fee/assessment` with `:component/id`, `:component/type` (`:ordinary` or `:adjustment`), signed `:money/amount`, `:reference-day`, `:booking-day` and `:value-day`. The command's `:component/ids` must contain exactly that component ID. Reference, booking/value days and any `:cause/transaction-id` must agree between command and assessment. The assessment amount and `:fee/difference` must equal the charge amount for a debit or its negative for a refund credit. An optional assessment `:source-event-counter` must match the command; optional `:booking-cutoff` must equal booking day minus one. Yield records the confirmed command's source counter even if the assessment omits it. Missing or inconsistent assessment metadata returns `:invalid` with `:reason :invalid-fee-assessment` before any effect or ID reservation. Ordinary generated fee commands already include this metadata.
+
+Interest commands require `:settlement/id`, `:period/end-day` and `:booking-cutoff` so a committed event can reconstruct the original receipt. The reference day equals the period end; the booking cutoff equals booking day minus one; the period end cannot follow that cutoff. Value day equals booking day, the actual settlement run day. Yield-generated commands already satisfy these requirements.
+
+Source version checking and recording are one local atomic operation. A decline or a different account's event does not change that account version.
 
 ## Ledger
 
@@ -61,10 +67,10 @@ Entries preserve original metadata and add `:journal/position` and `:postings`. 
 | Function | Contract |
 |---|---|
 | `(create config ports)` | Requires function ports `:submit-financial! [command]` and `:flush-deliveries! []`. |
-| `(receive! module approved-event)` | Returns recorded/duplicate/invalid receipt. Buffers out-of-order counters without declaring their gaps complete. |
+| `(receive! module approved-event)` | Returns recorded/duplicate/invalid receipt. Buffers out-of-order counters; confirms original fee assessments and interest settlement links from committed events. |
 | `(calculate! module request)` | Runs one serial daily or historical job for one account, producing fee records and pending interest components. |
 | `(settle! module request)` | Selects eligible unpaid components, settles their signed total once and returns an immutable receipt. |
-| `(report module account-id)` | Returns source prefix/readiness, all components, fees, settlement receipts, paid interest and pending total. |
+| `(report module account-id)` | Returns source prefix/readiness, components, fees, settlement receipts, paid/pending interest, saved financial intents and unresolved commands. |
 
 Daily request:
 
@@ -95,7 +101,15 @@ Settlement request:
 
 The request supplies no payment amount. Ordinary components through the period end are eligible; adjustments also require booking through the cutoff. Current-month ordinary components remain pending. Positive totals credit; negative totals debit even into negative funds; zero totals link components in a local receipt without a financial command. A stale payment settles nothing. A confirmed original payment settles only its original links even if a retry would choose a different total. Settlement IDs are global within Yield. A recorded receipt returned again is a duplicate.
 
-Each component preserves ID, type (`:ordinary`/`:adjustment`), reference, booking/value days and signed amount, with calculation/cause metadata. Receipts link selected IDs; earlier components are never marked or rewritten. Previously paid adjustments remain part of later target comparisons. `:complete?` on Yield's report means the known local account prefix is contiguous; system reporting also checks pending deliveries. Accepted payments can have `:complete? false` when their delivery remains unresolved.
+Before calling `:submit-financial!`, Yield atomically appends the complete command to `:financial-intents` and keeps the same map in `:pending-financial-commands`. The command fixes its ID, amount, dates, component links and source counter. Interest components are already saved; a fee command includes its calculated assessment. These report fields are vectors of command maps. Saving an intent alone neither confirms a fee nor settles interest.
+
+If submission throws or leaves its outcome unknown, retrying that interest settlement ID resends the exact saved map, including the original dates, even if the supplied request or available components have changed. A pending fee is retried before the next calculation replaces its assessment. While a command remains unresolved, a different financial command or new settlement, including a zero settlement, returns `:retry-required` with `:reason :pending-financial-command`. Pure interest calculation may still append components, but the report remains incomplete.
+
+An explicit `:invalid` result or `:retry-required` with `:reason :stale-source` proves the command was not recorded. Yield clears its pending entry and preserves the proposal in `:financial-intents`; a later attempt may recalculate and save another proposal with the same unrecorded ID. A stale source requires fresh calculation, not replacing only the saved counter. Retrying an unresolved command does not append another intent.
+
+A recorded result, its confirmed duplicate, or delivery of the committed event confirms the original assessment or settlement and clears that command's pending entry in one local transition. Interest delivery creates the receipt using the original settlement ID, signed amount, dates and component links without requiring a retry of that ID. A later settlement therefore cannot pay those same components again. Positive and negative payments use this same confirmation path.
+
+Each component preserves ID, type (`:ordinary`/`:adjustment`), reference, booking/value days and signed amount, with calculation/cause metadata. Receipts link selected IDs; earlier components are never marked or rewritten. Previously paid adjustments remain part of later target comparisons. `:complete?` on Yield's report requires both a contiguous known local account prefix and no pending financial command. System reporting exposes the same intent fields and also checks pending deliveries. Accepted payments can have `:complete? false` when their delivery remains unresolved.
 
 Expected validation, stale-view and delivery outcomes are data. Broken invariants/technical failures remain visible exceptions. Jobs are serial; concurrent job orchestration and restart recovery are outside scope.
 

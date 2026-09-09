@@ -76,7 +76,7 @@
                                   (select-keys query [:value-through-day :booking-through-day :as-of-journal-position]))]
       (merge snapshot
              (select-keys yield [:interest-paid :pending-interest :interest/components :fees :settlements
-                                :source-event-counter])
+                                :source-event-counter :financial-intents :pending-financial-commands])
              {:day day :view :operational-at-capture
               :complete? (and (empty? pending) (:complete? yield))
               :pending-delivery-count (count pending)

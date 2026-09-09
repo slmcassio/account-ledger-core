@@ -235,6 +235,8 @@ Only add further constants when supported by an approved decision or an identifi
 
 These results use the explicit [SPEC checkpoint schedule](../implementation/bank-spec/SPEC.md#6-replay-schedule-and-independent-expectations), not a generalized banking calendar.
 
+The financial intent correction changes failure recovery and accepted command metadata, with no change to these numerical rules or replay boundaries. Its [executed demo](evidence/bank-spec-financial-intents/demo.txt) matches the original twelve six-day reports and separate Day 7 continuation exactly.
+
 | Quantity | Derivation and boundary |
 |---|---|
 | Initial E1/E2 balance | `1200.00 - 950.00 = 250.00`; supplied principal inputs. |

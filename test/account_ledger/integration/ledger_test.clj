@@ -148,7 +148,11 @@
                       {:booking-day 7 :value-day 6 :received-day 7 :purpose :fee
                        :source-event-counter 0 :reference-day 2 :component/ids ["fee-H2-refund"]
                        :fee/difference -25.00M :fee/original-value-day 6
-                       :cause/transaction-id "E9"})]
+                       :cause/transaction-id "E9"
+                       :fee/assessment {:component/id "fee-H2-refund" :component/type :adjustment
+                                        :reference-day 2 :booking-day 7 :value-day 6
+                                        :money/amount -25.00M :source-event-counter 0
+                                        :booking-cutoff 6 :cause/transaction-id "E9"}})]
     (is (= :recorded (:outcome (ledger/post! module refund))))
     (let [before (ledger/journal module "ACC-001")
           entry (first before)]

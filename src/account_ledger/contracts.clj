@@ -44,6 +44,13 @@
 (s/def ::from-day day?)
 (s/def ::through-day day?)
 (s/def :cause/transaction-id id?)
+(s/def :component/id id?)
+(s/def :component/type #{:ordinary :adjustment})
+(s/def ::fee-assessment
+  (s/keys :req [:component/id :component/type :money/amount]
+          :req-un [::reference-day ::booking-day ::value-day]
+          :opt [:cause/transaction-id]
+          :opt-un [::source-event-counter ::booking-cutoff]))
 (s/def ::calculation
   (s/and (s/keys :req [:account/id]
                  :req-un [::run-day ::booking-cutoff ::mode])
@@ -91,6 +98,29 @@
                         [id (assoc account :opening-balance (money/amount currency (:opening-balance account))
                                            :daily-fee fee)])))))))
 
+(defn- valid-fee-assessment? [command]
+  (let [assessment (:fee/assessment command)
+        currency (:money/currency command)]
+    (and (s/valid? ::fee-assessment assessment)
+         (= [(:component/id assessment)] (:component/ids command))
+         (= (select-keys assessment [:reference-day :booking-day :value-day :cause/transaction-id])
+            (select-keys command [:reference-day :booking-day :value-day :cause/transaction-id]))
+         (or (not (contains? assessment :source-event-counter))
+             (= (:source-event-counter command) (:source-event-counter assessment)))
+         (or (not (contains? assessment :booking-cutoff))
+             (= (dec (:booking-day command)) (:booking-cutoff assessment)))
+         (try
+           (= (if (= :debit (:transaction/type command))
+                (:money/amount command) (- (:money/amount command)))
+              (money/amount currency (:money/amount assessment))
+              (money/amount currency (:fee/difference command)))
+           (catch clojure.lang.ExceptionInfo _ false)))))
+
+(defn- valid-interest-settlement? [command]
+  (and (s/valid? ::settlement (assoc command :run-day (:booking-day command)))
+       (= (:reference-day command) (:period/end-day command))
+       (= (:value-day command) (:booking-day command))))
+
 (defn validate-command
   "Return normalized input or an invalid reason. Does not inspect stored identities."
   [config command]
@@ -126,9 +156,17 @@
                                (update command :money/amount #(money/amount (:money/currency command) %)))]
             (when (:installment-count normalized)
               (money/allocate-three (:money/currency normalized) (:money/amount normalized)))
-            (if (and (not= :reversal type) (not (pos? (:money/amount normalized))))
+            (cond
+              (and (not= :reversal type) (not (pos? (:money/amount normalized))))
               {:valid? false :reason :invalid-amount}
-              {:valid? true :command normalized}))
+
+              (and (= :fee (:purpose normalized)) (not (valid-fee-assessment? normalized)))
+              {:valid? false :reason :invalid-fee-assessment}
+
+              (and (= :interest (:purpose normalized)) (not (valid-interest-settlement? normalized)))
+              {:valid? false :reason :invalid-interest-settlement}
+
+              :else {:valid? true :command normalized}))
           (catch clojure.lang.ExceptionInfo e {:valid? false :reason (:reason (ex-data e))})))))
 
 (defn valid-event? [config event]

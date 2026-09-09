@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-09-09T09:39:43-03:00",
+  "worktree_HEAD": "ad24b3fcdb878bf6dc41c7cb1106afaf80ad16d2",
+  "primary_HEAD": "6980b14e0eaf8f02bba1e7486eca4dbd0119d4df",
+  "primary_clean": true,
+  "index_empty": true,
+  "exercise_statement_matches_HEAD": true,
+  "previous_worklog_retained_verbatim": true,
+  "review_files_current_sha256": {
+    "docs/reviews/bank-spec/business-rules.md": "86ac7b59ef121ca8cecee90cf2e8b8aaa4303c556e1bf52a1b6e5a447574343d",
+    "docs/reviews/bank-spec/code-quality.md": "9f8f21af9b5d8c9d9e82f088d6cb3a097359fa55a007d440b2c9ddba45b3e42e",
+    "docs/reviews/bank-spec/performance.md": "ca4fbbb0d5a2042081679baa9407939978ca7997c011d7c318f468da8543e231",
+    "docs/reviews/bank-spec/test-quality.md": "c07e5f87c07401fa2ad316b6d385d4f376cc29fb968efb2e9c4b38b3e0e2f430"
+  }
+}

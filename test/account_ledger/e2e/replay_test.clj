@@ -43,6 +43,12 @@
     (is (= 12 (count daily-reports)))
     (is (every? :complete? daily-reports))
     (is (= [1 2 3 4 5 6] (mapv :day aed)))
+    (is (= [[] [] []
+            [{:type :missing-authorization :authorization/id "Auth-Z"}]
+            [{:type :missing-authorization :authorization/id "Auth-Z"}]
+            [{:type :missing-authorization :authorization/id "Auth-Z"}]]
+           (mapv :occurrences aed)))
+    (is (= [[] [] [] [] [] []] (mapv :occurrences bhd)))
     (is (= [250M 250M 650M 285M -335M 210.57M] (mapv :financial-balance aed)))
     (is (= [0M 200M 200M 0M 0M 0M] (mapv :held-amount aed)))
     (is (= [250M 50M 450M 285M -335M 210.57M] (mapv :available-balance aed)))
@@ -55,7 +61,9 @@
     (is (= 0.004M (get-in summary ["ACC-002" :pending-interest])))
     (is (= :declined (get-in summary ["ACC-001" :authorization-states "Auth-B"])))
     (is (= :settled (get-in summary ["ACC-001" :authorization-states "Auth-A"])))
-    (is (seq (get-in summary ["ACC-001" :occurrences])))
+    (is (= [{:type :missing-authorization :authorization/id "Auth-Z"}]
+           (get-in summary ["ACC-001" :occurrences])))
+    (is (= [] (get-in summary ["ACC-002" :occurrences])))
     (let [components (get-in summary ["ACC-001" :interest/components])
           originals (filter #(= :ordinary (:component/type %)) components)
           adjustments (filter #(= :adjustment (:component/type %)) components)
@@ -85,6 +93,9 @@
     (is (= 15 (:last-event-counter aed)))
     (is (= 0.19M (:pending-interest aed)))
     (is (= 0.008M (:pending-interest bhd)))
+    (is (= [{:type :missing-authorization :authorization/id "Auth-Z"}]
+           (:occurrences aed)))
+    (is (= [] (:occurrences bhd)))
     (is (= 0.11M (reduce + 0M (map :money/amount
                                 (filter #(and (= :adjustment (:component/type %))
                                               (<= (:reference-day %) 5)) (:interest/components aed))))))

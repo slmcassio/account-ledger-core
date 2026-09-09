@@ -1,6 +1,25 @@
 # BANK-SPEC execution decisions
 
-Source: [approved specification](docs/implementation/bank-spec/SPEC.md) and [plan](docs/implementation/bank-spec/PLAN.md), launched 09 September 2026. The baseline is `ba4201b51901b355c896cc94981bea14139c925e`. All work remains unstaged and uncommitted in `codex/bank-spec`.
+Source: [approved specification](docs/implementation/bank-spec/SPEC.md) and [plan](docs/implementation/bank-spec/PLAN.md), launched 09 September 2026 at baseline `ba4201b51901b355c896cc94981bea14139c925e`. The implementation was subsequently rebased and committed with user authorization as recorded in [WORKLOG](docs/deliverables/WORKLOG.md). The financial intent corrections and regression follow-up below form one user-authorized commit on `codex/bank-spec` after `ad24b3fcdb878bf6dc41c7cb1106afaf80ad16d2`; Git history records its final identity.
+
+## Financial intents before effects
+
+The user explicitly required local calculation recording before any outbound effect and correction of both reported duplication defects. This section supersedes the earlier confirmation-recovery claims where they were incomplete.
+
+* Save the entire financial command before submission: stable transaction ID, component links, amount, dates, source counter and fee assessment when applicable. Keep an append-only proposal history and at most one unresolved command per account. Existing serial jobs make a general retry framework unnecessary.
+* An exception or unknown result preserves the exact pending command. Retrying the same settlement resends that saved command; calculation resumes its pending fee first. Another financial command, including a new zero settlement, waits. Pure accruals can continue without changing the earlier intent.
+* A definitive invalid or stale-source rejection records no money, so clear pending state and allow a fresh proposal. Preserve the rejected calculation in history and retain its unrecorded transaction ID. Never attach a fresh counter to an unknown old payment.
+* Confirm the original assessment or settlement receipt atomically with clearing its pending entry. Both the original financial result and delivered committed events can provide that confirmation. Event delivery recognizes the original settlement independently of the next caller's ID. Intent recording itself does not mark interest paid or a fee charged.
+* Require coherent fee assessment metadata and interest receipt metadata at the shared boundary before Authorization changes money. Normal producers already supplied these fields; accepted incomplete commands could otherwise bypass Yield's history. Copy the confirmed command's mandatory source counter into its fee record, avoiding a redundant mandatory nested field.
+* The effect-order audit found Authorization already saves outcome, snapshot and envelopes before dispatch, and Ledger records the balanced journal before acknowledgement. No changes to those module lifecycles were necessary. Every cross-module call still occurs outside the local state lock.
+
+Verification: regressions inspect saved reports from inside the submission port, lose responses before and after recording, exercise different settlement IDs, changed retry dates, definite rejections, fee refunds and incomplete accepted contracts. The initial corrected suite passed 97 tests and 964 assertions; [verification](docs/deliverables/VERIFICATION.md#financial-intent-correction) preserves command evidence and scope limits.
+
+## Closing the review's regression gaps
+
+The user's next instruction included all four demonstrated surviving mutations and the missing settlement recovery scenario, then authorized a signed commit with WORKLOG. Retain the earlier production fixes, strengthen the exact financial/delivery/report outcomes, and prove that all four original mutations fail against the complete suite. No business rule changes or general mutation-testing framework are needed.
+
+The final suite passes 98 tests and 1,033 assertions. Negative Ledger delivery, ignored duplicate responses, BHD availability bypass and fabricated occurrences now produce respectively 11, 12, 14 and 7 assertion failures, with no execution errors. A direct System regression preserves one payment after response loss and a different settlement ID. [Verification and reproducible probes](docs/deliverables/VERIFICATION.md#regression-protection-follow-up) record the evidence. Prior review documents remain untouched and outside the commit.
 
 ## Specification defaults accepted at launch
 

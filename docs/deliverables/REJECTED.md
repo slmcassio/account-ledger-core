@@ -135,5 +135,7 @@ Executable replay, temporal-query, hold, installment and rounding tests are mapp
 
 * Replaced Ledger's direct reuse of new-command validation on committed events with validation of the command projection followed by full event/posting validation. A regression test run exposed rejected legitimate deliveries after computed fields were reserved to Authorization; preserving separate boundaries fixed it.
 * Restricted the example 08 historical-interest option to an explicitly bounded historical request. An independent review reproduced an ordinary daily request that could skip the mandatory fee before the schema restriction. Its regression now rejects the request instead.
+* Replaced submission before local payment-intent recording and recovery dependent on the next settlement ID. An unknown result now retains the saved original command; delivered confirmation links its original components before any new selection. The different-ID regression demonstrated the original repeated payment.
+* Rejected incomplete fee and interest commands at the shared boundary. Accepted money must carry the assessment or receipt metadata Yield needs to recognize it. Composed regressions reproduce the previously invisible fee/payment and verify rejection before any financial effect.
 
 No Kafka, HTTP, database, general retry framework or extended calendar was built and discarded. They were excluded by scope rather than abandoned implementation approaches.

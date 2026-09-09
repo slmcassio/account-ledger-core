@@ -1,0 +1,36 @@
+[
+  {
+    "command": [
+      "clojure",
+      "-M:test"
+    ],
+    "cwd": "/Users/slmcassio/Developer/account-ledger-core-bank-spec",
+    "started_at": "2026-09-09T09:37:41-03:00",
+    "recorded_at": "2026-09-09T09:37:42-03:00",
+    "exit_code": 0,
+    "output": "normal.txt"
+  },
+  {
+    "command": [
+      "clojure",
+      "-M:design-challenge"
+    ],
+    "cwd": "/Users/slmcassio/Developer/account-ledger-core-bank-spec",
+    "started_at": "2026-09-09T09:37:42-03:00",
+    "recorded_at": "2026-09-09T09:37:42-03:00",
+    "exit_code": 1,
+    "output": "design-challenge.txt"
+  },
+  {
+    "command": [
+      "clojure",
+      "-M:demo"
+    ],
+    "cwd": "/Users/slmcassio/Developer/account-ledger-core-bank-spec",
+    "started_at": "2026-09-09T09:37:42-03:00",
+    "recorded_at": "2026-09-09T09:37:43-03:00",
+    "exit_code": 0,
+    "output": "demo.txt",
+    "matches_original_demo": true
+  }
+]

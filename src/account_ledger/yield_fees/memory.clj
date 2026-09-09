@@ -8,7 +8,8 @@
            (atom {:input-ids {} :settlement-ids {}
                   :accounts (into {} (for [id (keys (:accounts configuration))]
                                        [id {:events (sorted-map) :fees []
-                                            :interest/components [] :settlements []}]))})
+                                            :interest/components [] :settlements []
+                                            :financial-intents [] :pending-financial-commands {}}]))})
            ports))
 
 (defn configuration [^Module module] (.-configuration module))

@@ -1,0 +1,10 @@
+Recorded: 2026-09-09T09:45:26-03:00
+Modified Markdown files: 10
+Local targets: 330
+Local Markdown anchors: 183
+Whitespace: git diff --check passed
+No separate formatter or lint configuration found.
+Primary checkout clean at expected HEAD; index empty before staging.
+Original exercise and prior WORKLOG entries preserved verbatim.
+All four review report hashes match the prior recording; excluded from commit scope.
+Local links: passed

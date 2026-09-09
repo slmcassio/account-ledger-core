@@ -32,27 +32,57 @@
       (is (= 15.00M (:hold/released event))))))
 
 (deftest hold-boundary-and-decline-recording
-  (let [funded (apply-commands (initial) [(fixtures/command "fund" :credit 20.00M 1)])
-        [exact approved] (domain/submit funded (fixtures/command "exact" :authorization 20.00M 1
-                                                                {:authorization/id "exact-hold"}))
-        [declined refused] (domain/submit funded (fixtures/command "over" :authorization 20.01M 1
-                                                                  {:authorization/id "over-hold"}))]
-    (is (= :recorded (:outcome approved)))
-    (is (= 0.00M (get-in exact [:accounts "ACC-001" :snapshot :available-balance])))
-    (is (= :declined (:outcome refused)))
-    (is (= :insufficient-available-balance (:reason refused)))
-    (is (= (:accounts funded) (update-in (:accounts declined) ["ACC-001" :history] pop)))
-    (is (nil? (:recorded/snapshot refused)))
-    (is (nil? (:recorded/event refused)))
-    (is (= 2 (count (get-in declined [:accounts "ACC-001" :history]))))
-    (is (= (:deliveries funded) (:deliveries declined)))
-    (is (= refused (get-in declined [:identities "over"])))
-    (let [more-funds (apply-commands declined [(fixtures/command "later" :credit 100.00M 2)])
-          [unchanged duplicate] (domain/submit more-funds {:transaction/id "over" :money/amount :malformed})]
-      (is (= :duplicate (:outcome duplicate)))
-      (is (= refused (:original/result duplicate)))
-      (is (= more-funds unchanged))
-      (is (= 120.00M (get-in unchanged [:accounts "ACC-001" :snapshot :available-balance]))))))
+  (doseq [[account-id currency funds over zero minor-unit]
+          [["ACC-001" :AED 20.00M 20.01M 0.00M 0.01M]
+           ["ACC-002" :BHD 20.000M 20.001M 0.000M 0.001M]]]
+    (testing (str currency " uses its own minor unit at the availability boundary")
+      (let [account {:account/id account-id :money/currency currency}
+            funded (apply-commands (initial) [(fixtures/command "fund" :credit funds 1 account)])
+            [exact approved] (domain/submit funded
+                                            (fixtures/command "exact" :authorization funds 1
+                                                              (assoc account :authorization/id "exact-hold")))
+            declined-command (fixtures/command "over" :authorization over 1
+                                               (assoc account :authorization/id "over-hold"))
+            [declined refused] (domain/submit funded declined-command)]
+        (is (= :recorded (:outcome approved)))
+        (is (= [funds funds zero 2 {"exact-hold" funds}]
+               ((juxt :financial-balance :held-amount :available-balance :last-event-counter :holds)
+                (get-in exact [:accounts account-id :snapshot]))))
+        (is (= :declined (:outcome refused)))
+        (is (= :insufficient-available-balance (:reason refused)))
+        (is (= (:accounts funded) (update-in (:accounts declined) [account-id :history] pop)))
+        (is (nil? (:recorded/snapshot refused)))
+        (is (nil? (:recorded/event refused)))
+        (is (= (conj (get-in funded [:accounts account-id :history])
+                     (assoc refused :command declined-command))
+               (get-in declined [:accounts account-id :history])))
+        (is (= (select-keys funded [:deliveries :delivery-order :acknowledged])
+               (select-keys declined [:deliveries :delivery-order :acknowledged])))
+        (is (= refused (get-in declined [:identities "over"])))
+        (let [more-funds (apply-commands declined [(fixtures/command "later" :credit 100M 2 account)])
+              [unchanged duplicate] (domain/submit more-funds {:transaction/id "over" :money/amount :malformed})]
+          (is (= :duplicate (:outcome duplicate)))
+          (is (= refused (:original/result duplicate)))
+          (is (= more-funds unchanged))
+          (is (= 120M (get-in unchanged [:accounts account-id :snapshot :available-balance])))))
+      (testing "zero funds cannot support even the smallest hold"
+        (let [before (initial)
+              command (fixtures/command "unfunded" :authorization minor-unit 1
+                                        {:account/id account-id :money/currency currency
+                                         :authorization/id "unfunded-hold"})
+              [after result] (domain/submit before command)]
+          (is (= :declined (:outcome result)))
+          (is (= :insufficient-available-balance (:reason result)))
+          (is (= (:accounts before) (update-in (:accounts after) [account-id :history] pop)))
+          (is (= [{:outcome :declined :reason :insufficient-available-balance
+                   :transaction/id "unfunded" :account/id account-id
+                   :authorization/state :declined :occurrences [] :command command}]
+                 (get-in after [:accounts account-id :history])))
+          (is (= (select-keys before [:deliveries :delivery-order :acknowledged])
+                 (select-keys after [:deliveries :delivery-order :acknowledged])))
+          (is (= result (get-in after [:identities "unfunded"])))
+          (is (nil? (:recorded/event result)))
+          (is (nil? (:recorded/snapshot result))))))))
 
 (deftest known-identity-precedes-every-payload-check
   (let [[recorded original] (domain/submit (initial) (fixtures/command "same" :credit 10.00M 1))]
@@ -119,7 +149,8 @@
 (defn financial-command [id amount source]
   (fixtures/command id :credit amount 6
                     {:purpose :interest :reference-day 5 :component/ids ["interest/day5"]
-                     :source-event-counter source}))
+                     :source-event-counter source :settlement/id "period-one"
+                     :period/end-day 5 :booking-cutoff 5}))
 
 (deftest source-version-is-account-specific-and-unrecorded-attempts-retain-identity
   (let [funded (apply-commands (initial) [(fixtures/command "fund" :credit 10.00M 1)])
@@ -144,6 +175,25 @@
       (is (= :duplicate (:outcome duplicate)))
       (is (= result (:original/result duplicate)))
       (is (= paid again)))))
+
+(deftest interest-without-receipt-metadata-cannot-record-effects-or-reserve-identity
+  (let [before (initial)
+        command (financial-command "system/payment" 0.10M 0)]
+    (doseq [key [:settlement/id :period/end-day :booking-cutoff]]
+      (let [invalid (dissoc command key)
+            [unchanged rejected] (domain/submit before invalid)]
+        (is (= :invalid (:outcome rejected)))
+        (is (= :invalid-interest-settlement (:reason rejected)))
+        (is (= before unchanged))
+        (let [[recorded result] (domain/submit unchanged command)
+              [duplicate-state duplicate] (domain/submit recorded invalid)]
+          (is (= :recorded (:outcome result)))
+          (is (= 0.10M (get-in recorded [:accounts "ACC-001" :snapshot :financial-balance])))
+          (is (= (select-keys command [:settlement/id :period/end-day :booking-cutoff])
+                 (select-keys (:recorded/event result) [:settlement/id :period/end-day :booking-cutoff])))
+          (is (= :duplicate (:outcome duplicate)))
+          (is (= result (:original/result duplicate)))
+          (is (= recorded duplicate-state)))))))
 
 (deftest reversal-restores-principal-once-with-supplied-dates
   (let [state (apply-commands (initial) (take 8 fixtures/events))
@@ -243,11 +293,18 @@
         (is (= :invalid (:outcome result)))
         (is (= reason (:reason result)))))))
 
+(defn- fee-command []
+  (fixtures/command "system/fee" :debit 25.0M 6
+                    {:purpose :fee :reference-day 2 :source-event-counter 0
+                     :component/ids ["fee/day2"] :fee/difference 25.00M
+                     :cause/transaction-id "late-debit" :fee/original-value-day 6
+                     :fee/assessment {:component/id "fee/day2" :component/type :adjustment
+                                      :reference-day 2 :booking-day 6 :value-day 6
+                                      :money/amount 25.00M :source-event-counter 0
+                                      :booking-cutoff 5 :cause/transaction-id "late-debit"}}))
+
 (deftest financial-debit-preserves-fee-contract-even-into-negative-funds
-  (let [command (fixtures/command "system/fee" :debit 25.0M 6
-                                 {:purpose :fee :reference-day 2 :source-event-counter 0
-                                  :component/ids ["fee/day2"] :fee/difference 25.00M
-                                  :cause/transaction-id "late-debit" :fee/original-value-day 6})
+  (let [command (fee-command)
         [state result] (domain/submit (initial) command)
         event (:recorded/event result)]
     (is (= :recorded (:outcome result)))
@@ -255,10 +312,28 @@
     (is (= 2 (.scale ^BigDecimal (:money/amount event))))
     (is (= -25.00M (get-in state [:accounts "ACC-001" :snapshot :available-balance])))
     (is (= (select-keys command [:purpose :reference-day :source-event-counter :component/ids
-                                 :fee/difference :cause/transaction-id :fee/original-value-day])
+                                 :fee/difference :fee/assessment :cause/transaction-id :fee/original-value-day])
            (select-keys event [:purpose :reference-day :source-event-counter :component/ids
-                              :fee/difference :cause/transaction-id :fee/original-value-day])))
+                              :fee/difference :fee/assessment :cause/transaction-id :fee/original-value-day])))
     (let [reversal (dissoc (fixtures/command "reverse-fee" :reversal nil 7 {:reversal/of "system/fee"}) :money/amount)
           [unchanged rejected] (domain/submit state reversal)]
       (is (= state unchanged))
       (is (= :not-principal-movement (:reason rejected))))))
+
+(deftest invalid-fee-assessments-cannot-record-effects-or-reserve-identity
+  (let [before (initial)
+        command (fee-command)]
+    (doseq [invalid [(dissoc command :fee/assessment)
+                     (assoc-in command [:fee/assessment :money/amount] 24.00M)
+                     (assoc-in command [:fee/assessment :component/id] "unlinked-fee")]]
+      (let [[unchanged rejected] (domain/submit before invalid)]
+        (is (= :invalid (:outcome rejected)))
+        (is (= :invalid-fee-assessment (:reason rejected)))
+        (is (= before unchanged))
+        (let [[recorded result] (domain/submit unchanged command)
+              [duplicate-state duplicate] (domain/submit recorded invalid)]
+          (is (= :recorded (:outcome result)))
+          (is (= -25.00M (get-in recorded [:accounts "ACC-001" :snapshot :financial-balance])))
+          (is (= :duplicate (:outcome duplicate)))
+          (is (= result (:original/result duplicate)))
+          (is (= recorded duplicate-state)))))))

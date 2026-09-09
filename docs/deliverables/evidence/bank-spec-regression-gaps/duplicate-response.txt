@@ -1,0 +1,81 @@
+Recorded: 2026-09-09T09:43:46-03:00
+Command arguments: ["clojure", "-Sdeps", "{:paths [\"src\" \"test\"]}", "-M", "docs/deliverables/evidence/bank-spec-regression-gaps/review-mutations.clj", "duplicate-response"]
+Exit: 1
+
+Review mutation: duplicate-response
+
+Testing account-ledger.contracts-test
+
+Testing account-ledger.e2e.examples-test
+
+Testing account-ledger.e2e.replay-test
+
+Testing account-ledger.integration.authorization-test
+
+Testing account-ledger.integration.financial-intents-test
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:202)
+expected: (= :recorded (:outcome result))
+  actual: (not (= :recorded :duplicate))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:203)
+expected: (true? (:complete? result))
+  actual: (not (true? nil))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:204)
+expected: (= :duplicate (get-in result [:financial/result :outcome]))
+  actual: (not (= :duplicate nil))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:205)
+expected: (= component-ids (get-in result [:settlement/receipt :component/ids]))
+  actual: (not (= ["system/interest-component/[\"ACC-001\" 1 nil 0]"] nil))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:206)
+expected: (= 0.04M (get-in result [:settlement/receipt :money/amount]))
+  actual: (not (= 0.04M nil))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:208)
+expected: (empty? (:pending-financial-commands view))
+  actual: (not (empty? [{:money/amount 0.04M, :booking-cutoff 2, :account/id "ACC-001", :purpose :interest, :transaction/type :credit, :settlement/id "original", :period/end-day 2, :value-day 3, :reference-day 2, :component/ids ["system/interest-component/[\"ACC-001\" 1 nil 0]"], :money/currency :AED, :received-day 3, :booking-day 3, :source-event-counter 1, :transaction/id "system/interest-payment/[\"ACC-001\" \"original\"]"}]))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:209)
+expected: (= 0.04M (:interest-paid view))
+  actual: (not (= 0.04M 0.00M))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:210)
+expected: (= 0.00M (:pending-interest view))
+  actual: (not (= 0.00M 0.04M))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:211)
+expected: (= 1 (count (:settlements view)))
+  actual: (not (= 1 0))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:213)
+expected: (empty? (authorization/pending-deliveries authorization))
+  actual: (not (empty? [{:delivery/id ["system/interest-payment/[\"ACC-001\" \"original\"]" :ledger], :destination :ledger, :event {:money/amount 0.04M, :booking-cutoff 2, :financial/effect 0.04M, :account/id "ACC-001", :purpose :interest, :transaction/type :credit, :settlement/id "original", :period/end-day 2, :value-day 3, :occurrences [], :reference-day 2, :component/ids ["system/interest-component/[\"ACC-001\" 1 nil 0]"], :money/currency :AED, :received-day 3, :booking-day 3, :source-event-counter 1, :transaction/id "system/interest-payment/[\"ACC-001\" \"original\"]", :event-counter 2}} {:delivery/id ["system/interest-payment/[\"ACC-001\" \"original\"]" :yield], :destination :yield, :event {:money/amount 0.04M, :booking-cutoff 2, :financial/effect 0.04M, :account/id "ACC-001", :purpose :interest, :transaction/type :credit, :settlement/id "original", :period/end-day 2, :value-day 3, :occurrences [], :reference-day 2, :component/ids ["system/interest-component/[\"ACC-001\" 1 nil 0]"], :money/currency :AED, :received-day 3, :booking-day 3, :source-event-counter 1, :transaction/id "system/interest-payment/[\"ACC-001\" \"original\"]", :event-counter 2}}]))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:215)
+expected: (= 100.04M (:money/amount (ledger/balance ledger {:account/id "ACC-001", :value-through-day 3, :booking-through-day 3})))
+  actual: (not (= 100.04M 100.00M))
+
+FAIL in (a-direct-confirmed-duplicate-uses-the-original-financial-receipt) (financial_intents_test.clj:217)
+expected: (= [0.04M] (mapv :financial/effect (interest-journal ledger)))
+  actual: (not (= [0.04M] []))
+
+Testing account-ledger.integration.ledger-test
+
+Testing account-ledger.integration.system-test
+
+Testing account-ledger.integration.yield-fees-test
+
+Testing account-ledger.money-test
+
+Testing account-ledger.unit.authorization-test
+
+Testing account-ledger.unit.ledger-test
+
+Testing account-ledger.unit.yield-fees-test
+
+Ran 98 tests containing 1033 assertions.
+12 failures, 0 errors.
+Normal suite: {:test 98, :pass 1021, :fail 12, :error 0, :type :summary}

@@ -94,6 +94,7 @@
                     (authorization/submit! module
                                            (fixtures/command "system/interest" :credit 0.04M 2
                                                              {:purpose :interest :source-event-counter source
+                                                              :settlement/id "month" :period/end-day 1 :booking-cutoff 1
                                                               :reference-day 1 :component/ids ["day1"]}))))]
     (is (= 1 (deref prepared 5000 ::timeout)))
     (authorization/submit! module (fixtures/command "later" :credit 100.00M 2))
@@ -108,6 +109,7 @@
       (let [payment (authorization/submit! module
                                            (fixtures/command "system/interest" :credit 0.08M 2
                                                              {:purpose :interest :source-event-counter 2
+                                                              :settlement/id "month" :period/end-day 1 :booking-cutoff 1
                                                               :reference-day 1 :component/ids ["day1"]}))]
         (is (= :recorded (:outcome payment)))
         (is (= 3 (get-in payment [:recorded/event :event-counter])))
@@ -117,6 +119,7 @@
   (let [module (authorization/create fixtures/config)
         commands (mapv #(fixtures/command % :credit 0.01M 2
                                           {:purpose :interest :source-event-counter 0
+                                           :settlement/id % :period/end-day 1 :booking-cutoff 1
                                            :reference-day 1 :component/ids ["day1"]})
                        ["system/left" "system/right"])
         results (competing-submissions module commands)

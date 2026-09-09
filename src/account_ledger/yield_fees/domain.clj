@@ -71,10 +71,14 @@
 (defn report [account account-state account-id]
   (let [components (:interest/components account-state)
         receipts (:settlements account-state)
+        pending (vec (vals (:pending-financial-commands account-state)))
         settled (set (mapcat :component/ids receipts))
         currency (:money/currency account)]
     (merge {:account/id account-id :money/currency currency
             :interest/components components :fees (:fees account-state) :settlements receipts
+            :financial-intents (vec (:financial-intents account-state))
+            :pending-financial-commands pending
             :interest-paid (total currency receipts)
             :pending-interest (total currency (remove #(contains? settled (:component/id %)) components))}
-           (input-view (vals (:events account-state))))))
+           (update (input-view (vals (:events account-state))) :complete?
+                   #(and % (empty? pending))))))

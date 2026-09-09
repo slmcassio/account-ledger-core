@@ -1,6 +1,75 @@
 # BANK-SPEC Verification
 
-Verified on 09 September 2026 in America/Sao_Paulo. Individual command recording times and exact output are retained in [command evidence](evidence/bank-spec/commands.json). These are execution observations, not estimates of work duration.
+## Regression protection follow-up
+
+The user's follow-up required closure of all five concerns in the test-quality review and a signed commit including WORKLOG. This verification covers the combined financial-intent fixes and the completed regression protection. `docs/reviews` remains unchanged and excluded from the commit.
+
+The final normal command `clojure -M:test` passed **98 tests / 1,033 assertions**, with **zero failures and errors**, exit **0**: [output](evidence/bank-spec-regression-gaps/normal.txt). Each review mutation below ran the same complete suite in its own JVM and now causes assertion failures. These are controlled verification probes outside normal test discovery, with no changes to production source files.
+
+| Review mutation | Assertions failed | Errors | Exit | Evidence |
+|---|---:|---:|---:|---|
+| Ledger rejects negative-interest payments | 11 | 0 | 1 | [negative Ledger delivery](evidence/bank-spec-regression-gaps/negative-ledger.txt) |
+| Yield ignores confirmed duplicate financial responses | 12 | 0 | 1 | [duplicate response](evidence/bank-spec-regression-gaps/duplicate-response.txt) |
+| BHD authorization bypasses available funds | 14 | 0 | 1 | [BHD availability](evidence/bank-spec-regression-gaps/bhd-availability.txt) |
+| Every report fabricates occurrence content | 7 | 0 | 1 | [occurrence content](evidence/bank-spec-regression-gaps/fabricated-occurrences.txt) |
+
+[Command arguments, timestamps and results](evidence/bank-spec-regression-gaps/commands.json) and the [exact mutation probe](evidence/bank-spec-regression-gaps/review-mutations.clj) make the checks reproducible. From the worktree root, run:
+
+```sh
+clojure -Sdeps '{:paths ["src" "test"]}' -M docs/deliverables/evidence/bank-spec-regression-gaps/review-mutations.clj negative-ledger
+```
+
+Replace the final argument with `duplicate-response`, `bhd-availability` or `fabricated-occurrences` for the other probes. Each intentionally modified run exits 1; the normal implementation exits 0. These probes do not replace or hide the exercise's separate design challenge.
+
+Permanent regression coverage:
+
+* P1: `a-different-settlement-after-response-loss-cannot-pay-the-same-interest-again` uses the public System API and all three modules. A payment confirmed before response loss is followed directly by a different settlement, without an intervening accrual or explicit drain. It asserts one 0.04 payment, operational/accounting balance 100.04, unique original component links, no pending delivery and immutable original receipt on retry.
+* Delivery: `negative-settlement-debits-zero-balance-and-counts-paid-adjustments` asserts the one balanced 0.20 debit, both module balances at -0.20, completed delivery and recorded/completed historical follow-up. The earlier lost-negative-response regression remains.
+* Duplicate response: `a-direct-confirmed-duplicate-uses-the-original-financial-receipt` asserts the original receipt, one payment/counter advance, both balances, cleared pending state and completed delivery.
+* BHD: `hold-boundary-and-decline-recording` now preserves the AED case and covers BHD approval at exact availability, refusal 0.001 above it, and refusal of a 0.001 hold from zero funds. Refusal preserves funds, holds, counter and delivery state while retaining the decline in history.
+* Occurrences: the full replay asserts none through Day 3 for ACC-001, exactly the missing `Auth-Z` occurrence from Day 4 through the separately captured Day 7, and none for ACC-002. Example 05 asserts the exact missing `Auth-Missing` occurrence.
+
+Before strengthening the relevant tests, the BHD mutation passed its focused Authorization tests (14 / 184) and the occurrence mutation passed the end-to-end tests (8 / 99). Both now fail. The earlier financial-intent corrections already exposed the negative-delivery and duplicate-response mutations; this follow-up strengthens their delivery, journal and result assertions as specified. No further production behavior change was needed beyond the financial-intent correction below.
+
+An independent reviewer inspected all five completed regression areas and found no remaining actionable issue within this scope. The independent numerical oracle remains part of the passing suite. `clojure -M:demo` exited 0 with output exactly equal to the original twelve six-day reports and two Day 7 reports ([output](evidence/bank-spec-regression-gaps/demo.txt)). `clojure -M:design-challenge` again produced exactly **one deliberate failed assertion, zero errors, exit 1** ([output](evidence/bank-spec-regression-gaps/design-challenge.txt)). [Artifact checks](evidence/bank-spec-regression-gaps/artifact-checks.txt) retain the document and preservation checks. This is targeted regression verification, not an exhaustive mutation-coverage claim.
+
+## Financial intent correction
+
+Initial correction verified on 09 September 2026 after commit `ad24b3fcdb878bf6dc41c7cb1106afaf80ad16d2`, in `/Users/slmcassio/Developer/account-ledger-core-bank-spec` on `codex/bank-spec`. At that check the changes were unstaged and no commit or remote operation had been performed. The original checkout was clean on `main` at `6980b14e0eaf8f02bba1e7486eca4dbd0119d4df`. The original exercise and local `docs/reviews` reports were preserved. The subsequent regression follow-up and its commit authorization are documented above.
+
+| Executed command | Tests | Assertions | Failures / errors | Exit | Evidence |
+|---|---:|---:|---|---:|---|
+| `clojure -M:test` | 97 | 964 | 0 / 0 | 0 | [normal suite](evidence/bank-spec-financial-intents/normal.txt) |
+| `clojure -M:design-challenge` | 1 | 1 | **1 deliberate / 0** | **1** | [separate challenge](evidence/bank-spec-financial-intents/design-challenge.txt) |
+| `clojure -M:demo` | n/a | n/a | Exact original output | 0 | [replay](evidence/bank-spec-financial-intents/demo.txt) |
+
+[Command timestamps](evidence/bank-spec-financial-intents/commands.json) retain actual execution and recording times in America/Sao_Paulo. The demo output equals the original captured output exactly, excluding its recording header: twelve reports for Days 1 through 6 and two separately labeled Day 7 reports. The independent integer oracle still passes as part of the normal suite; expected results were not derived from the production calculation.
+
+The two reviewed duplication defects are corrected:
+
+* Yield saves the entire command and calculation links before submission. The unknown outcome retains the exact pending map. A later settlement cannot select the same components while that operation is unresolved. Delivered confirmation records the original receipt independently of a subsequent caller's settlement ID.
+* The shared boundary rejects a missing or inconsistent fee assessment before recording money. Its confirmed source counter is copied from the accepted command. The analogous incomplete-interest contract also rejects commands without coherent receipt ID, period and dates.
+
+[Financial intent integration tests](../../test/account_ledger/integration/financial_intents_test.clj) cover saved state visible inside the outgoing port, loss before and after Authorization recording, immutable retries after new accruals and changed request dates, confirmed duplicate results, different settlement IDs, zero settlement blocked by an unknown payment, definitive invalid/stale rejection, negative interest and reversal refunds. [System integration tests](../../test/account_ledger/integration/system_test.clj) verify that malformed financial commands change no snapshot, journal, delivery or calculation report, and that accepted records prevent another charge/payment. Existing [Yield tests](../../test/account_ledger/integration/yield_fees_test.clj) additionally check an unknown fee is retried before replacing its calculation, even when a later input changes the target to zero.
+
+Regression evidence before the relevant fixes:
+
+* The independent financial intent test author's original six tests executed 113 assertions with 38 failures and zero errors against the committed implementation.
+* The fee contract unit run executed 34 tests / 336 assertions with 50 failures and zero errors before its validation change, then passed. The subsequent interest contract unit run executed 37 tests / 385 assertions with 32 failures and zero errors before its change, then passed.
+* The composed regression for omitted nested fee source metadata exposed five failures and two null-source errors; copying the confirmed command source fixed it. The composed incomplete-interest regression demonstrated 100.08 paid from a 100.00 principal with only 0.04 accrued, producing 16 failures and zero errors before contract correction.
+* One older lost-response test expected zero pending after a correction because receipt recognition was delayed until settlement retry. It now expects -0.04 immediately after delivered confirmation, preserving the original 0.04 payment and the separate unpaid correction.
+
+An independent effect-order audit found Authorization already records outcomes, snapshots and delivery envelopes before dispatch; Ledger records the balanced journal before acknowledgement. An independent final reviewer ran 52 integration tests / 480 assertions with zero failures/errors and checked the final code and API documentation. Its source-metadata and interest-contract findings were corrected with the regressions above; its final documentation note about equal interest booking/value days was also applied. No remaining finding was identified within the serial, unique-ID scope. [Artifact checks](evidence/bank-spec-financial-intents/artifact-checks.txt) record whitespace, local links and preservation checks.
+
+This initial correction added 19 tests and 295 assertions to the previous 78 / 669 suite. BHD authorization boundaries and occurrence-report details were outside that initial step; the regression follow-up above subsequently closed both gaps.
+
+Intent history and pending commands are in-memory state. They do not survive process exit. Jobs remain serial, identity uniqueness remains the producer's responsibility, and the existing annotated challenge still exposes the intentional duplicate-payload limitation. No financial constants, capitalization rules or replay boundaries changed.
+
+## Original implementation verification record
+
+The sections below preserve the initial implementation evidence and describe that earlier workspace state. Current correction results and the superseding review findings are above and in [WORKLOG](WORKLOG.md).
+
+Originally verified on 09 September 2026 in America/Sao_Paulo. Individual command recording times and exact output are retained in [command evidence](evidence/bank-spec/commands.json). These are execution observations, not estimates of work duration.
 
 ## Workspace and scope
 

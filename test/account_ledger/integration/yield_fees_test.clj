@@ -138,7 +138,7 @@
     (is (= :invalid-calculation (:reason (yield/calculate! module (assoc (daily 3) :booking-cutoff 3)))))))
 
 (deftest negative-settlement-debits-zero-balance-and-counts-paid-adjustments
-  (let [{:keys [module submit! authorization]} (real-fixture)]
+  (let [{:keys [module submit! authorization ledger]} (real-fixture)]
     (submit! (fixtures/command "A" :credit 750.00M 1))
     (yield/calculate! module (daily 2))
     (yield/settle! module (settlement "earlier-payment" 2 1))
@@ -152,10 +152,27 @@
           result (yield/settle! module (settlement "negative" 5 2))
           after (yield/report module "ACC-001")]
       (is (= -0.20M (:pending-interest before)))
+      (is (= :recorded (:outcome result)))
+      (is (true? (:complete? result)))
+      (is (= {:pending-count 0 :errors []} (:delivery result)))
       (is (= -0.20M (get-in result [:settlement/receipt :money/amount])))
       (is (= -0.20M (:financial-balance (authorization/snapshot authorization "ACC-001"))))
+      (is (= -0.20M (:money/amount (ledger/balance ledger {:account/id "ACC-001"
+                                                         :value-through-day 5 :booking-through-day 5}))))
+      (is (empty? (authorization/pending-deliveries authorization)))
+      (let [debits (filterv #(and (= :interest (:purpose %)) (neg? (:financial/effect %)))
+                            (ledger/journal ledger "ACC-001"))]
+        (is (= 1 (count debits)))
+        (is (= {:financial/effect -0.20M :booking-day 5 :value-day 5}
+               (select-keys (first debits) [:financial/effect :booking-day :value-day])))
+        (is (= 2 (count (:postings (first debits)))))
+        (is (= #{{:book/account "customer/ACC-001" :side :debit :money/amount 0.20M :money/currency :AED}
+                 {:book/account "clearing/AED" :side :credit :money/amount 0.20M :money/currency :AED}}
+               (set (:postings (first debits))))))
       (is (= (:interest/components before) (:interest/components after)))
-      (yield/calculate! module (historical 6 1 1 "C"))
+      (let [review (yield/calculate! module (historical 6 1 1 "C"))]
+        (is (= :recorded (:outcome review)))
+        (is (true? (:complete? review))))
       (is (= (:interest/components after) (:interest/components (yield/report module "ACC-001"))))
       (is (= 0.00M (:pending-interest (yield/report module "ACC-001")))))))
 
@@ -256,7 +273,7 @@
       (is (= 100.04M (:financial-balance (authorization/snapshot authorization "ACC-001"))))
       (is (= [0.04M] (mapv :money/amount @submissions))))))
 
-(deftest lost-payment-response-is-recovered-before-a-recomputed-zero-settlement
+(deftest delivered-payment-is-already-settled-before-historical-recalculation
   (let [lose? (atom true)
         {:keys [module submit! authorization submissions]}
         (real-fixture (fn [auth command]
@@ -271,7 +288,8 @@
                             (yield/settle! module (settlement "same-payment" 3 2))))
       (submit! (fixtures/command "B" :debit 100.00M 3 {:value-day 1}))
       (yield/calculate! module (historical 4 1 1 "B"))
-      (is (= 0.00M (:pending-interest (yield/report module "ACC-001"))))
+      ;; Delivery already confirmed the original credit, so only its correction is pending.
+      (is (= -0.04M (:pending-interest (yield/report module "ACC-001"))))
       (let [result (yield/settle! module (settlement "same-payment" 5 2))
             view (yield/report module "ACC-001")]
         (is (= [(:component/id original)] (get-in result [:settlement/receipt :component/ids])))
@@ -398,3 +416,26 @@
       (is (= [1262.49M 1262.49M] (mapv :calculation/base (:interest/components view))))
       (is (= 1.00M (:pending-interest view)))
       (is (= 1262.49M (:financial-balance snapshot) (:available-balance snapshot))))))
+
+(deftest unconfirmed-fee-is-retried-before-replacing-its-calculation
+  (let [lose? (atom true)
+        {:keys [module submit! authorization submissions]}
+        (real-fixture (fn [auth command]
+                        (if (compare-and-set! lose? true false)
+                          (throw (ex-info "Fee request did not reach Authorization" {}))
+                          (authorization/submit! auth command))))]
+    (submit! (fixtures/command "overdraft" :debit 1.00M 1))
+    (is (thrown-with-msg? clojure.lang.ExceptionInfo #"did not reach"
+                          (yield/calculate! module (daily 2))))
+    (let [original (first @submissions)]
+      (is (= [original] (:financial-intents (yield/report module "ACC-001")))))
+    ;; New eligible principal makes the recalculated fee zero, but does not
+    ;; establish whether the original command was recorded by its recipient.
+    (submit! (fixtures/command "late-credit" :credit 1.00M 1 {:received-day 2}))
+    (is (= :stale-source (:reason (yield/calculate! module (daily 2)))))
+    (is (= 2 (count @submissions)))
+    (is (= (first @submissions) (second @submissions)))
+    (is (empty? (:pending-financial-commands (yield/report module "ACC-001"))))
+    (is (= :recorded (:outcome (yield/calculate! module (daily 2)))))
+    (is (= [0.00M] (mapv :money/amount (:fees (yield/report module "ACC-001")))))
+    (is (= 0.00M (:financial-balance (authorization/snapshot authorization "ACC-001"))))))

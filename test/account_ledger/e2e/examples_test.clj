@@ -58,7 +58,8 @@
       (is (= :recorded (:outcome result)))
       (is (= [320M 0M 320M] ((juxt :financial-balance :held-amount :available-balance) state)))
       (is (= 2 (count (:journal state))))
-      (is (seq (:occurrences state)))
+      (is (= [{:type :missing-authorization :authorization/id "Auth-Missing"}]
+             (:occurrences state)))
       (is (empty? (:interest/components state))))))
 
 (deftest example-06-authorization-decisions

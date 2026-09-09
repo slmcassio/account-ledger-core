@@ -34,6 +34,8 @@ The separately labeled Day 7 continuation returns 75.00 in fees, producing AED *
 
 Use [API documentation](docs/api.md) for historical accounting queries with explicit economic day, booking cutoff and local journal position. Queries never trigger delivery or corrections. [Architecture](docs/architecture.md), [implementation decisions](agent-decisions.md) and [numbers](docs/deliverables/NUMBERS.md) explain the small design for a live defense.
 
+Yield saves each fee or interest command locally before submitting it. An uncertain response retains the exact command and blocks another financial operation for that account until resolved. Confirmation records the original assessment or paid component links, including when it arrives by event delivery. Reports expose `:financial-intents` and `:pending-financial-commands`; unresolved commands make the report incomplete. These records remain in memory and do not survive process exit.
+
 ## Documentation
 
 ### Exercise Reference

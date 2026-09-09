@@ -526,6 +526,13 @@ The BANK-SPEC launch approved these bounded implementation resolutions. They do 
 
 General external input completeness, automatic expiration beyond the replay and a real business-day calendar remain out of scope. No unimplemented required replay behavior is hidden by those limits.
 
+### Recording financial intent before submission
+
+1. **Ambiguity:** Which local record exists if submission fails or its accepted response is lost?
+2. **Why unclear:** Saved accrual components alone do not identify the payment that selected them. An accepted fee without assessment metadata cannot participate in later fee comparisons.
+3. **Decision:** Following the user's explicit correction, save the complete command before calling Authorization. Retain an unknown command unchanged, block another financial operation for that account, and confirm original component links from either the financial result or delivered event. Only a definite invalid/stale rejection releases the command for fresh calculation. Require the assessment/receipt metadata in every accepted financial command.
+4. **Reason:** This preserves the calculation that caused the effect and prevents a later settlement from paying the same interest again. It uses the existing serial, in-memory boundaries without adding durable storage or a generic retry mechanism. See [implementation decisions](../../agent-decisions.md#financial-intents-before-effects) and [verification](VERIFICATION.md#financial-intent-correction).
+
 ### Module recording and delivery
 
 **Rationale and limits:** Tying the candidate to the calculation base makes the comparison detect any advance in that account's snapshot version. Enforcing uniqueness in the same operation prevents concurrent attempts with one ID from both affecting state. Each API call makes one local attempt; stale financial proposals return for an explicit recalculation with the same ID. BANK-SPEC uses a short local lock around the pure decision and state replacement; no external module call occurs while it is held.
