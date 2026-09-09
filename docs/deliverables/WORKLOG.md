@@ -10,6 +10,13 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 22:15:42
+
+* The user approved overdraft fees configured by account type in the account's own currency: AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type. Recorded the zero BHD fee as an explicit exception to the exercise's literal mandatory fee, chosen for simplicity because conversion requirements are missing. Updated [study 12](../research/12-fee-currency-research.md), ambiguity decisions, business rules, numerical notes, README and references in studies 06/07.
+* Revalidated the committed studies 10 and 11 before integration. Preserved E10 after E9 with both dates on Day 5, its approved installment allocation, the authorization funding requirement and legitimate confirmed debits. Principal remains separate from final balances with interest. Study 06's open timing and input questions and study 10's unresolved calendar mapping and negative payable policy remain unchanged.
+* Independent review found no actionable issues. Checks completed so far covered the diff, whitespace, 114 local links, 55 anchors, five decimal calculations and preservation of the primary checkout's 31-file snapshot. The approved study 12 hash, studies 10/11 and the exercise statement were verified. No executable ledger or test suite exists.
+* This entry records completed work at the current America/Sao_Paulo recording time, with no inferred execution duration. The user requested a commit and push; neither is claimed complete here. The local commit follows final verification.
+
 ### 08 September 2026, 22:07:50
 
 * Reviewed and simplified [study 11](../research/11-installments-research.md), separating exact conservation of E10's BHD 10.000 credit from the convention for placing the remaining BHD 0.001. The user approved installment 3, giving BHD 3.333, 3.333 and 3.334; the other positions remain valid alternatives.

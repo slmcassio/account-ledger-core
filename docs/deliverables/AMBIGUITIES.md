@@ -138,13 +138,21 @@ Auth-B has a hold only if its request is approved. The absence of settlement alo
 
 ## Overdraft Fee Assessment Base
 
-**Decision:** For the daily job in D, first select inputs cumulatively with `booking_date <= D-1`. For each period being evaluated, obtain its ledger balance from those inputs using their applicable value dates. Exclude only the fee components attributed to that period and their adjustments already included in the balance. Keep other periods' fees and refunds according to their actual value dates. A negative assessment base requires AED 25.00; a zero or positive base requires no fee. Holds and pending interest do not enter the base.
+**Decision:** For the daily job in D, first select inputs cumulatively with `booking_date <= D-1`. For each period being evaluated, obtain its ledger balance from those inputs using their applicable value dates. Exclude only the fee components attributed to that period and their adjustments already included in the balance. Keep other periods' fees and refunds according to their actual value dates. A negative assessment base uses the [configured fee in the account's currency](#overdraft-fee-currency); a zero or positive base requires no fee. Holds and pending interest do not enter the base.
 
 **Assumption and rationale:** A fee should not sustain its own assessment after a legitimate late credit removes the original deficit. Excluding only its own period components prevents that circular result without removing other periods' dated charges or refunds. This is an approved project interpretation of the exercise, not an explicit rule in its statement.
 
 **Effect and reconciliation:** The reported ledger balance continues to include every eligible financial entry with an applicable value date. The exclusion is only for fee assessment. Compare the corrected fee target with the original charge plus all earlier fee adjustments; append only the difference. For legitimate late transactions, both adjustment dates remain the actual correction day. Reviewing periods in date order does not itself backdate them. [Reversal fee refunds](#reversal-compensation) instead retain the original charge's value date. See [study 07](../research/07-overdraft-fees-research.md) for examples.
 
-**Accepted limits:** Study 06 remains approved with its unresolved replay checkpoints and ordinary assessment dates; its commit did not establish a final fee count after E7. Preserve that limit when concluding this study's independent assessment decision. Study 08 defines reversal compensation without resolving these timing and numerical limits. [Study 10](../research/10-interest-capitalization-research.md) now defines the payment date and explains its effect on later bases; the negative BHD case remains for study 12. These decisions do not determine the final Day 6 fee.
+**Accepted limits:** Study 06 remains approved with its unresolved replay checkpoints and ordinary assessment dates; its commit did not establish a final fee count after E7. Preserve that limit when concluding this study's independent assessment decision. Study 08 defines reversal compensation without resolving these timing and numerical limits. [Study 10](../research/10-interest-capitalization-research.md) now defines the payment date and explains its effect on later bases. The [currency decision](#overdraft-fee-currency) defines the fee for the supplied account types. These decisions do not determine the final Day 6 fee.
+
+## Overdraft Fee Currency
+
+**Requirement and exception:** The exercise requires AED 25.00 per account per negative closing day without exempting BHD accounts. The user explicitly chose a different treatment: configure the daily fee by account type in the account's own currency, with AED 25.00 for the type corresponding to ACC-001 and BHD 0.000 for the type corresponding to ACC-002.
+
+**Assumption and rationale:** Accept this departure from the literal mandatory rule for simplicity because no conversion requirements are supplied. The zero BHD fee is a project choice, not a consequence of monetary precision or HALF_UP.
+
+**Limits:** A negative BHD base produces the configured zero fee; it does not become nonnegative. Authorization still requires available balance after a new hold to remain at or above zero in the account's currency, and legitimate confirmed debits still enter the ledger. No foreign exchange, separate AED obligation, additional account types or general prohibition on negative balances is adopted. [Study 12](../research/12-fee-currency-research.md) separates the supplied principal example from final balances with interest.
 
 ## Reversal Compensation
 

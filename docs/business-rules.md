@@ -12,7 +12,7 @@ BR06 records the approved project choice for confirmed settlements. The other ro
 | BR04 | **Effect of a hold** | Applying a hold resulting from an approved authorization. | Reduce the **available balance** without changing the **ledger balance**. |
 | BR05 | **Authorization approval** | Receiving a new authorization request. | Approve only if the available balance, **after applying the new hold**, remains **at or above zero**. |
 | BR06 | **Settlement with a missing local authorization** | Recording a legitimate, externally confirmed settlement whose authorization is absent from the local ledger. | **Append the debit and report the missing authorization.** Preserve the supplied reference and dates; do not create an authorization or hold. |
-| BR07 | **Overdraft fee assessment** | A day's closing ledger balance is **below zero**. | Assess **AED 25.00**, once per day, per account. |
+| BR07 | **Overdraft fee assessment** | A day's closing ledger balance is **below zero**. | Literal exercise rule: assess **AED 25.00**, once per day, per account. The approved currency exception is recorded below. |
 | BR08 | **Fee value date** | Recording an overdraft fee. | Set `value_date` to the **day assessed**. The interpretations for late adjustments and reversal refunds are recorded below. |
 | BR09 | **Daily interest accrual** | Calculating daily interest on the closing ledger balance. | Apply **0.04% per day to positive balances only**. Zero or negative balances do not accrue interest. |
 | BR10 | **Interest capitalization** | End of Day 6. | Capitalize accrued interest as **a single credit**. |
@@ -72,9 +72,15 @@ Clock times, replay checkpoints, and handling missing eligible records remain un
 
 For the job in D, select inputs with cumulative `booking_date <= D-1`. For each period being evaluated, calculate the ledger balance using those inputs and their applicable value dates. Exclude only that period's own fee components and related adjustments already included in this balance to obtain the fee assessment base. Keep other periods' fees and refunds according to their actual value dates. Holds and pending interest do not enter this base.
 
-Assess AED 25.00 when the resulting base is negative, otherwise zero. Reconcile that target with the original fee plus all earlier fee adjustments and append only the difference on the actual correction day. The reported ledger balance still includes every eligible financial entry with an applicable value date; the exclusion changes fee eligibility, not history.
+Use the [configured fee in the account's currency](#approved-exception-overdraft-fee-currency) when the resulting base is negative, otherwise zero. Reconcile that target with the original fee plus all earlier fee adjustments and append only the difference on the actual correction day. The reported ledger balance still includes every eligible financial entry with an applicable value date; the exclusion changes fee eligibility, not history.
 
-This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06. Study 08 defines reversal compensation; study 10 defines payment dates and their effect on later bases. The negative BHD case remains for study 12. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
+This approved interpretation of BR07 prevents a fee from sustaining itself. Final E7 fee counts and replay checkpoints remain open under study 06. Study 08 defines reversal compensation; study 10 defines payment dates and their effect on later bases. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base).
+
+## Approved Exception: Overdraft Fee Currency
+
+Configure the daily overdraft fee by account type in its own currency: AED 25.00 for the type corresponding to ACC-001 and BHD 0.000 for the type corresponding to ACC-002. The zero BHD fee is an explicit exception to BR07's literal requirement, chosen for simplicity because conversion requirements are missing. No exchange rate or additional type is inferred.
+
+A zero fee does not prohibit negative balances or allow an unfunded authorization. BR05 still requires nonnegative available balance after a new hold, in the account's currency; BR06 still records legitimate confirmed debits. See the [decision and limits](deliverables/AMBIGUITIES.md#overdraft-fee-currency).
 
 ## Approved Interpretation: Daily Interest Calculation
 
@@ -93,6 +99,5 @@ This schedule is a project choice. The exercise's fixed Day 6 credit remains req
 ## Open Questions
 
 * **Other rounding questions:** Intermediate precision and stages outside daily interest are not established by study 09. E10 allocation is defined in the [approved decision](deliverables/AMBIGUITIES.md#e10-installment-allocation).
-* **Fee in another currency:** How should an overdraft fee denominated in AED apply to a BHD account?
 * **Closing checkpoints:** Which clock times, business time zone, and replay checkpoints should apply, and how should missing eligible records be handled?
 * **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?

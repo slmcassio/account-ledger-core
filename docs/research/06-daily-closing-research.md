@@ -33,7 +33,7 @@ Queries append nothing. Corrections never [automatically reevaluate authorizatio
 * **Duplicates:** Proposed same event ID for repeat detection; equal amounts and dates are insufficient.
 * **Concurrency:** Proposed validation of eligible inputs and prior results, followed by indivisible recording and retry if they changed. Excluded future bookings alone require no retry. Mechanism undecided.
 
-[Study 07](07-overdraft-fees-research.md) defines fee bases; [08](08-reversals-research.md) defines reversal compensation; [09](09-daily-interest-research.md) defines exact daily calculation. Final E7 fee counts and replay totals remain open. Old examples 04 and 08 establish no current totals. Study 08's simulation establishes no calendar. Payment limits remain in [10](10-interest-capitalization-research.md), and negative BHD fees in study 12.
+[Study 07](07-overdraft-fees-research.md) defines fee bases; [08](08-reversals-research.md) defines reversal compensation; [09](09-daily-interest-research.md) defines exact daily calculation. Final E7 fee counts and replay totals remain open. Old examples 04 and 08 establish no current totals. Study 08's simulation establishes no calendar. Payment limits remain in [10](10-interest-capitalization-research.md). [12](12-fee-currency-research.md) defines the approved fee configuration in each account's currency, including the zero BHD fee.
 
 **Review status:** Study 06 remains approved with these dependencies explicitly pending.
 

@@ -164,4 +164,10 @@ BHD's required three decimal places give a minimum stored unit of 0.001. Half, 0
 
 Criterion 7 instead gives `3 * 3.334 = 10.002`, an excess of BHD 0.002. Rounding each exact third independently with HALF_UP gives `3 * 3.333 = 9.999`, leaving BHD 0.001 unallocated. These are derived comparisons, not permitted changes to the original credit.
 
+## Overdraft Fee Currency Values
+
+The [approved configuration](AMBIGUITIES.md#overdraft-fee-currency) uses AED 25.00 for ACC-001's account type, retaining the exercise's amount, and BHD 0.000 for ACC-002's account type, an explicit project exception. Halving AED 25.00 changes the supplied amount; half of the chosen zero BHD fee remains zero. Neither value defines an exchange rate.
+
+[Study 12](../research/12-fee-currency-research.md) uses ACC-002's supplied zero opening balance and E10 credit as scenario data, with principal separate from interest. Its hypothetical BHD -1.000 base illustrates that zero fees do not prevent negative balances; halving it to -0.500 preserves that conclusion. It is not a new account, movement or constant.
+
 TODO: Record additional constants and numerical decisions as their reviews are approved.

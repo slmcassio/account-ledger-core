@@ -2,11 +2,11 @@
 
 ## Rule and approved base
 
-The [exercise](../exercise-statement.md#nonnegotiable-rules) requires AED 25.00 per negative closing day per account, with the assessment day as the fee's value date. Zero incurs no fee.
+The [exercise](../exercise-statement.md#nonnegotiable-rules) requires AED 25.00 per negative closing day per account, with the assessment day as the fee's value date. Zero incurs no fee. [Study 12](12-fee-currency-research.md) records the approved exception: fees configured by account type in its own currency, with AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type.
 
 For the job in D, select inputs cumulatively by `booking_date <= D-1`, then calculate historical day H from the opening balance and entries with `value_date <= H`. Holds and pending interest, including corrections, have no ledger effect.
 
-**Approved choice:** Remove only H's own fee components and adjustments already included in that balance. Keep other periods' charges and refunds at their actual dates. Charge 25.00 only when this base is negative. This prevents a fee from sustaining itself. It changes the assessment base, not the reported ledger balance, which retains all entries passing both filters.
+**Approved choice:** Remove only H's own fee components and adjustments already included in that balance. Keep other periods' charges and refunds at their actual dates. Use the configured fee only when this base is negative. This prevents a fee from sustaining itself. It changes the assessment base, not the reported ledger balance, which retains all entries passing both filters.
 
 ## Corrections
 
@@ -32,7 +32,7 @@ Day 1's base is `-10.00 + 20.00 = 10.00`: the fee's value date already excludes 
 
 Study 06 leaves checkpoints, ordinary assessment dates, and missing eligible inputs unresolved. The final fee count after E7 remains open; its principal calculations are in [NUMBERS](../deliverables/NUMBERS.md#values-used-in-the-overdraft-fee-snapshots). E9's Day 6 booking excludes it from the Day 5 cutoff; E10 stays after E9.
 
-Study 08 now defines reversal compensation. [Study 10](10-interest-capitalization-research.md) now defines payment dates and their effect on later bases. Fees on negative BHD balances remain for study 12. These snapshots establish neither final balances nor total fees.
+Study 08 now defines reversal compensation. [Study 10](10-interest-capitalization-research.md) now defines payment dates and their effect on later bases. These snapshots establish neither final balances nor total fees.
 
 ## Sources and limits
 

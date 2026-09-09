@@ -38,3 +38,4 @@ TODO: Explain the daily closing ledger balances, fee assessments, authorization 
 * [09: Daily interest calculation](docs/research/09-daily-interest-research.md)
 * [10: Interest capitalization](docs/research/10-interest-capitalization-research.md)
 * [11: Installment allocation with an exact total](docs/research/11-installments-research.md)
+* [12: Overdraft fees in the account's currency](docs/research/12-fee-currency-research.md)
