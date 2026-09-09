@@ -1,0 +1,4 @@
+Discovery count compared with top-level deftest declarations
+Exit: 0
+
+{:namespaces 11, :loaded-tests 78, :top-level-test-definitions 78}

@@ -1,0 +1,9 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.5"}
+        org.clojure/spec.alpha {:mvn/version "0.5.238"}
+        org.clojure/core.specs.alpha {:mvn/version "0.4.74"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :main-opts ["-m" "account-ledger.runner"]}
+           :demo {:main-opts ["-m" "account-ledger.replay"]}
+           :design-challenge {:extra-paths ["test-design-challenge"]
+                              :main-opts ["-m" "account-ledger.design-challenge"]}}}

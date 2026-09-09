@@ -45,3 +45,9 @@ Current ledger balance is `100.00 + 50.00 + 50.00 = 200.00`. Day 1 unpaid intere
 The [Authorization payment contract](../deliverables/AMBIGUITIES.md#yield-calculation-and-payment) still requires the current source account counter for a financial payment. An excluded booking can advance that counter and require recalculation with the same amount. Validation and atomic recording of calculation records remain a separate [open proposal](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
 
 The account, amounts, arrival order and review checkpoint are scenario inputs. This example sets no clock time, time zone, general input-completeness policy or final replay total.
+
+## Executable historical views
+
+The BANK-SPEC fixture records B during the Day 2 calculation and C afterward, before the Day 3 review. Both credits are already known when it calculates the two explicit historical views. The first view includes principal events through B's account counter 2; the second includes C at counter 3. These interest-only view boundaries produce the documented +0.02 and +0.02 components without changing receipt dates or submitting fees from a partial view. An unbounded review of both credits would instead append one +0.04 component with the same final total. Repeating or moving back to an earlier view cannot undo a later recorded correction.
+
+See [the executable fixture](../../test/account_ledger/e2e/examples_test.clj) and [the implementation decision](../../agent-decisions.md#boundary-and-review-refinements).

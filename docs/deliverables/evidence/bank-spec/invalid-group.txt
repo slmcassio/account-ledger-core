@@ -1,0 +1,5 @@
+Recorded: 2026-09-09T01:18:41-03:00
+Command: clojure -M:test unknown
+Exit: 2
+
+Test runner error: Unknown test group

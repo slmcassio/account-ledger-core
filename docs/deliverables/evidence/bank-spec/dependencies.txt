@@ -1,0 +1,8 @@
+Command: clojure -Stree
+Exit: 0
+
+org.clojure/clojure 1.12.5
+  X org.clojure/spec.alpha 0.5.238 :use-top
+  X org.clojure/core.specs.alpha 0.4.74 :use-top
+org.clojure/spec.alpha 0.5.238
+org.clojure/core.specs.alpha 0.4.74

@@ -1,5 +1,7 @@
 # Numbers
 
+**BANK-SPEC implementation status:** Research-stage statements about unresolved replay results below are retained from remote main. The [implemented numerical outcomes](#bank-spec-replay-outcomes) at the end of this document establish the completed scenario and its temporal boundaries. No financial outcome changed during this rebase.
+
 Each row answers four questions: **What value? Where did it come from? What is it for and why? Why not half?**
 
 **Rule** means an exercise requirement. **Choice** means an approved project decision. **Scenario** and **Example** identify supplied and illustrative inputs. **Derived** values follow from those inputs. **Proposal** means not adopted.
@@ -228,3 +230,28 @@ For a transaction that creates a snapshot, `candidate.event_counter = base.last_
 **Source:** [snapshot decision](AMBIGUITIES.md#snapshot-recording-and-retries) and [architecture version example](../architecture.md#calculation-version-validation).
 
 Only add further constants when supported by an approved decision or an identified scenario. [Open calculation decisions](AMBIGUITIES.md#pending-calculation-decisions) still prevent final replay totals.
+
+## BANK-SPEC Replay Outcomes
+
+These results use the explicit [SPEC checkpoint schedule](../implementation/bank-spec/SPEC.md#6-replay-schedule-and-independent-expectations), not a generalized banking calendar.
+
+| Quantity | Derivation and boundary |
+|---|---|
+| Initial E1/E2 balance | `1200.00 - 950.00 = 250.00`; supplied principal inputs. |
+| E3 availability | `250.00 - 200.00 = 50.00`; holds do not change financial balance. |
+| E4/E5/E6 financial balance | `250.00 + 400.00 - 185.00 - 180.00 = 285.00`. E5 releases unused 15.00 without credit. |
+| E7 historical H2/H3/H4 principal | `-370.00`, `30.00`, `-335.00`; exclude E9, fees and capitalization. |
+| E7 current balance | `285.00 - 620.00 = -335.00`; E8 would leave availability -425.00 and is declined. |
+| Original H1 through H5 interest | `[0.10, 0.10, 0.26, 0.11, 0.00]`, totaling 0.57 after each day's rounding. |
+| Day 6 fees | H2, H4 and H5 each require 25.00, totaling 75.00. H3 is positive. All three are booked and valued Day 6. |
+| E7 interest adjustments | H2 `0.00 - 0.10 = -0.10`; H3 `0.01 - 0.26 = -0.25`; H4 `0.00 - 0.11 = -0.11`; total -0.46, booked Day 6. |
+| Day 6 payment/close | Payment 0.57 excludes Day 6 adjustments. `-335.00 - 75.00 + 620.00 + 0.57 = 210.57`. |
+| Day 7 reversal refunds | Three refunds of 25.00, booked Day 7 and valued Day 6, produce current 285.57. |
+| Day 7 interest corrections | H2/H3/H4/H5 `[+0.10,+0.25,+0.11,+0.11]`; total +0.57; prior-month unpaid net `-0.46 + 0.57 = 0.11`. |
+| Ordinary Day 6, calculated Day 7 | `210.57 * 0.0004 = 0.084228`, rounded to 0.08. Day 7 refunds are excluded by booking cutoff 6. New-month amount. |
+| BHD late correction | Day 6 records +0.004 for H5, excluded from zero Day 6 settlement. New-month H6 adds 0.004 on Day 7, giving total pending 0.008. |
+| Snapshot counts | ACC-001 counters 12 at Day 6 and 15 after three Day 7 refunds; ACC-002 counter 1. E3 creates a hold snapshot; E8 decline and zero settlement create none. |
+
+The independent test oracle uses integer minor units and `0.0004 = 1/2500`, with positive HALF_UP computed as integer division after adding 1250. This is a test derivation of the supplied rate and rounding, not another production constant. The minimum three-installment total is three currency minor units, ensuring all three journal amounts are positive; halving it cannot produce three positive postings. E10 is much larger and unchanged.
+
+Logical days start at 1 because the exercise names Day 1; initial state/counters/journal position use zero before recorded events. The next position increments by 1, not a fractional quantity. Day 5 month end, Day 6 first business day, and the separate Day 7 continuation are approved fixture boundaries. There is no chosen wall-clock time, annual divisor, retry count, backoff interval or expiration duration.

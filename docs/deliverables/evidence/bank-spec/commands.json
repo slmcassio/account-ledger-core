@@ -1,0 +1,108 @@
+[
+  {
+    "name": "normal",
+    "command": [
+      "clojure",
+      "-M:test"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "recorded": "2026-09-09T01:18:36-03:00",
+    "summary": "Normal suite: {:test 78, :pass 669, :fail 0, :error 0, :type :summary}"
+  },
+  {
+    "name": "normal-fresh-jvm",
+    "command": [
+      "clojure",
+      "-M:test"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "recorded": "2026-09-09T01:18:37-03:00",
+    "summary": "Normal suite: {:test 78, :pass 669, :fail 0, :error 0, :type :summary}"
+  },
+  {
+    "name": "unit",
+    "command": [
+      "clojure",
+      "-M:test",
+      "unit"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "recorded": "2026-09-09T01:18:38-03:00",
+    "summary": "Normal suite: {:test 30, :pass 272, :fail 0, :error 0, :type :summary}"
+  },
+  {
+    "name": "integration",
+    "command": [
+      "clojure",
+      "-M:test",
+      "integration"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "recorded": "2026-09-09T01:18:39-03:00",
+    "summary": "Normal suite: {:test 40, :pass 298, :fail 0, :error 0, :type :summary}"
+  },
+  {
+    "name": "e2e",
+    "command": [
+      "clojure",
+      "-M:test",
+      "e2e"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "recorded": "2026-09-09T01:18:40-03:00",
+    "summary": "Normal suite: {:test 8, :pass 99, :fail 0, :error 0, :type :summary}"
+  },
+  {
+    "name": "demo",
+    "command": [
+      "clojure",
+      "-M:demo"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "recorded": "2026-09-09T01:18:40-03:00",
+    "summary": "  Complete internal delivery: true"
+  },
+  {
+    "name": "design-challenge",
+    "command": [
+      "clojure",
+      "-M:design-challenge"
+    ],
+    "exit": 1,
+    "expected_exit": 1,
+    "recorded": "2026-09-09T01:18:41-03:00",
+    "summary": "Deliberate challenge: {:test 1, :pass 0, :fail 1, :error 0, :type :summary}"
+  },
+  {
+    "name": "invalid-group",
+    "command": [
+      "clojure",
+      "-M:test",
+      "unknown"
+    ],
+    "exit": 2,
+    "expected_exit": 2,
+    "recorded": "2026-09-09T01:18:41-03:00",
+    "summary": "Test runner error: Unknown test group"
+  },
+  {
+    "name": "zero-discovery",
+    "command": [
+      "clojure",
+      "-Sdeps",
+      "{:paths [\"/Users/slmcassio/Developer/account-ledger-core-bank-spec/src\" \"/Users/slmcassio/Developer/account-ledger-core-bank-spec/test\"]}",
+      "-M",
+      "-m",
+      "account-ledger.runner"
+    ],
+    "exit": 2,
+    "expected_exit": 2,
+    "summary": "WARNING: Use of :paths external to the project has been deprecated, please remove: /Users/slmcassio/Developer/account-ledger-core-bank-spec/src\nWARNING: Use of :paths external to the project has been deprecated, please remove: /Users/slmcassio/Developer/account-ledger-core-bank-spec/test\nTest runner error: No test namespaces discovered"
+  }
+]

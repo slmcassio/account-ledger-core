@@ -6,11 +6,11 @@ This [Part 2 deliverable](exercise-inputs/exercise-statement.md#part-2-architect
 
 Keep Ledger, Authorization, and Yield and Fees in one system that runs in memory. One combined module needs less structure but entangles responsibilities; separate systems add coordination overhead. Three domain modules keep ownership explicit through internal interfaces.
 
-The scope excludes a web layer, persistence, database, UI, system error corrections, and taxes on yield. Language, technology, process count, and implementation primitives remain unspecified.
+The scope excludes a web layer, persistence, database, UI, system error corrections, and taxes on yield. BANK-SPEC uses one Clojure/JVM process, exact BigDecimal arithmetic, persistent data structures and small in-memory adapters. [deps.edn](../deps.edn) pins its dependencies.
 
 ## Domains and module boundaries
 
-Module identifiers below are illustrative.
+The public modules are `account-ledger.authorization.api`, `account-ledger.ledger.api` and `account-ledger.yield-fees.api`. [API documentation](api.md) describes their contracts.
 
 * **Authorization (`authorization`)** owns operational transactions, snapshots, holds, and decisions. A new hold requires nonnegative remaining availability. After recording, it sends approved transactions to Yield and Fees and committed financial movements to Ledger.
 * **Ledger (`ledger`)** owns financial entries and current and historical accounting balances. Each movement becomes one balanced journal entry with equal debit and credit postings in the same currency. Book accounts need not be customer accounts. It preserves booking and value dates and owns no authorization, interest, or fee policy.
@@ -38,7 +38,7 @@ In addition to [snapshot validation](#snapshots-and-concurrency), a new payment 
 
 The recorded-ID rule also applies to payments: redelivery requests no recalculation. Fee submissions use the same source counter check. A declined authorization leaves the account version unchanged and does not invalidate an otherwise current calculation.
 
-The financial booking cutoff does not replace this operational check. An excluded booking may leave the amount unchanged while invalidating its source counter. Establishing complete inputs for that account version remains [unresolved](deliverables/AMBIGUITIES.md#yield-calculation-and-payment).
+The financial booking cutoff does not replace this operational check. An excluded booking may leave the amount unchanged while invalidating its source counter. Yield verifies the contiguous received account prefix, including hold-only counters; the dispatcher drains known pending envelopes before complete calculations. This does not promise receipt of all future external events.
 
 <a id="daily-calculations-and-payment"></a>
 
@@ -48,9 +48,9 @@ Under the [daily timing decision](deliverables/AMBIGUITIES.md#daily-calculation-
 
 Keep unpaid accruals and adjustments separate from posted money. Under the [component settlement decision](deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment), link each eligible component to exactly one settlement, preserve earlier payments, and retain settled components for later difference calculations. Pending interest is outside ledger and available balances and earns no interest.
 
-The [payment decision](deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) separates the accrual period from the booking cutoff. Settle positive totals as credits and negative totals as debits, even into a negative balance. Record each financial payment with its actual dates, after calculation. Subsequent balance calculations include financial payments according to those dates. A zero total settles components without moving funds; its protocol remains open. [Study 10](research/10-interest-capitalization-research.md) explains the schedule and examples.
+The [payment decision](deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) separates the accrual period from the booking cutoff. Settle positive totals as credits and negative totals as debits, even into a negative balance. Record each financial payment with its actual dates, after calculation. Subsequent balance calculations include financial payments according to those dates. A zero total atomically links its components in an immutable local receipt, without a payment, journal entry or Authorization counter. [Study 10](research/10-interest-capitalization-research.md) explains the schedule and examples.
 
-Apply the [daily interest rule](exercise-inputs/business-rules-corrected.md#approved-interpretation-daily-interest-calculation) and [payment rules](exercise-inputs/business-rules-corrected.md#approved-interpretation-active-calculations). [Pending decisions](deliverables/AMBIGUITIES.md#pending-calculation-decisions) include the actual business day calendar, zero-settlement protocol and calculation-record validation.
+Apply the [daily interest rule](exercise-inputs/business-rules-corrected.md#approved-interpretation-daily-interest-calculation) and [payment rules](exercise-inputs/business-rules-corrected.md#approved-interpretation-active-calculations). [Implementation decisions](deliverables/AMBIGUITIES.md#pending-calculation-decisions) define serial jobs and the zero protocol. A real business-day calendar is outside the fixture.
 
 ## Overdraft fee assessment and corrections
 
@@ -74,7 +74,7 @@ The [simulation](research/examples/08-reversal-15-day-simulation.md) illustrates
 
 Authorization records transaction plus snapshot before forwarding financial data. Ledger posting is a separate operation and uses the same transaction ID to prevent duplicate journal entries. Hold-only changes and declines create no financial posting.
 
-After recording, retry failed delivery or posting with the recorded ID and original dates; do not reapply operational effects or reauthorize. Delivery may be asynchronous, so accounting reports can lag operational snapshots. Recovery and reporting readiness remain unresolved.
+After recording, retry failed delivery or posting with the recorded ID and original dates; do not reapply operational effects or reauthorize. Delivery may be asynchronous, so accounting reports can lag operational snapshots. Each recipient has a pending envelope and independent acknowledgement. The deterministic dispatcher tries each pending envelope once per drain and returns failures explicitly. A report stays incomplete while known deliveries remain; querying it never triggers recovery.
 
 ## Transaction entry and test replay
 
@@ -82,17 +82,17 @@ After recording, retry failed delivery or posting with the recorded ID and origi
 
 Every financial effect follows the snapshot path. [Confirmed settlements](exercise-inputs/business-rules-corrected.md#approved-interpretation-settlements) record their debit even when a hold is missing or availability is negative. Keep reservation changes separate from financial postings: a [release](deliverables/AMBIGUITIES.md#hold-settlement-and-release) changes availability without a credit.
 
-Use [study 13](research/13-acceptance-criteria-research.md#analysis) for criterion analysis, [AMBIGUITIES](deliverables/AMBIGUITIES.md#pending-calculation-decisions) for decisions and open results, and [REJECTED](deliverables/REJECTED.md) for recorded refusals.
+Use [study 13](research/13-acceptance-criteria-research.md#analysis) for criterion analysis, [AMBIGUITIES](deliverables/AMBIGUITIES.md#pending-calculation-decisions) for adopted execution boundaries, and [REJECTED](deliverables/REJECTED.md) for recorded refusals.
 
 ### E10 installment allocation
 
 The [approved allocation and receipt scenario](deliverables/AMBIGUITIES.md#e10-installment-allocation) preserve E10's credit and Day 5 dates. It arrives on Day 6 after E9 and the Day 5 calculation; its interest correction remains pending until the next eligible monthly payment. [Study 11](research/11-installments-research.md#small-example) explains the remainder convention; [NUMBERS](deliverables/NUMBERS.md#e10-installment-values) records the inputs and calculations.
 
-If installments are individual financial credits, link them to E10 without also crediting the parent. Representation, IDs, event count and counter effects remain unspecified.
+If installments are individual financial credits, link them to E10 without also crediting the parent. BANK-SPEC records one E10 transaction and snapshot; Ledger appends three balanced pairs in one atomic journal, retaining installment positions and the original ID. ACC-002 has counter 1 after E10 and after its zero settlement.
 
 ## C3 component view
 
-Here, C3 means [C4 Level 3: components](https://c4model.com/diagrams/component). This logical view uses [notation independent C4](https://c4model.com/diagrams/notation) and shows transaction interactions; test reporting is omitted. Forwarding may be asynchronous. Neither Authorization nor Yield consumes Ledger data. The process model remains unspecified.
+Here, C3 means [C4 Level 3: components](https://c4model.com/diagrams/component). This logical view uses [notation independent C4](https://c4model.com/diagrams/notation) and shows transaction interactions; test reporting is omitted. Forwarding may be asynchronous. Neither Authorization nor Yield consumes Ledger data. The implementation runs in one process with in-memory delivery.
 
 Numbers identify interactions, not event counters or one continuous sequence. Receiving transactions updates the history; calculation has an independent trigger.
 
@@ -115,3 +115,21 @@ flowchart TB
 ## Potential Future Separation
 
 Yield and fee assessment share dated inputs and correction mechanisms, so one module keeps the exercise small. A future overdraft credit facility could justify a separate Credit domain. Its limit, reservation, and repayment policies would require new decisions; the current scope covers fees only.
+
+## Executable boundaries and tradeoffs
+
+Each domain has pure rules in `domain.clj`, a public `api.clj` facade and an opaque in-memory handle in `memory.clj`. Authorization keeps a local lock around calculation and replacement, making identity, source version and outcome indivisible. Ledger appends the whole balanced entry in one local atomic update. Yield jobs are serial; zero settlement selection and receipt recording are one local transition. No module lock is held while calling another module.
+
+`system.clj` injects two function ports into Yield: `:submit-financial!` and `:flush-deliveries!`. The dispatcher routes immutable pending envelopes to Ledger or Yield and acknowledges each successful/duplicate destination. A lost recipient acknowledgement can cause redelivery but cannot repeat money. Runtime state disappears on process exit; restart recovery and distributed delivery are intentionally absent.
+
+A financial source mismatch leaves its proposal ID unrecorded, allowing an explicit retry after fresh input. Each fee component is confirmed, delivered and recalculated before the next versioned proposal. A recorded payment duplicate supplies its original amount and component links; a changed new selection cannot replace them. This coordination is specific to fees and interest.
+
+`transaction.clj` submits only to Authorization. `replay.clj` contains the supplied fixture and logical checkpoints, using `system.clj` to run jobs, drain delivery and capture reports. It returns twelve persistent snapshots before running the separately requested Day 7 continuation. Operational reports and historical accounting queries have distinct temporal meanings. Ledger returns the actual local journal position even when the caller omits it, so a query can be reproduced later.
+
+Customer book accounts are liabilities whose balance is credits minus debits. Each has a named same-currency clearing counterpart. This minimal exercise chart balances all principal, fee and interest movements without adding revenue/tax products. Opening balances remain configuration at position zero.
+
+Example 08 requires ordered historical interest views after both source credits are known. A narrowly scoped optional principal-input bound supports those views only with `:interest-only? true`; it cannot suppress ordinary fees or submit fee payments from an incomplete historical view. Main replay calculations always use the full eligible feed. See the [recorded refinement](../agent-decisions.md#boundary-and-review-refinements).
+
+## Verification and defense
+
+[VERIFICATION](deliverables/VERIFICATION.md) links every required behavior to executable tests and records the actual command results. The independent integer oracle derives interest using the exact fraction 1/2500, separate from production BigDecimal calculations. [REJECTED](deliverables/REJECTED.md#bank-spec-acceptance-criteria) evaluates all eight criteria with explicit boundaries. The separately executed [challenge](../tests/README.md) exposes producer identity collisions that this duplicate policy cannot detect.

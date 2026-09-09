@@ -1,5 +1,7 @@
 # Ambiguities
 
+**BANK-SPEC implementation status:** The research-stage questions below preserve the reorganized remote documentation. For this implementation, the [BANK-SPEC resolutions](#bank-spec-implementation-resolutions) and [execution decisions](../../agent-decisions.md) supersede research-stage Open labels concerning checkpoints, internal input completeness, calculation records, replay totals, zero settlement, E10 representation and book mappings. General external completeness and a real calendar remain outside scope. No policy or code changed during this rebase.
+
 Each item answers four questions: what is unclear, why, what we decided, and why we chose it. **Open** means no resolution has been approved. Research links retain the supporting evidence and its limits.
 
 ## Rounding Mode
@@ -509,3 +511,31 @@ Record `3 * 0.50 = 1.50` pending, with both adjustment dates D30 and a breakdown
 4. **Reason:** The balanced-entry choice does not define those mappings. Exercise CREDIT and DEBIT labels describe customer balance changes only.
 
 **Source:** [Architecture, Ledger ownership](../architecture.md#domains-and-module-boundaries) and the [recorded architecture contract](WORKLOG.md#09-september-2026-001355).
+
+## BANK-SPEC Implementation Resolutions
+
+The BANK-SPEC launch approved these bounded implementation resolutions. They do not create a general banking calendar or completeness guarantee.
+
+* **Schedule:** Integer logical days and the checkpoints in [SPEC section 6](../implementation/bank-spec/SPEC.md#6-replay-schedule-and-independent-expectations). E7 corrections wait for Day 6 cutoff 5; E9 corrections wait for Day 7 cutoff 6. E10 arrives after E9 on Day 6 with both dates Day 5. No wall-clock scheduler or business time zone is needed for the fixture.
+* **Eligible inputs:** Each module owns its state. Yield reconstructs balances from opening state and the contiguous approved account feed, including hold-only counters. Known internal delivery is drained before complete calculations/reports. Later external receipts remain possible and produce adjustments according to their booking eligibility.
+* **Calculation records:** Jobs execute serially. Authorization atomically validates identity and current source counter for each financial submission. Each fee is confirmed and delivered before the next amount is computed. A stale unrecorded proposal settles nothing and retains its ID. No second optimistic-concurrency system is added inside Yield.
+* **Replay totals:** Day 6 ACC-001 closes at AED 210.57 after three fees totaling 75.00 and interest payment 0.57, with -0.46 pending. ACC-002 closes at BHD 10.000 with zero payment and +0.004 pending. The separate Day 7 continuation returns 75.00, gives AED 285.57, and leaves 0.11 prior-month adjustment plus 0.08 new-month ordinary interest pending. [NUMBERS](NUMBERS.md#bank-spec-replay-outcomes) derives these values.
+* **Calendar:** Day 5 ends the month and Day 6 is its successor's first business day. No actual month, year, holidays, tax rules or future payment dates are selected. These remain outside the fixture.
+* **Zero settlement:** Yield records one immutable receipt and its selected component IDs atomically. It submits no financial command, posts no journal and increments no Authorization counter. Further corrections remain separate unpaid components.
+* **Ordered example 08:** Two explicitly bounded, interest-only historical views reproduce its +0.02 and +0.02 corrections after both credits were already recorded. The optional bound cannot be used to skip fees in daily jobs or submit partial-view fees. Default calculations use all eligible inputs. See the [fixture clarification](../examples/08-daily-closing.md#executable-historical-views).
+
+General external input completeness, automatic expiration beyond the replay and a real business-day calendar remain out of scope. No unimplemented required replay behavior is hidden by those limits.
+
+### Module recording and delivery
+
+**Rationale and limits:** Tying the candidate to the calculation base makes the comparison detect any advance in that account's snapshot version. Enforcing uniqueness in the same operation prevents concurrent attempts with one ID from both affecting state. Each API call makes one local attempt; stale financial proposals return for an explicit recalculation with the same ID. BANK-SPEC uses a short local lock around the pure decision and state replacement; no external module call occurs while it is held.
+
+Declines do not advance Authorization's counter and are absent from the approved feed. If approved transaction 10 is followed by a decline, the account version remains 10. That decline alone does not invalidate a payment calculated from version 10. BANK-SPEC delivers recorded envelopes deterministically and tracks the contiguous account prefix, including hold events, before calculating. This establishes completeness of the known internal feed, not of future external receipts.
+
+**Implementation:** Each recorded transaction has independent pending Ledger and Yield envelopes. An explicit drain acknowledges successful or duplicate receipt once per destination and leaves failed deliveries pending. Normal jobs drain before calculations and complete reports; a pure report exposes incomplete delivery without performing it. No timers, durable queue or restart recovery is included.
+
+**Implementation:** E10 is one transaction and snapshot with immutable installment amounts. Ledger appends one journal containing three identified balanced posting pairs, with no extra parent credit. Its original ID deduplicates the entire movement. ACC-002 advances once to counter 1; its zero settlement does not advance it. No installment calendar or inter-installment interest is included.
+
+**Rationale:** Separate responsibilities make balances, holds, and calculations easier to explain and test. One system limits coordination overhead; internal interfaces must preserve the domain boundaries. Snapshot validation and retries follow the [recording decision](#snapshot-recording-and-retries). BANK-SPEC uses one JVM process, Clojure, persistent data structures and small local in-memory adapters. There is no distributed deployment.
+
+**Implementation:** Each `customer/<account-id>` liability uses a same-currency `clearing/<currency>` counterpart. Incoming money debits clearing and credits the customer; outgoing money reverses the sides. Fees and interest retain their purpose metadata while using the same small chart. The local adapter atomically appends both sides and the original ID. Initial balances are config at journal position 0, not synthetic transactions. Ledger records after Authorization, as specified in [Ledger Delivery](#ledger-delivery).

@@ -1,5 +1,7 @@
 # Rejected Criteria and Approaches
 
+**BANK-SPEC implementation status:** Research-stage statements about unresolved replay results below are retained from remote main. The [implemented criterion assessments](#bank-spec-acceptance-criteria) at the end of this document establish the completed scenario and its temporal boundaries. No financial outcome changed during this rebase.
+
 Each refusal answers four questions: **What was rejected? Why? What did we adopt? What supports it?** Rejections below are already recorded project decisions; a research alternative alone is not a new rejection.
 
 ## Acceptance Criteria Coverage
@@ -113,3 +115,25 @@ Each refusal answers four questions: **What was rejected? Why? What did we adopt
 **Limit:** A zero fee does not permit an unfunded hold. It introduces no conversion or separate AED obligation.
 
 Add further refusals only when their review and rationale are recorded. Keep unresolved criteria visible rather than inventing a result.
+
+## BANK-SPEC Acceptance Criteria
+
+| Criterion | Conclusion and evidence |
+|---|---|
+| 1 | Accept at value day 2, booking cutoff 5, before fees and E9: `1200 - 950 - 620 = -370`. A later cutoff is a different view. |
+| 2 | Reject exactly one fee. E7 gives H2 -370, H3 +30, H4 -335 and H5 -335. Three 25.00 charges are recorded on Day 6 for H2/H4/H5, totaling 75.00. H2 identifies a historical reference, not the charge's booking/value date. |
+| 3 | Accept confirmed E5. It debits 185.00, bringing funds to 465.00 after E4; the explicitly final settlement ends the 200.00 hold and releases 15.00 without credit. |
+| 4 | Reject as explained above: confirmed E6 debits 180.00 and separately reports missing Auth-Z. |
+| 5 | Correct conditionally: an approved hold changes availability only. Actual E8 is declined because `-335 - 90 < 0`; it creates no hold or new snapshot. |
+| 6 | Reject blanket restoration. E9 restores 620.00 principal on receipt, while fee corrections await Day 7's eligible view. Day 6 closes at 210.57 and Day 7 current funds become 285.57, including the actual 0.57 payment. Pending adjustments, immutable history and Auth-B's declined decision remain. A reconstructed principal view can restore 285.00 without proving every operational balance or record returned to its earlier value. |
+| 7 | Reject: `3 * 3.334 = 10.002`. The preserved total is `3.333 + 3.333 + 3.334 = 10.000`. |
+| 8 | Reject any discarded interest remainder: two rounded 465.00 days sum to 0.38, while rounding their raw aggregate gives 0.37. Pay the former exactly. |
+
+Executable replay, temporal-query, hold, installment and rounding tests are mapped in [VERIFICATION](VERIFICATION.md). These conclusions use the delivered BANK-SPEC scenario, not the older research counterfactual.
+
+## Build Corrections Actually Made
+
+* Replaced Ledger's direct reuse of new-command validation on committed events with validation of the command projection followed by full event/posting validation. A regression test run exposed rejected legitimate deliveries after computed fields were reserved to Authorization; preserving separate boundaries fixed it.
+* Restricted the example 08 historical-interest option to an explicitly bounded historical request. An independent review reproduced an ordinary daily request that could skip the mandatory fee before the schema restriction. Its regression now rejects the request instead.
+
+No Kafka, HTTP, database, general retry framework or extended calendar was built and discarded. They were excluded by scope rather than abandoned implementation approaches.

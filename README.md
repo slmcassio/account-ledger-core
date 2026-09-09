@@ -1,16 +1,38 @@
 # Account Ledger Core
 
-Documentation for an account ledger that runs in memory.
+One Clojure/JVM application in memory, with Authorization, Ledger, and Yield and Fees. It implements the supplied exercise with the [adopted rules](docs/exercise-inputs/business-rules-corrected.md) and the [BANK-SPEC schedule](docs/implementation/bank-spec/SPEC.md). No HTTP, database, UI or runtime persistence is required.
 
 ## Running the Suite
 
-No executable ledger or test suite exists yet.
+Run from the repository root with Java and the Clojure CLI. Verified environment: Java 25 and Clojure CLI 1.12.5.1654. `deps.edn` pins Clojure 1.12.5, spec.alpha 0.5.238 and core.specs.alpha 0.4.74. Dependency download is needed only if they are absent from the local Maven cache.
 
-TODO: Document prerequisites and the commands required to run the suite.
+```sh
+clojure -M:test
+clojure -M:test unit
+clojure -M:test integration
+clojure -M:test e2e
+clojure -M:demo
+```
+
+The default suite discovers every normal test namespace. Failures, errors, invalid groups and zero discovered tests produce a nonzero exit. Unit tests exercise pure rules; integration tests use real module adapters and controlled delivery/concurrency; end-to-end tests execute E1 through E10 and the five separate documented examples. The numerical oracle uses integer minor units independently of production calculation functions.
+
+The required deliberate design challenge runs separately:
+
+```sh
+clojure -M:design-challenge
+```
+
+It must exit 1 with exactly one assertion failure and no runtime errors. It demands a payload-conflict response for a known transaction ID, exposing that the adopted duplicate policy trusts producer identity uniqueness and does not inspect changed content. The normal suite verifies the approved duplicate response. See [test explanation](tests/README.md) and [executed verification evidence](docs/deliverables/VERIFICATION.md).
 
 ## Reading the Output
 
-TODO: Explain the daily closing ledger balances, fee assessments, authorization states, and errors shown in the output.
+The demo prints twelve immutable operational reports, one for each account/day. Financial balance reflects recorded money; active holds affect availability only. Fees show their reference, booking and value days; positive fee amounts are charges and negative amounts refunds. Interest paid has entered funds, while pending components have not. Occurrences include the missing Auth-Z reference; it does not suppress the confirmed debit. Counter values identify account snapshots, not elapsed days or Ledger journal positions.
+
+At the Day 6 operational close, ACC-001 has AED **210.57**, paid interest **0.57**, no holds, and pending interest **-0.46**. Three fees total 75.00; Auth-B remains declined. ACC-002 has BHD **10.000**, zero paid interest, and **0.004** pending. E10 is one transaction containing installments 3.333, 3.333 and 3.334.
+
+The separately labeled Day 7 continuation returns 75.00 in fees, producing AED **285.57**. Its pending interest is **0.19**: 0.11 in prior-month adjustments and 0.08 for ordinary Day 6 interest in the new month. BHD pending interest becomes **0.008**, with no further financial movement. These are later results, not replacements for Day 6's captured report. Day 7 refunds have booking 7 and cannot enter the Day 7 job's booking-cutoff-6 base.
+
+Use [API documentation](docs/api.md) for historical accounting queries with explicit economic day, booking cutoff and local journal position. Queries never trigger delivery or corrections. [Architecture](docs/architecture.md), [implementation decisions](agent-decisions.md) and [numbers](docs/deliverables/NUMBERS.md) explain the small design for a live defense.
 
 ## Documentation
 

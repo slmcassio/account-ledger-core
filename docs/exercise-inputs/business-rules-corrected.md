@@ -1,5 +1,7 @@
 # Corrected Business Rules
 
+BANK-SPEC implements these policies with the [approved execution specification](../implementation/bank-spec/SPEC.md). Its concrete protocol and schedule resolutions are recorded in [AMBIGUITIES](../deliverables/AMBIGUITIES.md#pending-calculation-decisions). The original exercise statement remains unchanged.
+
 This document combines exercise requirements with approved project interpretations and exceptions.
 
 **Project rounding decision:** use HALF_UP with two decimal places for AED and three for BHD. The explicit assumption is to favor the recipient of positive interest at exact ties, accepting the upward bias in those cases. See the [rounding decision and source limits](../deliverables/AMBIGUITIES.md#rounding-mode).
@@ -90,7 +92,7 @@ Settle each account's eligible unpaid interest total at the end of Day 6, separa
 
 The [approved monthly schedule](../deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) pays on the first business day for the previous month's ordinary accruals plus eligible unpaid adjustments, including corrections of older paid periods. Keep this period separate from the booking cutoff; current month ordinary accruals remain pending. Record payments with both dates on the actual payment day, after their calculations. Follow the component settlement rules above.
 
-Day 6 is the first business day of a new month and Day 5 ends the previous month. Day 6 interest is calculated on Day 7 and paid on the first business day of the following month. [Study 10](../research/10-interest-capitalization-research.md) explains this assumption. The actual calendar, final amounts and zero-settlement protocol remain [pending](../deliverables/AMBIGUITIES.md#pending-calculation-decisions). The snapshot contract below applies to financial credits and debits.
+Day 6 is the first business day of a new month and Day 5 ends the previous month. Day 6 interest is calculated on Day 7 and paid on the first business day of the following month. [Study 10](../research/10-interest-capitalization-research.md) explains this assumption. BANK-SPEC specifies the final amounts and zero-settlement receipt protocol [in the execution decisions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions). An actual calendar remains outside the fixture. The snapshot contract below applies to financial credits and debits.
 
 Yield reconstructs interest bases from approved transactions forwarded by Authorization after recording and from opening state. It receives no input directly from Transaction and consumes no Ledger or Authorization balance. Its payment carries the target account's source-view counter, distinct from the new payment counter. Authorization skips recorded IDs before inspecting amount or source version. Otherwise it requires the source version to equal its current snapshot version as part of conditional payment and snapshot recording, assigning the payment that counter plus one. A mismatch applies no payment and requests recalculation using approved transactions for the latest account counter, retaining the unrecorded payment's supplied ID. See the [decision and input completeness limits](../deliverables/AMBIGUITIES.md#yield-calculation-and-payment). The required interest rate, currency rounding, and exact-sum reconciliation still apply.
 
@@ -120,12 +122,12 @@ E10 credits ACC-002 with BHD 10.000 in three installments, all booked and valued
 
 E10 arrives on Day 6 after E9 and after the job recorded Day 5 interest without it. Preserve both Day 5 dates. Append the BHD +0.004 interest correction with both dates Day 6; it is excluded from Day 6 payment and remains pending until the next eligible monthly payment. This scenario does not resolve general input completeness.
 
-If installments are individual financial credits, link them to E10 without also crediting the parent. Representation, IDs, event count and counter effects remain unspecified. No installment calendar, interest between installments or general allocation algorithm is introduced.
+If installments are individual financial credits, link them to E10 without also crediting the parent. BANK-SPEC uses one E10 transaction and snapshot with three balanced posting pairs in one journal, preserving the parent ID and advancing ACC-002 once to counter 1. No installment calendar, interest between installments or general allocation algorithm is introduced.
 
 See the [decision and rationale](../deliverables/AMBIGUITIES.md#e10-installment-allocation), [numerical derivation](../deliverables/NUMBERS.md#e10-installment-values), and [study 11](../research/11-installments-research.md).
 
 ## Open Questions
 
-Calculation questions and their study dependencies are listed in [AMBIGUITIES](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
+The bounded implementation resolutions and genuine remaining external/calendar limits are listed in [AMBIGUITIES](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
 
 * **Hold expiration beyond the replay:** What duration or deadline, time reference, and update rules should a general expiration policy use?

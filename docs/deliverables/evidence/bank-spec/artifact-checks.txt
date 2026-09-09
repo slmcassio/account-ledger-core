@@ -1,0 +1,10 @@
+{
+  "changed_markdown_files": 16,
+  "local_targets_checked": 303,
+  "anchors_checked": 148,
+  "errors": []
+}
+Documented API example: exit0, expected250.10/.10/0/complete confirmed
+Demo structure: twelve six-day reports and two separate Day7 reports, allcomplete
+{:namespaces 11, :loaded-tests 78, :top-level-test-definitions 78}
+Primary checkout clean/unchanged; original exercise and historical worklog unchanged; index empty

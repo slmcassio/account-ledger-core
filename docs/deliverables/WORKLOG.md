@@ -21,6 +21,13 @@ Earlier entries remain verbatim. Their decisions and status describe their recor
 
 ## Research and Documentation Updates
 
+### 09 September 2026, 09:18:53
+
+1. **Work:** Prepared the BANK-SPEC implementation for its authorized local signed commit: Authorization, Ledger, Yield and Fees, deterministic dispatch, explicit APIs, unit and integration tests, the real exercise replay, the separate annotated design challenge, and supporting documentation and execution evidence. The branch was rebased onto remote main at `6980b14e0eaf8f02bba1e7486eca4dbd0119d4df`; documentation conflicts retained upstream material and the BANK-SPEC resolutions while source and tests remained unchanged.
+2. **Decisions and open items:** Eight independent reviewers, two per topic, completed code quality, performance, test quality and business rule reviews. Two verified defects remain: a confirmed interest payment can be paid again by a different settlement after response loss, and an accepted fee without assessment metadata can be charged again. Four demonstrated coverage gaps concern negative-interest Ledger delivery, confirmed duplicate responses, BHD authorization boundaries and report occurrence details. Performance suggestions are optional at the supplied replay scale. These findings supersede earlier no-findings statements; no suggested correction was applied. The user requested committing the current implementation and excluding every file under `docs/reviews`, which remains local. No push is authorized.
+3. **Verification:** Fresh `clojure -M:test` passed 78 tests and 669 assertions with zero failures and errors, exit 0. `clojure -M:design-challenge` ran one test with exactly one intended assertion failure, zero errors and exit 1. `clojure -M:demo` exited 0 and matched the prior twelve six-day reports and separate Day 7 continuation exactly, excluding only the prior recording header. Diff, whitespace, 349 local targets and 206 anchors passed for the 16 Markdown files in commit scope. No separate formatter or linter configuration is present. Passing tests do not negate the known review findings.
+4. **Recorded time:** 09 September 2026, 09:18:53 in America/Sao_Paulo. This records the summary, not execution start, completion time or duration. Commit creation and signature verification follow this entry; neither is claimed complete here.
+
 ### 09 September 2026, 01:35:57
 
 Recorded in America/Sao_Paulo. This timestamp records the entry, not execution start, completion time or duration.
@@ -30,6 +37,25 @@ Recorded in America/Sao_Paulo. This timestamp records the entry, not execution s
 * Clarified criterion 2: the final E7 fee count remains open, while ordinary H+1 assessment dates and actual late correction dates are approved.
 * Independent content and coverage reviews, 15 exact decimal arithmetic checks, 19 PRD links and anchors, and whitespace checks passed. No ledger implementation tests were performed.
 * The user authorized this worklog update, a signed commit and a push to `origin/main`. This entry records completed documentation work and verification; publication is not claimed complete here.
+
+### 09 September 2026, 01:20:57
+
+Recorded in America/Sao_Paulo. This is the recording time, not an inferred execution duration.
+
+* Completed BANK-SPEC implementation, integrated replay and the five independent documented examples. Preserved E1 through E10 order, exact installment allocation, D-1 cutoffs, the six-day report boundary and the separate Day 7 continuation. Final current source contains no required stub or skipped scenario.
+* Addressed independently reproduced defects in confirmed fee/payment recovery after lost responses, principal reversal eligibility and committed-event validation. Also closed the daily-fee bypass through the example 08 option. Added failing regressions first; the final read-only reviewer reran its reproductions and the full suite and reported no remaining actionable finding.
+* Executed `clojure -M:test` twice in fresh JVMs: 78 tests, 669 assertions, zero failures/errors, exit 0 both times. Unit: 30/272; integration: 40/298; e2e: 8/99, all exit 0. Demo printed twelve six-day reports and two separately labeled Day 7 reports, exit 0. The annotated challenge executed exactly one intended assertion failure, zero errors, exit 1. Invalid-group and zero-discovery runner checks returned exit 2. The API documentation example executed successfully.
+* Updated README, architecture, API contracts, AMBIGUITIES, NUMBERS, REJECTED, test instructions, example 08's explicit historical view and the approved execution checklist. [VERIFICATION](VERIFICATION.md) maps all requirements/functions and retains actual output. The final figures are AED 210.57 at Day 6 (paid 0.57, pending -0.46) and AED 285.57 at Day 7 (pending 0.11 prior month plus 0.08 new month); BHD 10.000 with pending 0.004 then 0.008. These boundaries are not interchangeable.
+* Confirmed primary checkout remains clean on the original baseline, the exercise statement and historical worklog remain unchanged, and the worktree index is empty. All source and documentation remain unstaged and uncommitted on `codex/bank-spec`; no publication, signing or Touch ID operation occurred. Final artifact/link evidence is in the verification directory.
+
+### 09 September 2026, 01:12:13
+
+Recorded in America/Sao_Paulo. This is the recording time, not an inferred execution duration.
+
+* Launched BANK-SPEC from verified baseline `ba4201b51901b355c896cc94981bea14139c925e`, with a clean primary checkout. Created linked worktree `account-ledger-core-bank-spec` on `codex/bank-spec`; all implementation remains unstaged and uncommitted. Copied the approved specification and plan into `docs/implementation/bank-spec`.
+* Established exact money helpers, shared boundary contracts, pinned existing Java/Clojure runtime dependencies, test discovery and the independent integer oracle. Delegated the three modules with isolated file ownership and connected their actual early paths. The initial integrated credit/accrual/payment and hold/settlement tests passed before historical module work completed.
+* Executed the first complete replay: `clojure -M:test e2e` passed 8 tests and 99 assertions; `clojure -M:demo` printed all twelve reports plus a separate Day 7 continuation with the specification amounts. The separate challenge executed one real assertion failure and zero errors, exit 1. These are milestone results; later final evidence supersedes their counts.
+* Boundary hardening then exposed a Ledger integration mismatch: generated event fields were being revalidated as new command fields. The full suite correctly failed. The Ledger owner is adapting the command projection while preserving full committed-event validation; final success is not claimed in this entry. Remaining work includes coverage review, independent review and final documentation/checks.
 
 ### 09 September 2026, 01:01:36
 
