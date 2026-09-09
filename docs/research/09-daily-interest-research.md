@@ -2,7 +2,7 @@
 
 ## Rule and approved calculation
 
-For each account and day, multiply its positive closing ledger balance by `0.0004`, then round once using [HALF_UP and the currency's precision](01-rounding-research.md#scope). Zero and negative balances earn nothing. Keep the product exact until daily rounding, with no intermediate rounding or fractions carried between days. Each daily amount is reproducible from its own base.
+For each account and day, multiply its positive closing ledger balance by `0.0004`, then round once using [HALF_UP and the currency's precision](01-rounding-research.md#scope). Zero and negative balances earn nothing. Keep the product exact until daily rounding, with no intermediate rounding or fractions carried between days.
 
 The [exercise](../exercise-statement.md#nonnegotiable-rules) supplies the daily rate and currency precisions. Exact products need at most six fractional places for AED or seven for BHD, distinct from stored monetary precision, with no limit implied on integer digits. No language is selected.
 
@@ -27,7 +27,7 @@ Interest adjustments retain the correction dates defined in study 02 and [remain
 
 ## Remaining dependencies
 
-The [booking cutoff](06-daily-closing-research.md#agreed-operation) and [reversal fee refund dates](08-reversals-research.md#approved-decisions-and-remaining-limits) remain approved. Actual bases and totals depend on [study 06's open decisions](06-daily-closing-research.md#decisions-still-open) and [study 10's payment questions](10-interest-capitalization-research.md#approved-monthly-payment). Older examples establish no current replay results.
+Apply the approved [booking cutoff](06-daily-closing-research.md#agreed-operation) and [reversal fee refund dates](08-reversals-research.md#correcting-fees-and-interest-after-a-reversal). Final bases and totals depend on [the open calculation decisions](06-daily-closing-research.md#decisions-still-open).
 
 ## Technical reference
 

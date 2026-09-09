@@ -2,7 +2,7 @@
 
 ## Inputs and requirement
 
-In the [exercise](../exercise-statement.md#event-stream), E10 credits ACC-002 with BHD 10.000 in three installments. Both booking and value dates are Day 5. Preserve E10 after E9 in the supplied order. These are scenario inputs, not a monthly payment schedule.
+In the [exercise](../exercise-statement.md#event-stream), E10 credits ACC-002 with BHD 10.000 in three installments. [Study 06](06-daily-closing-research.md#receipt-and-missing-inputs) defines its late arrival and interest correction.
 
 BHD requires three decimal places, so its smallest stored unit is BHD 0.001. The installments must preserve the original credit exactly. Three equal stored amounts are impossible because 10,000 units cannot be divided equally by three.
 
@@ -10,7 +10,7 @@ BHD requires three decimal places, so its smallest stored unit is BHD 0.001. The
 
 **Decision:** Give the remaining BHD 0.001 to installment 3. The final installment then completes the original total. Giving it to installment 1 or 2 would also work; choosing a fixed position makes the result reproducible.
 
-Only the distribution changes. All three installments belong to ACC-002 and retain Day 5 for both dates. If they are individual ledger credits, link them to E10 and do not credit the full parent amount again.
+All three installments belong to ACC-002 and retain Day 5 for both booking and value dates; they introduce no payment schedule. If they are individual ledger credits, link them to E10 and do not credit the full parent amount again.
 
 ## Small example
 

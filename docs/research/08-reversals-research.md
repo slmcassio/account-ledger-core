@@ -1,13 +1,17 @@
 # Principal reversals and financial corrections
 
-## What A and B do
+## Correcting fees and interest after a reversal
 
-**Approved: method B.** Recalculate all affected fees and interest from the affected value day onward, preserving the principal reversal once and recording only differences. The comparison below explains the choice: both methods reverse principal at its original value date; **only the fee refund's value date differs**.
+Reversing a debit may also require correcting the fees and interest it affected.
 
-* **A, not adopted: effective on the correction day.** The refund returns funds now; earlier fees remain in past balances.
-* **B, approved: effective on the original fee date.** The refund returns funds now and offsets that fee in reconstructed past balances.
+**Approved rule:** Append the principal reversal once with the supplied dates, then recalculate affected fees and interest from the affected value day onward. Record only differences without rewriting earlier records.
 
-Both record refunds on the actual correction day. B neutralizes the fee at its original value date while preserving when funds were returned. Returning only principal was not selected.
+The comparison below considers two fee refund policies. Both book refunds on the correction day; only their value dates differ:
+
+* **A, not adopted:** use the correction day, leaving earlier fees in past balances.
+* **B, approved:** use the original fee's value date, offsetting those fees in reconstructed past balances.
+
+Returning only principal was not selected.
 
 ## One fee, two outcomes
 
@@ -22,13 +26,13 @@ Focus on the 25.00 fee for Day 5, charged with booking/value Day 6. Both methods
 | Corrected Day 6 balance | 2,500 - 25 = 2,475.00 | 2,500 - 25 + 25 = 2,500.00 |
 | Day 6 interest at 0.04% | 0.99 | 1.00 |
 
-These are reconstructed balances, not funds delivered in the past. Both make the refund available on Day 9; B uses Day 6 only as its economic date, without rewriting earlier credits. Interest differences [remain pending until eligible payment](10-interest-capitalization-research.md#approved-payment-and-components), including corrections of paid periods.
+Both make the refund available on Day 9. B's Day 6 value date reconstructs past balances without delivering funds in the past or rewriting earlier credits.
 
-This follows one of four fees. The others have value dates after Day 6; all four produce a 100.00 refund in the full Day 9 example. The [complete calculation](examples/08-reversal-15-day-simulation.md) shows every event and corrected day.
+The [complete calculation](examples/08-reversal-15-day-simulation.md) includes three more fees with value dates after Day 6, giving a 100.00 refund on Day 9.
 
 ## Before or after payment
 
-The full example compares reversal on Day 9 or Day 12, with one payment on Day 10 and consultation on Day 15. It uses a 25.00 daily fee, 0.04% daily interest and HALF_UP rounding. Its [schedule and calculation assumptions](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) are illustrative.
+The full example compares reversal on Day 9 or Day 12, payment on Day 10 and consultation on Day 15, with a 25.00 daily fee, 0.04% daily interest and HALF_UP rounding. Its [schedule](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) is illustrative.
 
 | Reversal / method | Paid Day 10 | Balance Day 10 | Balance Day 15 | Pending Day 15 |
 |---|---|---|---|---|
@@ -47,18 +51,16 @@ The [supplied E9](../exercise-statement.md) credits AED 620.00 to reverse E7, wi
 
 Under the [daily booking cutoff](06-daily-closing-research.md#agreed-operation), E9 and adjustments booked Day 6 cannot change the payment referencing Day 5, even if processed first.
 
-Use [study 07's fee base](07-overdraft-fees-research.md#rule-and-approved-base), retaining other periods' charges and refunds at their actual dates.
-
-Apply [study 02's incremental comparison](02-booking-and-value-dates-research.md#approved-adjustment-method), with the fee refund date exception below. Fee differences affect funds. Preserve [daily rounding](09-daily-interest-research.md#rule-and-approved-calculation) and the [pending-interest and payment rules](10-interest-capitalization-research.md#approved-payment-and-components).
+Use the approved [fee base](07-overdraft-fees-research.md#rule-and-approved-base), [incremental comparison](02-booking-and-value-dates-research.md#approved-adjustment-method) and [daily rounding](09-daily-interest-research.md#rule-and-approved-calculation). Fee differences affect funds; interest follows the [payment rules](10-interest-capitalization-research.md#approved-payment-and-components).
 
 ## Approved decisions and remaining limits
 
-* **Scope:** recalculate every affected fee and daily interest component from the affected value day onward, within the applicable calculation boundary. This does not automatically refund every fee.
-* **Dates:** book each reversal fee refund on the actual correction day and use the original charge's value date. This is a limited exception to the [late transaction policy](02-booking-and-value-dates-research.md#approved-adjustment-method). Interest corrections retain both dates on the actual correction day and remain pending.
+* **Scope:** respect the applicable calculation boundary; reversal does not automatically refund every fee.
+* **Dates:** [the approved fee refund dating](#correcting-fees-and-interest-after-a-reversal) is a limited exception to the [late transaction policy](02-booking-and-value-dates-research.md#approved-adjustment-method). Interest corrections retain both dates on the actual correction day and remain pending, including corrections of paid periods.
 
 Restoring principal, historical balances, net fees, interest and authorizations are different outcomes. Criterion 6's blanket restoration claim is unsupported. [Authorizations](04-authorization-decisions-research.md#approved-policy-later-balance-corrections) are not automatically reevaluated.
 
-Study 08 remains approved with [study 06's open calculation dependencies](06-daily-closing-research.md#decisions-still-open) and [study 10's calendar and payment questions](10-interest-capitalization-research.md#approved-monthly-payment) pending. Approved arithmetic does not resolve the open bases or final totals. Legacy examples 04 and 08, identified in study 06, establish no current replay totals; this study's simulation supplies no calendar policy. No [negative payable policy](10-interest-capitalization-research.md#remaining-questions) is adopted.
+Final replay bases and totals depend on [the open calculation decisions](06-daily-closing-research.md#decisions-still-open). Apply the approved [calendar](10-interest-capitalization-research.md#approved-monthly-payment) and [signed settlement](10-interest-capitalization-research.md#approved-signed-settlement).
 
 ## Sources and limits
 

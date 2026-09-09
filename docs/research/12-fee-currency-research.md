@@ -10,15 +10,11 @@ The user chose the zero BHD fee for simplicity and because conversion requiremen
 
 ## Supplied example
 
-The [accounts](../exercise-statement.md#accounts) and [event stream](../exercise-statement.md#event-stream) provide these inputs:
-
-* ACC-002 opens at BHD 0.000.
-* E10 is its only movement: a total credit of BHD 10.000 in three installments.
-* Process E10 after E9, with both `booking_date` and `value_date` on Day 5.
+[ACC-002 opens at BHD 0.000](../exercise-statement.md#accounts). Its only supplied movement is [E10's BHD 10.000 credit](../exercise-statement.md#event-stream), with both `booking_date` and `value_date` on Day 5. It [arrives late on Day 6](06-daily-closing-research.md#receipt-and-missing-inputs).
 
 Principal here means opening balance plus supplied financial movements, excluding fees and interest. Before E10 is recorded, it is zero. Once its installments are recorded, principal is BHD 0.000 for Days 1 through 4 and `0.000 + 10.000 = 10.000` for Days 5 and 6.
 
-Principal never becomes negative. These figures exclude interest and are not final balances; no capitalization calculation is needed for this conclusion.
+Principal never becomes negative in this scenario; these are not final account balances.
 
 ## Negative example and boundaries
 

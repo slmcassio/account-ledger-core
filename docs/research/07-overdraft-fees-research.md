@@ -6,7 +6,11 @@ The [exercise](../exercise-statement.md#nonnegotiable-rules) requires AED 25.00 
 
 Calculate historical day H using [study 06's booking cutoff and value-date filters](06-daily-closing-research.md#agreed-operation). Holds and pending interest have no ledger effect.
 
-**Approved choice:** Remove only H's own fee components and adjustments already included in that balance. Keep other periods' charges and refunds at their actual dates. Use the configured fee only when this base is negative. This prevents a fee from sustaining itself. It changes the assessment base, not the reported ledger balance, which retains all entries passing both filters.
+**Approved choice:** Remove only H's own included fee components and adjustments. Keep other periods' charges and refunds at their actual dates. Charge only if this base is negative, preventing a fee from sustaining itself. The reported ledger balance still retains all entries passing both filters.
+
+## Approved assessment dates
+
+Assess the ordinary fee for historical day H on H+1, setting booking and value dates to that actual assessment day. This follows the daily job's schedule: H identifies the balance period, while the fee starts affecting funds when assessed. Corrections use the dates below.
 
 ## Corrections
 
@@ -14,23 +18,23 @@ Apply [study 02's adjustment method](02-booking-and-value-dates-research.md#appr
 
 `corrected fee - (original fee + all earlier adjustments)`
 
-A positive difference debits; a negative difference refunds. **All earlier adjustments count even when excluded from the historical balance.** Repeating unchanged targets yields zero. Review days chronologically. Both adjustment dates are the correction day except for [reversal fee refunds](08-reversals-research.md#approved-decisions-and-remaining-limits), which retain the original fee value date.
+A positive difference debits; a negative difference refunds. **All earlier adjustments count even when excluded from the historical balance.** Repeating unchanged targets yields zero. Review days chronologically. Both adjustment dates are the correction day except for [reversal fee refunds](08-reversals-research.md#correcting-fees-and-interest-after-a-reversal), which retain the original fee value date.
 
 ## Calculation snapshots
 
-Both hypothetical AED accounts open at 0.00, before capitalization, with no holds or financial entries beyond those listed. Assume complete inputs for a Day 6 job referencing Day 5. These examples choose no ordinary schedule or replay checkpoints.
+Both hypothetical AED accounts open at 0.00, before capitalization, with no holds or unlisted financial entries. Assume complete inputs for a Day 6 job referencing Day 5.
 
 **Late debit.** Credits of 100.00 and 20.00 have matching booking and value dates on Days 1 and 2, respectively. A 110.00 debit has booking Day 5 and value Day 1. Neither period has prior fees.
 
 Day 1's base becomes `100.00 - 110.00 = -10.00`; Day 2's becomes `100.00 + 20.00 - 110.00 = 10.00`. Their fee targets are 25.00 and zero. If assessed on Day 6, the 25.00 adjustment has both dates on Day 6 and changes neither historical balance.
 
-**Earlier period's fee.** A 10.00 debit has both dates on Day 1. Its existing 25.00 fee belongs to Day 1 but was assessed, booked, and valued on Day 2, an illustrative date. A 20.00 credit has booking Day 5 and value Day 1. There are no prior adjustments.
+**Earlier period's fee.** A 10.00 debit has both dates on Day 1. Its 25.00 fee was assessed, booked, and valued on Day 2. A 20.00 credit has booking Day 5 and value Day 1. There are no prior adjustments.
 
 Day 1's base is `-10.00 + 20.00 = 10.00`: the fee's value date already excludes it. Its target becomes zero, requiring a 25.00 refund, with both dates Day 6 if assessed then. Day 2's base remains `-10.00 - 25.00 + 20.00 = -15.00`. That other period's fee remains effective; the refund does not backdate.
 
 ## Pending decisions
 
-[Study 06](06-daily-closing-research.md#decisions-still-open) retains the open checkpoints, assessment dates, missing inputs and final E7 fee count. [Study 10](10-interest-capitalization-research.md#approved-capitalization-date) defines payment dates and their effect on later bases. These snapshots establish neither final balances nor total fees.
+Final fee counts and balances depend on [the open calculation decisions](06-daily-closing-research.md#decisions-still-open), applying [the approved payment dates](10-interest-capitalization-research.md#approved-capitalization-date).
 
 ## Sources and limits
 

@@ -4,7 +4,7 @@
 
 In the [exercise](../exercise-statement.md), E6 is a settlement of AED 180.00 for ACC-001. It references Auth-Z, but the event stream contains no earlier authorization for Auth-Z.
 
-Criterion 4 says to reject a settlement whose authorization cannot be found. BR06 originally repeated it, although the exercise warns that some criteria are wrong.
+Criterion 4 says to reject a settlement whose authorization cannot be found, but the exercise warns that some criteria are wrong.
 
 The nonnegotiable rules leave this case undefined. Does SETTLEMENT request a payment or report one already settled?
 

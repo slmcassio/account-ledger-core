@@ -11,7 +11,7 @@ This report covers legitimate transactions delivered after they occurred, such a
 
 Neither date necessarily identifies when an event occurred or arrived. Preserve the supplied dates and event order. Append records without changing earlier records.
 
-The [exercise](../exercise-statement.md) requires a fee's `value_date` to equal the "day assessed". For late transaction adjustments, the project uses the current assessment day; historical days identify calculation periods. [Reversal fee refunds](08-reversals-research.md#approved-decisions-and-remaining-limits) are a narrow exception: current booking, original fee value date.
+The [exercise](../exercise-statement.md) requires a fee's `value_date` to equal the "day assessed". For late transaction adjustments, the project uses the current assessment day; historical days identify calculation periods. [Reversal fee refunds](08-reversals-research.md#correcting-fees-and-interest-after-a-reversal) are a narrow exception: current booking, original fee value date.
 
 ## Approved adjustment method
 

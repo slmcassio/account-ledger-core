@@ -2,32 +2,44 @@
 
 ## Approved payment and components
 
-The [exercise](../exercise-statement.md#nonnegotiable-rules) requires one interest credit per account at the end of Day 6. Keep AED and BHD separate. The [study 06 job](06-daily-closing-research.md#agreed-operation) references Day 5; Day 6 interest is calculated on Day 7, payable later.
+The [exercise](../exercise-statement.md#nonnegotiable-rules) literally requires one interest credit per account at the end of Day 6. Keep AED and BHD separate. The [daily job](06-daily-closing-research.md#agreed-operation) references Day 5.
 
-Sum eligible unpaid daily accruals and positive or negative interest adjustments exactly, including corrections of paid periods. Never repay settled components. Record what the payment settles and preserve earlier payments. Use the daily amounts calculated under [study 09](09-daily-interest-research.md).
+Sum eligible unpaid [daily accruals](09-daily-interest-research.md) and signed interest adjustments exactly, including corrections of paid periods. Record which components are settled, settle each once and preserve earlier payments.
 
 **Independent inputs:** unpaid eligible AED accruals 0.10 and 0.20, plus eligible correction -0.02 for a paid period. Pay `0.10 + 0.20 - 0.02 = 0.28`; exclude that period's earlier payment.
 
+## Approved signed settlement
+
+At the scheduled payment, settle the eligible unpaid total according to its sign:
+
+* Positive: credit the account.
+* Negative: debit the account, even if its balance becomes negative.
+* Zero: mark the components as settled without a financial movement.
+
+This project choice recovers excess interest at regular settlement without carrying an eligible negative total forward. The exercise's credit wording does not specify negative or zero totals. Negative daily balances still earn zero, not negative interest.
+
+**Independent example:** eligible AED accrual 0.10 and correction -0.30 give -0.20. Debit 0.20 at payment; a zero account balance becomes -0.20.
+
 ## Why pending interest earns nothing
 
-Pending interest stays outside ledger and available balances and earns nothing until paid, including hypothetical returns from earlier payment dates. This project choice simplifies daily calculations without changing the exercise's 0.04% daily rate.
+Pending amounts affect neither ledger nor available balances and earn no interest. Do not calculate hypothetical returns from earlier payment dates. This approved simplification preserves the exercise's 0.04% daily rate.
 
-A real provider defines its rate and terms within applicable regulation; this simplified choice may not suit every regulated product. [CBUAE Consumer Protection Standards](https://www.centralbank.ae/media/5crd24gm/cp-standards-pdf.pdf#page=26), 2.1.2.4 and 2.3.2.2(d) and (e), require disclosure of payment frequency and the compounding basis, but do not establish our method. Applicability and compliance remain unestablished. Currency alone does not determine jurisdiction; payment frequency alone does not determine compounding.
+[CBUAE Consumer Protection Standards](https://www.centralbank.ae/media/5crd24gm/cp-standards-pdf.pdf#page=26), 2.1.2.4 and 2.3.2.2(d) and (e), require disclosure of payment frequency and compounding basis. They establish neither this method nor its applicability or compliance. Currency alone does not determine jurisdiction; payment frequency alone does not determine compounding.
 
 ## Approved capitalization date
 
-Book and value the credit on its actual payment day, after the calculations producing it. Like an ordinary inflow, a Day 6 credit enters Day 6 fee and interest bases evaluated on Day 7. It cannot change the previous day's interest calculated on payment day. Payment order neither overrides input dates nor assigns [ordinary fee dates](07-overdraft-fees-research.md).
+Book and value the resulting credit or debit on its actual payment day, after calculation. A Day 6 movement enters Day 6 fee and interest bases evaluated on Day 7; it cannot change Day 5 interest. Payment order overrides neither input dates nor [ordinary fee dates](07-overdraft-fees-research.md#approved-assessment-dates).
 
 **Independent example:** Day 6 balance AED 12.49 before an eligible payment of 0.01, with complete inputs and no fees, holds or other movements. Day 7 calculates `12.50 × 0.0004 = 0.005 → 0.01`. Without the credit, `12.49 × 0.0004 = 0.004996 → 0.00`. Neither result changes the payment already made.
 
 ## Approved monthly payment
 
-Pay on the first business day for the previous month. This period is separate from booking eligibility: current month accruals remain pending, while eligible unpaid adjustments can concern older periods. When day 1 is Monday and a business day, calculate the preceding month's last day first, then pay. The job's new ordinary accrual participates; corrections booked that day do not.
+Pay on the first business day of each month for the previous month. Current month accruals remain pending; eligible unpaid adjustments can concern older periods. Booking eligibility is separate: the job's new ordinary accrual participates if it belongs to the payment period; corrections booked on payment day do not.
 
-This is an explicit exercise choice. No business day calendar or mapping of synthetic Days 1 through 6 to months is supplied. Preserve the fixed Day 6 credit; its relationship to this schedule and later payment of Day 6 interest remains unresolved.
+**Approved scenario mapping:** Day 6 is the first business day of a new month, when regular monthly settlement occurs; Day 5 ends the previous month. For an illustrative 30-day month, Days 1 through 6 correspond to dates 26, 27, 28, 29, 30 and 01. Day 6 ordinary interest belongs to the new month, is calculated on Day 7 and awaits payment on the first business day of the following month.
+
+This project assumption selects no specific month, year, jurisdiction or holiday calendar. The [15-day reversal simulation](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) uses a separate illustrative schedule.
 
 ## Remaining questions
 
-[Study 06](06-daily-closing-research.md#receipt-and-missing-inputs) covers receipt, missing eligible inputs and checkpoints; final replay amounts remain open. A correction after payment waits for the next eligible monthly payment under the component rules above.
-
-**Negative total:** eligible AED accrual 0.10 and correction -0.30 give -0.20. Carrying this against future interest or debiting the account requires a policy. Recommend carrying it to preserve payment as a credit; neither option is approved.
+[Calculation checkpoints and final amounts](06-daily-closing-research.md#decisions-still-open) remain open; actual future payment dates require a business day calendar. A correction after payment waits for the next eligible monthly payment.

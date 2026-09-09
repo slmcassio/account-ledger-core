@@ -8,7 +8,7 @@ This illustration is separate from the supplied E7/E9 replay. Method B is approv
 
 * Open with AED 2,500.00 on Day 1, no holds or pending interest. Debit 3,000.00 with booking/value Day 5. Reverse 3,000.00 with value Day 5 and booking Day 9 or Day 12. No other external movements occur.
 * Charge 25.00 per negative assessment base; accrue 0.04% daily on positive balances. Use exact arithmetic and daily HALF_UP rounding: `2,500.00 * 0.0004 = 1.00`. Each 25.00 fee reduces that daily interest by 0.01.
-* Run the ordinary job first in D with reference and cumulative booking cutoff D-1. Assess, book, and value the fee for H on H+1. A separate checkpoint immediately after reversal includes that new record and recalculates previously assessed periods. These checkpoints and assessment dates are assumptions for this example.
+* Run the ordinary job first in D with reference and cumulative booking cutoff D-1. Assess, book, and value the fee for H on H+1 under [the approved ordinary fee dates](../07-overdraft-fees-research.md#approved-assessment-dates). A separate checkpoint immediately after reversal includes that new record and recalculates previously assessed periods. These checkpoints remain assumptions for this example.
 * Pay once at the end of Day 10, referencing Day 9 and including its resulting accrual. Day 15 is only a consultation after the routine; pending then covers reference days through Day 14.
 
 Both methods recalculate fees and interest. **A** books and values fee refunds on the correction day. **B** books them that day but values each refund on its original fee's date. Both book and value interest corrections on the correction day and keep them pending until eligible payment.

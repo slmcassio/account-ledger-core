@@ -10,6 +10,16 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 08 September 2026, 23:38:45
+
+Recorded in America/Sao_Paulo. This timestamp records the entry, not execution start, completion time or duration.
+
+* Incorporated four approved decisions following `3abeedb`. [Ordinary fees](../research/07-overdraft-fees-research.md#approved-assessment-dates) for H have booking and value dates H+1. [E10](../research/06-daily-closing-research.md#receipt-and-missing-inputs) arrives on Day 6 after E9 and the Day 5 calculation, retaining its Day 5 dates. Its BHD +0.004 correction has both dates Day 6, is excluded from that day's payment and remains pending until eligible.
+* [Day 6 is the first business day of a new month](../research/10-interest-capitalization-research.md#approved-monthly-payment), with illustrative dates 26, 27, 28, 29, 30 and 01. Approved monthly settlement of the eligible signed total: positive credits, negative debits even into a negative balance, and zero settles without moving funds. Components settle once; pending interest has no balance effect. Day 6 interest is paid on the first business day of the following month.
+* Revised [study 08's opening](../research/08-reversals-research.md#correcting-fees-and-interest-after-a-reversal) to explain the reversal problem before introducing A/B. Removed repeated explanations and metacommentary across research, preserving equations, tables, examples and source limits. The editorial cleanup reduced 14 research files from 7,314 to 6,828 words, removing 486 (6.6%) against its pre-cleanup baseline, not the previous commit.
+* Preserved unresolved calculation checkpoints, clock and time zone, general input completeness, duplicates, concurrency and final replay totals. Changes remained within research; this worklog entry records them for publication.
+* Coordinated verification passed: diff and whitespace checks, 85 local targets, 61 internal research anchors, 23 preserved external citation URLs, four Decimal reversal scenarios, rounding, E10 and negative settlement checks, and preservation of 31 primary checkout files. No executable ledger or test suite exists.
+
 ### 08 September 2026, 22:34:56
 
 * Completed REVIEW-RESEARCH using only the contents of research as substantive sources. Consolidated repeated policy descriptions into direct study references and replaced the duplicate simulation result table with a link to [study 08](../research/08-reversals-research.md#before-or-after-payment).
