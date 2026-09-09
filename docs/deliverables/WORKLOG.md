@@ -21,6 +21,13 @@ Earlier entries remain verbatim. Their decisions and status describe their recor
 
 ## Research and Documentation Updates
 
+### 09 September 2026, 10:37:53
+
+1. **Work:** Added one blank line before each day/account header in the demo output. The only source change is a println before display-report's existing header.
+2. **Decisions and open items:** The user authorized focused local commits for the latest work. This first commit contains only demo readability and its worklog entry; documentation consolidation follows separately. The fourteen reports retain their original order and contents. Local docs/reviews files remain excluded. No push is authorized.
+3. **Verification:** Fresh clojure -M:test passed 117 tests / 1,197 assertions with zero failures/errors, exit 0. The demo exited 0 and matched the previously executed capture with exactly fourteen inserted blank lines and no other output change. The separate design challenge ran one test / one assertion with exactly one intended failure and zero errors, exit 1. Diff and whitespace checks passed. Commit creation and cryptographic signature verification follow this entry and are not claimed complete here.
+4. **Recorded time:** 09 September 2026, 10:37:53 in America/Sao_Paulo. This records the summary, not execution start, completion time or duration.
+
 ### 09 September 2026, 10:05:18
 
 1. **Work:** Refactored Authorization, Ledger and Yield and Fees into pure `logic`, incoming/outgoing `ports`, `db/memory` and internal `model/models`, with mirrored tests. Moved shared arithmetic, validation and projections into shared logic, updated composition and test discovery, and retained every original behavioral test. Updated README, API, detailed architecture, contracts, decisions and verification evidence. Added concise architecture, tradeoffs and production Markdown deliverables and their combined three-page PDF after the user set a maximum of four pages; the detailed architecture remains a separate reference. Declared PDFs as binary Git artifacts to preserve their file representation.

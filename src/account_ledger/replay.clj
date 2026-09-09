@@ -83,6 +83,7 @@
     {:day 7 :reports views :summary (into (sorted-map) (map (juxt :account/id identity) views))}))
 
 (defn- display-report [report]
+  (println)
   (println (str "Day " (:day report) " | " (:account/id report) " | " (name (:money/currency report))))
   (println "  Financial:" (:financial-balance report) "Held:" (:held-amount report)
            "Available:" (:available-balance report) "Counter:" (:last-event-counter report))
