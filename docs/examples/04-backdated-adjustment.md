@@ -8,7 +8,7 @@ This fictional example illustrates the [approved adjustment method](../research/
 
 ## Rules and assumptions
 
-Apply the [exercise's rules](../exercise-statement.md): AED 25.00 per negative closing day, daily interest of 0.04% on positive closing balances, and one interest credit at the end of Day 6. Round each daily accrual to two decimal places with the approved HALF_UP mode.
+Apply the [exercise's rules](../exercise-inputs/exercise-statement.md): AED 25.00 per negative closing day, daily interest of 0.04% on positive closing balances, and one interest credit at the end of Day 6. Round each daily accrual to two decimal places with the approved HALF_UP mode.
 
 The adjustment method and interpretation of fee value dates are adopted project choices. The closing schedule below is specific to this example.
 

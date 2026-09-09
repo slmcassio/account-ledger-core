@@ -72,7 +72,7 @@ Make sure anyone can open your link without signing in. Test in an incognito win
 
 ## Part 2: Architecture & Tradeoffs Document
 
-The detailed instructions for this part have not been provided yet.
+**Reference note:** Only the section title and the evaluation guidance below were supplied for this part.
 
 ## How You'll Be Evaluated
 

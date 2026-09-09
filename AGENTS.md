@@ -11,7 +11,7 @@ Apply these instructions throughout this repository. Keep them focused on durabl
 ## Session Context
 
 * Inspect the current branch and working changes before editing. Preserve unrelated work and verify the current repository state instead of treating an old worklog entry as current status.
-* Start with the [README](README.md), [exercise statement](docs/exercise-statement.md), [business rules](docs/business-rules.md), and relevant [ambiguity decisions](docs/deliverables/AMBIGUITIES.md). Consult the [worklog](docs/deliverables/WORKLOG.md) for context.
+* Start with the [README](README.md), [exercise statement](docs/exercise-inputs/exercise-statement.md), [corrected business rules](docs/exercise-inputs/business-rules-corrected.md), and relevant [ambiguity decisions](docs/deliverables/AMBIGUITIES.md). Consult the [worklog](docs/deliverables/WORKLOG.md) for context.
 * Follow the user's current scope. Reading the exercise or a research report does not authorize every action described in it. Do not invent missing requirements, including unavailable assessment content.
 
 ## Reasoning and Decisions

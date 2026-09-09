@@ -2,7 +2,7 @@
 
 ## The problem
 
-In the [exercise](../exercise-statement.md), E6 is a settlement of AED 180.00 for ACC-001. It references Auth-Z, but the event stream contains no earlier authorization for Auth-Z.
+In the [exercise](../exercise-inputs/exercise-statement.md), E6 is a settlement of AED 180.00 for ACC-001. It references Auth-Z, but the event stream contains no earlier authorization for Auth-Z.
 
 Criterion 4 says to reject a settlement whose authorization cannot be found, but the exercise warns that some criteria are wrong.
 

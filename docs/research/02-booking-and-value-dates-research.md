@@ -11,7 +11,7 @@ This report covers legitimate transactions delivered after they occurred, such a
 
 Neither date necessarily identifies when an event occurred or arrived. Preserve the supplied dates and event order. Append records without changing earlier records.
 
-The [exercise](../exercise-statement.md) requires a fee's `value_date` to equal the "day assessed". For late transaction adjustments, the project uses the current assessment day; historical days identify calculation periods. [Reversal fee refunds](08-reversals-research.md#correcting-fees-and-interest-after-a-reversal) are a narrow exception: current booking, original fee value date.
+The [exercise](../exercise-inputs/exercise-statement.md) requires a fee's `value_date` to equal the "day assessed". For late transaction adjustments, the project uses the current assessment day; historical days identify calculation periods. [Reversal fee refunds](08-reversals-research.md#correcting-fees-and-interest-after-a-reversal) are a narrow exception: current booking, original fee value date, under the [accepted decision](../deliverables/AMBIGUITIES.md#reversal-compensation).
 
 ## Approved adjustment method
 
@@ -20,7 +20,7 @@ The [exercise](../exercise-statement.md) requires a fee's `value_date` to equal 
 3. Append only a nonzero adjustment, separately linked to the transaction, using the correction day for both dates except for reversal fee refunds above.
 4. Keep a breakdown by historical day and component.
 
-The net amount includes the original result and **all prior adjustments, paid or unpaid**. Never repeat the principal. Fee differences debit or credit the ledger. Interest differences, including corrections of paid periods, [remain pending until eligible payment](10-interest-capitalization-research.md#approved-payment-and-components); that study defines their balance treatment, rationale and payment limits.
+The net amount includes the original result and **all prior adjustments, paid or unpaid**. Never repeat the principal. Fee differences debit or credit the ledger. Interest differences, including corrections of paid periods, [remain pending until eligible payment](10-interest-capitalization-research.md#approved-payment-and-components); that study defines their balance treatment, rationale and payment limits under the [component settlement decision](../deliverables/AMBIGUITIES.md#interest-adjustments-wait-for-payment).
 
 ## Example
 

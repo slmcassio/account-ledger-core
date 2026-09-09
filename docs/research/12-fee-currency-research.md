@@ -1,8 +1,12 @@
 # Overdraft fees in the account's currency
 
+**Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`.
+
+**Integration status:** The account type fee configuration and zero BHD fee below are adopted under [Overdraft Fee Currency](../deliverables/AMBIGUITIES.md#overdraft-fee-currency). This is an explicit project exception to the literal fee rule. E10 receipt timing remains part of the source review awaiting incorporation into the local deliverables under [Pending Calculation Decisions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
+
 ## Rule and approved exception
 
-The [exercise](../exercise-statement.md#nonnegotiable-rules) requires AED 25.00 per account per day with a negative closing balance, without exempting ACC-002, denominated in BHD. It supplies no exchange rate, reference date or conversion policy.
+The [exercise](../exercise-inputs/exercise-statement.md#nonnegotiable-rules) requires AED 25.00 per account per day with a negative closing balance, without exempting ACC-002, denominated in BHD. It supplies no exchange rate, reference date or conversion policy.
 
 **Approved decision:** Configure the daily overdraft fee by account type, in that account's own currency. For the types corresponding to the supplied accounts, use AED 25.00 for ACC-001 and BHD 0.000 for ACC-002. No additional account types are defined here.
 
@@ -10,7 +14,7 @@ The user chose the zero BHD fee for simplicity and because conversion requiremen
 
 ## Supplied example
 
-[ACC-002 opens at BHD 0.000](../exercise-statement.md#accounts). Its only supplied movement is [E10's BHD 10.000 credit](../exercise-statement.md#event-stream), with both `booking_date` and `value_date` on Day 5. It [arrives late on Day 6](06-daily-closing-research.md#receipt-and-missing-inputs).
+[ACC-002 opens at BHD 0.000](../exercise-inputs/exercise-statement.md#accounts). Its only supplied movement is [E10's BHD 10.000 credit](../exercise-inputs/exercise-statement.md#event-stream), with both `booking_date` and `value_date` on Day 5. It [arrives late on Day 6](06-daily-closing-research.md#receipt-and-missing-inputs).
 
 Principal here means opening balance plus supplied financial movements, excluding fees and interest. Before E10 is recorded, it is zero. Once its installments are recorded, principal is BHD 0.000 for Days 1 through 4 and `0.000 + 10.000 = 10.000` for Days 5 and 6.
 

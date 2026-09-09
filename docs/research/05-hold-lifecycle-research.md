@@ -16,7 +16,7 @@ Separately apply the effect on any matching active reservation:
 * **Final settlement:** consume the settled portion and release the remainder.
 * **Release without settlement:** free the specified reserved amount without a ledger debit or credit.
 
-Preserve the original authorization and decision records. Append reservation changes and derive the active amount from that history, following the [exercise's](../exercise-statement.md) immutability rule.
+Preserve the original authorization and decision records. Append reservation changes and derive the active amount from that history, following the [exercise's](../exercise-inputs/exercise-statement.md) immutability rule.
 
 **Approved assumption:** Auth-A's AED 185.00 settlement is final. End its AED 200.00 reservation and make the unused AED 15.00 available without a ledger credit. Neither the smaller amount nor the absence of later settlements establishes finality.
 

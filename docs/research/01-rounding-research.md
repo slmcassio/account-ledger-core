@@ -6,7 +6,7 @@ The project uses HALF_UP to round monetary amounts. AED uses two decimal places;
 
 ## Requirements and decision
 
-The [exercise](../exercise-statement.md) requires those currency precisions. It also requires the rounded daily interest accruals to sum exactly to the capitalized total. It does not specify how to round exact ties.
+The [exercise](../exercise-inputs/exercise-statement.md) requires those currency precisions. It also requires the rounded daily interest accruals to sum exactly to the capitalized total. It does not specify how to round exact ties.
 
 ## Analysis
 
@@ -14,7 +14,7 @@ HALF_UP rounds to the nearest representable amount, with exact ties away from ze
 
 The adopted choice assumes that positive interest recipients should receive the higher amount at exact ties. It accepts the resulting upward bias. This rationale does not establish a customer benefit for fees or negative adjustments.
 
-[Study 09](09-daily-interest-research.md#rule-and-approved-calculation) defines daily interest: exact multiplication followed by one currency rounding, with no fractions carried between days. This does not set intermediate precision or stages for other calculations. Rounding alone determines neither [installment allocation](11-installments-research.md#approved-remainder-position) nor [reversal compensation](08-reversals-research.md#approved-decisions-and-remaining-limits).
+[Study 09](09-daily-interest-research.md#rule-and-approved-calculation) documents the [approved daily calculation](../deliverables/AMBIGUITIES.md#daily-interest-calculation): exact multiplication followed by one HALF_UP currency rounding, with no fractions carried between days. The study does not set intermediate precision or stages for other calculations. Rounding alone determines neither [installment allocation](11-installments-research.md#approved-remainder-position) nor [reversal compensation](08-reversals-research.md#approved-decisions-and-remaining-limits).
 
 ## Example
 

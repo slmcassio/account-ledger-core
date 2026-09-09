@@ -1,5 +1,9 @@
 # Daily closing and corrections
 
+**Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
+
+**Integration status:** The ordinary fee dates and E10 receipt scenario below are decisions from the source review that still await incorporation into this worktree's deliverables. [AMBIGUITIES](../deliverables/AMBIGUITIES.md#pending-calculation-decisions) records the current accepted scope and remaining questions. The local architecture and supplied-ID rules are preserved in [Relation to the architecture](#relation-to-the-architecture).
+
 ## Agreed operation
 
 Financial transactions update the current ledger balance when processed. An intraday deficit alone triggers no daily fee.
@@ -28,15 +32,22 @@ Apply [study 02's incremental adjustment method and dates](02-booking-and-value-
 
 Queries append nothing. Corrections never [automatically reevaluate authorizations](04-authorization-decisions-research.md#approved-policy-later-balance-corrections).
 
+## Relation to the architecture
+
+Yield reconstructs these mathematical accounting balances from Authorization's approved transaction feed and initial account state. Neither Yield nor Authorization queries Ledger for a balance. The booking cutoff selects financial inputs within the approved account version; it is not a replacement event counter.
+
+The [approved identity rule](../deliverables/AMBIGUITIES.md#snapshot-recording-and-retries) skips an already recorded supplied ID before inspecting payload or repeating effects. A new interest payment or fee submission requires its source account counter to equal Authorization's current snapshot counter, checked together with ID uniqueness and transaction plus snapshot recording. Declines retain their decisions and IDs without a new snapshot or counter increment. See the [payment contract and feed completeness limit](../deliverables/AMBIGUITIES.md#yield-calculation-and-payment).
+
+E9 can leave the Day 6 payment amount unchanged because its booking is excluded, while still advancing Authorization's account counter. A stale payment must then retry using complete approved inputs for the current account version; its recalculated amount may be identical. Validation of cutoff-relevant calculation records remains a separate proposal.
+
 ## Decisions still open
 
 * **Reviews:** Proposed after E7: ACC-001 Days 2 through 4 before E8; after E9: Days 2 through 5. These and ordinary checkpoints beyond the E10 scenario remain open. E8 does not close Day 5.
 * **Clock:** Midnight and 00:30 start remain proposals; time zone is unresolved.
 * **Missing inputs:** General input completeness remains open beyond the E10 scenario.
-* **Duplicates:** Proposed same event ID for repeat detection; equal amounts and dates are insufficient.
-* **Concurrency:** Proposed validation of eligible inputs and prior results, followed by indivisible recording and retry if they changed. Excluded future bookings alone require no retry. Mechanism undecided.
+* **Calculation-record concurrency:** Proposed validation of eligible inputs and prior results, followed by indivisible recording and retry if they changed. At this calculation layer, excluded future bookings alone require no retry. This does not replace Authorization's approved source counter check; the calculation-record mechanism remains undecided.
 
-Final E7 fee counts and replay totals remain open. Legacy examples [04](../examples/04-backdated-adjustment.md) and [08](../examples/08-daily-closing.md) establish no current totals; the [reversal simulation](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) supplies no replay calendar. Apply the approved [fee base](07-overdraft-fees-research.md#rule-and-approved-base), [fee amounts](12-fee-currency-research.md#rule-and-approved-exception) and [monthly payment](10-interest-capitalization-research.md#approved-monthly-payment).
+Final E7 fee counts and replay totals remain open. Legacy examples [04](../examples/04-backdated-adjustment.md) and [08](../examples/08-daily-closing.md) establish no current totals; the [reversal simulation](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) supplies no replay calendar. Apply the approved [fee base](07-overdraft-fees-research.md#rule-and-approved-base) and [monthly payment](10-interest-capitalization-research.md#approved-monthly-payment). [Study 12](12-fee-currency-research.md#rule-and-approved-exception) records the [adopted fee currency decision](../deliverables/AMBIGUITIES.md#overdraft-fee-currency): account type configuration in the account currency, with AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type.
 
 **Review status:** Study 06 remains approved with these dependencies explicitly pending.
 

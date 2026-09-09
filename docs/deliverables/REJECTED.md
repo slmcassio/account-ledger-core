@@ -8,6 +8,10 @@ For legitimate late transaction adjustments, rejected assigning the corrected hi
 
 Under the approved project decision, the fee component affects the balance from its recording day. Posting that debit or credit against historical days would also change those days' ledger balances. Interest differences remain pending until the [next eligible regular payment](AMBIGUITIES.md#interest-adjustments-wait-for-payment); their dates do not create a historical ledger credit. The original delayed transaction retains its supplied historical value date.
 
+## Immediate Balance Corrections for Paid Interest
+
+Replaced the earlier approach that corrected already credited interest directly in the account balance. The [approved decision](AMBIGUITIES.md#interest-adjustments-wait-for-payment) keeps every interest difference pending until an eligible regular payment, preserving earlier payments and settling each unpaid component once. Fee adjustments change current funds when recorded; reversal fee refunds also affect reconstructed balances from the original charge's value date.
+
 ## Acceptance Criterion 4
 
 **Rejected:** refusing a settlement solely because its authorization ID is missing from the ledger, without recording the debit.
@@ -26,15 +30,15 @@ The [approved decision](AMBIGUITIES.md#hold-settlement-and-release) treats Auth-
 
 Rejected deferring every calculation until the entire event stream has arrived. The user chose an active system that calculates during event processing. Such a system continues receiving transactions and has no final input event to wait for.
 
-The [research](../research/06-daily-closing-research.md) keeps daily closing and later recalculation separate. A final report after the finite replay remains possible; the precise closing schedule is still proposed.
+The [research](../research/06-daily-closing-research.md) keeps daily closing and later recalculation separate. A final report after the finite replay remains possible. The previous-day reference and booking cutoff are approved; clock times and replay positions remain proposed.
 
 ## Principal Only and Current Dates for Reversal Fee Refunds
 
-For reversals, the user selected recalculation of all affected fees and interest rather than returning only principal. Derived bases can change, so leaving every previously calculated amount untouched was not selected.
+For reversals, the approved scope includes recalculation of all affected fees and interest from the affected value day onward, within the applicable calculation boundary. Returning only principal was not selected because derived bases can change. Recalculation does not automatically refund every fee.
 
 Method A in [study 08](../research/08-reversals-research.md) books and values fee refunds on the correction day. It was not adopted because those fees would remain in earlier balances. Approved method B keeps current booking but offsets each fee at its original charge's value date. The late transaction adjustment policy above remains unchanged outside this exception.
 
-Neither decision backdates interest payments: all interest differences retain current correction dates and wait for an eligible regular payment. This record does not establish criterion 6's blanket restoration or final replay totals; daily calculation stages are now defined in study 09, while the unresolved bases and study 10 payment dependencies remain open.
+Neither decision backdates interest payments: all interest differences retain current correction dates and wait for an eligible regular payment. This record does not establish criterion 6's blanket restoration or final replay totals; those remain subject to the [pending calculation decisions](AMBIGUITIES.md#pending-calculation-decisions).
 
 ## Acceptance Criterion 7
 
@@ -53,5 +57,11 @@ For two eligible unpaid days at AED 465.00, each day's raw interest is `465.00 *
 The [approved daily calculation](AMBIGUITIES.md#daily-interest-calculation) rejects intermediate rounding and carrying fractions between days. Each exact product is rounded once to its currency precision, keeping its daily result independent of other days.
 
 Rounding after aggregating raw interest does not replace the required sum of daily amounts. Likewise, a correction compares rounded daily targets rather than rounding their raw difference. The [small examples](../research/09-daily-interest-research.md#corrections-and-payment) show why that alternative can miss a monetary adjustment. This rejection concerns daily interest, not a policy for settling a negative payment total.
+
+## Snapshots for Declined Authorizations
+
+Replaced the earlier choice to create a snapshot and advance the account counter for a declined authorization. A decline changes neither funds nor holds. Advancing the counter made Yield's source version stale even though the declined request was absent from its approved transaction feed.
+
+The [revised decision](AMBIGUITIES.md#snapshot-recording-and-retries) retains the decline and its supplied ID in decision history, with no new snapshot or counter increment. Duplicate requests still preserve that decision.
 
 TODO: Record refused acceptance criteria and further abandoned approaches as they are reviewed.

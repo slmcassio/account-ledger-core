@@ -40,4 +40,4 @@ Under the approved assumption, rejection omits a confirmed debit and overstates 
 
 ## Sources and limits
 
-The [exercise](../exercise-statement.md) supplies AED precision and the available balance formula. External confirmation is a project assumption. A missing local authorization does not prove that a payment was confirmed.
+The [exercise](../exercise-inputs/exercise-statement.md) supplies AED precision and the available balance formula. External confirmation is a project assumption. A missing local authorization does not prove that a payment was confirmed.

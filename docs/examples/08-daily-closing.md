@@ -55,4 +55,4 @@ The earlier 0.04 was never recorded, so no compensation for that amount is neede
 
 At 00:37 on Day 2, the ledger balance is `100.00 + 50.00 + 50.00 = 200.00`. Unpaid interest for Day 1 is `0.06 + 0.02 = 0.08`. Neither interest record adds money to the account before capitalization.
 
-The [exercise](../exercise-statement.md) supplies the rate, precision, and deferred capitalization requirement. The [late transaction research](../research/02-booking-and-value-dates-research.md) supplies the adopted adjustment treatment. The account, amounts, times, and stopping point are scenario data. This example does not choose a reversal policy or implement a concurrency mechanism.
+The [exercise](../exercise-inputs/exercise-statement.md) supplies the rate, precision, and deferred capitalization requirement. The [late transaction research](../research/02-booking-and-value-dates-research.md) supplies the adopted adjustment treatment. The account, amounts, times, and stopping point are scenario data. This example does not choose a reversal policy or implement a concurrency mechanism.

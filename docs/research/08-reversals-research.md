@@ -1,5 +1,11 @@
 # Principal reversals and financial corrections
 
+**Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
+
+**Integration status:** Method B and pending interest corrections remain adopted under [AMBIGUITIES](../deliverables/AMBIGUITIES.md#reversal-compensation). References below to the source review's ordinary fee dates, Day 6 calendar mapping and signed settlement do not incorporate those updates into the local deliverables; their current status remains in [Pending Calculation Decisions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions).
+
+<a id="what-a-and-b-do"></a>
+
 ## Correcting fees and interest after a reversal
 
 Reversing a debit may also require correcting the fees and interest it affected.
@@ -47,15 +53,15 @@ With reversal on Day 9, eligible corrections join ordinary interest on Day 10: A
 
 Every correction concerns a legitimate transaction; error correction is excluded to simplify the exercise.
 
-The [supplied E9](../exercise-statement.md) credits AED 620.00 to reverse E7, with booking Day 6 and value Day 2. Preserve all records and their order, including E10 after E9 and E6's confirmed AED 180.00 debit.
+The [supplied E9](../exercise-inputs/exercise-statement.md) credits AED 620.00 to reverse E7, with booking Day 6 and value Day 2. Preserve all records and their order, including E10 after E9 and E6's confirmed AED 180.00 debit.
 
 Under the [daily booking cutoff](06-daily-closing-research.md#agreed-operation), E9 and adjustments booked Day 6 cannot change the payment referencing Day 5, even if processed first.
 
-Use the approved [fee base](07-overdraft-fees-research.md#rule-and-approved-base), [incremental comparison](02-booking-and-value-dates-research.md#approved-adjustment-method) and [daily rounding](09-daily-interest-research.md#rule-and-approved-calculation). Fee differences affect funds; interest follows the [payment rules](10-interest-capitalization-research.md#approved-payment-and-components).
+Use the approved [fee base](07-overdraft-fees-research.md#rule-and-approved-base) and [incremental comparison](02-booking-and-value-dates-research.md#approved-adjustment-method). Preserve HALF_UP and all prior adjustments, including paid ones. [Study 09](09-daily-interest-research.md#rule-and-approved-calculation) records the [adopted daily calculation](../deliverables/AMBIGUITIES.md#daily-interest-calculation): exact multiplication followed by one HALF_UP currency rounding, with no fractions carried between days. Fee differences affect funds; interest follows the [payment rules](10-interest-capitalization-research.md#approved-payment-and-components).
 
 ## Approved decisions and remaining limits
 
-* **Scope:** respect the applicable calculation boundary; reversal does not automatically refund every fee.
+* **Scope:** respect the applicable calculation boundary; reversal does not automatically refund every fee. The [accepted decision](../deliverables/AMBIGUITIES.md#reversal-compensation) records the complete rule and rationale.
 * **Dates:** [the approved fee refund dating](#correcting-fees-and-interest-after-a-reversal) is a limited exception to the [late transaction policy](02-booking-and-value-dates-research.md#approved-adjustment-method). Interest corrections retain both dates on the actual correction day and remain pending, including corrections of paid periods.
 
 Restoring principal, historical balances, net fees, interest and authorizations are different outcomes. Criterion 6's blanket restoration claim is unsupported. [Authorizations](04-authorization-decisions-research.md#approved-policy-later-balance-corrections) are not automatically reevaluated.

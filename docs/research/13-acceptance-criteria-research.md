@@ -1,12 +1,16 @@
 # Acceptance criteria assessment
 
+**Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`.
+
+**Integration status:** This assessment retains the source review for reference. [AMBIGUITIES](../deliverables/AMBIGUITIES.md) records this worktree's accepted decisions and remaining questions. The [rejection of criterion 8](../deliverables/REJECTED.md#acceptance-criterion-8) is adopted; [REJECTED](../deliverables/REJECTED.md) remains the record of adopted refusals. This does not adopt other source decisions that remain pending in the local deliverables.
+
 ## Reference and scope
 
 This study assesses the eight criteria against the exercise's rules, events and approved project decisions.
 
 ## Rule and open question
 
-The [exercise](../exercise-statement.md) deliberately includes incorrect criteria. Mandatory rules take precedence unless an explicit project exception is recorded. Missing definitions require a stated assumption, not an inferred industry standard. A result also needs its account, target day, processed events and fee treatment to be clear.
+The [exercise](../exercise-inputs/exercise-statement.md) deliberately includes incorrect criteria. Mandatory rules take precedence unless an explicit project exception is recorded. Missing definitions require a stated assumption, not an inferred industry standard. A result also needs its account, target day, processed events and fee treatment to be clear.
 
 ## Analysis
 
@@ -29,4 +33,4 @@ This counterfactual assumes intermediate closing and recalculation without suppl
 
 ## Sources and limits
 
-Part 2 instructions were not supplied and are outside this assessment.
+This assessment covers the eight criteria above. The [Part 2 architecture](../architecture.md) is documented separately.

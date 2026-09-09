@@ -17,7 +17,7 @@ The first four events illustrate the approved responsibilities. The continuation
 
 ## Events and results
 
-All amounts are AED. Each balance is the state after the event.
+All amounts are AED. Each balance is the state after the event. Authorization obtains its financial state and holds from its own latest snapshot, not from Ledger. D, C and A create snapshots. B records its declined decision and ID, preserving A's snapshot and counter. Ledger columns below show accounting outcomes, not reads by Authorization.
 
 | Event | Ledger change | Ledger balance | Active holds | Available balance |
 |---|---:|---:|---:|---:|
@@ -43,17 +43,17 @@ The resulting state has three distinct parts: ledger balance 40.00, A's active h
 
 The next two events also occur on Day 1 before closing. R reverses D with an appended credit of 10.00 linked to D. No daily charges or interest need correction in this scenario.
 
-Authorization does not automatically reconsider B after the balance change. N is a new explicit authorization request for 10.00.
+Authorization does not automatically reconsider B after the balance change. Resending B's ID preserves its recorded decline without a new snapshot or counter increment. N is a new explicit authorization request for 10.00 with a different ID.
 
 | Event | Ledger change | Ledger balance | Active holds | Available balance |
 |---|---:|---:|---:|---:|
 | R: reversal of D | +10.00 | 50.00 | 40.00 | 10.00 |
 | N: new request to hold 10.00, approved | 0.00 | 50.00 | 50.00 | 0.00 |
 
-After R, the ledger balance is `40.00 + 10.00 = 50.00` and available balance is `50.00 - 40.00 = 10.00`. Authorization uses this balance for new requests. B creates no hold.
+After R, the ledger balance is `40.00 + 10.00 = 50.00` and available balance is `50.00 - 40.00 = 10.00`. Authorization uses the financial state and holds in its updated snapshot for new requests. B creates no hold.
 
 N then passes the check: `50.00 - 40.00 - 10.00 = 0.00`. Active holds are now A's 40.00 and N's 10.00. B still has no hold. R was not known when A or B was processed; it is known when N is processed.
 
 ## Sources and limits
 
-The [exercise](../exercise-statement.md) supplies monetary precision and the authorization condition. The immediate reversal is scenario data, not a general policy for reversals or historical adjustments.
+The [exercise](../exercise-inputs/exercise-statement.md) supplies monetary precision and the authorization condition. The immediate reversal is scenario data, not a general policy for reversals or historical adjustments.

@@ -1,10 +1,14 @@
 # Daily interest calculation
 
+**Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`.
+
+**Integration status:** The daily calculation below is adopted under [Daily Interest Calculation](../deliverables/AMBIGUITIES.md#daily-interest-calculation): exact multiplication followed by one HALF_UP currency rounding, with no fractions carried between days. This decision does not set intermediate precision or rounding stages for other calculations.
+
 ## Rule and approved calculation
 
 For each account and day, multiply its positive closing ledger balance by `0.0004`, then round once using [HALF_UP and the currency's precision](01-rounding-research.md#scope). Zero and negative balances earn nothing. Keep the product exact until daily rounding, with no intermediate rounding or fractions carried between days.
 
-The [exercise](../exercise-statement.md#nonnegotiable-rules) supplies the daily rate and currency precisions. Exact products need at most six fractional places for AED or seven for BHD, distinct from stored monetary precision, with no limit implied on integer digits. No language is selected.
+The [exercise](../exercise-inputs/exercise-statement.md#nonnegotiable-rules) supplies the daily rate and currency precisions. Exact products need at most six fractional places for AED or seven for BHD, distinct from stored monetary precision, with no limit implied on integer digits. No language is selected.
 
 ## Why the stages matter
 

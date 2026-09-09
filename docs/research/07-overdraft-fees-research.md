@@ -1,8 +1,12 @@
 # Daily overdraft fee assessment
 
+**Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
+
+**Integration status:** The assessment base is adopted in [AMBIGUITIES](../deliverables/AMBIGUITIES.md#overdraft-fee-assessment-base). The ordinary assessment dates below are decisions from the source review that still await incorporation into this worktree's deliverables. The [account type fee configuration and zero BHD fee](../deliverables/AMBIGUITIES.md#overdraft-fee-currency) are adopted.
+
 ## Rule and approved base
 
-The [exercise](../exercise-statement.md#nonnegotiable-rules) requires AED 25.00 per negative closing day per account, with the assessment day as the fee's value date. Zero incurs no fee. [Study 12](12-fee-currency-research.md) records the approved exception: fees configured by account type in its own currency, with AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type.
+The [exercise](../exercise-inputs/exercise-statement.md#nonnegotiable-rules) requires AED 25.00 per negative closing day per account, with the assessment day as the fee's value date. Zero incurs no fee. [Study 12](12-fee-currency-research.md) records the [adopted exception](../deliverables/AMBIGUITIES.md#overdraft-fee-currency): fees configured by account type in its own currency, with AED 25.00 for ACC-001's type and BHD 0.000 for ACC-002's type.
 
 Calculate historical day H using [study 06's booking cutoff and value-date filters](06-daily-closing-research.md#agreed-operation). Holds and pending interest have no ledger effect.
 
@@ -34,7 +38,7 @@ Day 1's base is `-10.00 + 20.00 = 10.00`: the fee's value date already excludes 
 
 ## Pending decisions
 
-Final fee counts and balances depend on [the open calculation decisions](06-daily-closing-research.md#decisions-still-open), applying [the approved payment dates](10-interest-capitalization-research.md#approved-capitalization-date).
+Final fee counts and balances depend on [the open calculation decisions](06-daily-closing-research.md#decisions-still-open), applying [the approved payment dates](10-interest-capitalization-research.md#approved-capitalization-date). These isolated examples establish no final replay totals; [NUMBERS](../deliverables/NUMBERS.md#values-used-in-the-overdraft-fee-snapshots) records their inputs.
 
 ## Sources and limits
 

@@ -1,8 +1,12 @@
 # Interest capitalization
 
+**Source:** Research from `main` at `ec4e20cc9eb9f788e5195be574b384ec97108f32`, reconciled with the local architectural decisions.
+
+**Integration status:** The source review adopted signed settlement and the Day 6 monthly mapping below. Those updates still await incorporation into this worktree's deliverables. [AMBIGUITIES](../deliverables/AMBIGUITIES.md#interest-payment-schedule-and-capitalization) records the locally accepted payment rules, and [Pending Calculation Decisions](../deliverables/AMBIGUITIES.md#pending-calculation-decisions) retains the unresolved local calendar and negative-total decisions.
+
 ## Approved payment and components
 
-The [exercise](../exercise-statement.md#nonnegotiable-rules) literally requires one interest credit per account at the end of Day 6. Keep AED and BHD separate. The [daily job](06-daily-closing-research.md#agreed-operation) references Day 5.
+The [exercise](../exercise-inputs/exercise-statement.md#nonnegotiable-rules) literally requires one interest credit per account at the end of Day 6. Keep AED and BHD separate. The [daily job](06-daily-closing-research.md#agreed-operation) references Day 5.
 
 Sum eligible unpaid [daily accruals](09-daily-interest-research.md) and signed interest adjustments exactly, including corrections of paid periods. Record which components are settled, settle each once and preserve earlier payments.
 
@@ -39,6 +43,10 @@ Pay on the first business day of each month for the previous month. Current mont
 **Approved scenario mapping:** Day 6 is the first business day of a new month, when regular monthly settlement occurs; Day 5 ends the previous month. For an illustrative 30-day month, Days 1 through 6 correspond to dates 26, 27, 28, 29, 30 and 01. Day 6 ordinary interest belongs to the new month, is calculated on Day 7 and awaits payment on the first business day of the following month.
 
 This project assumption selects no specific month, year, jurisdiction or holiday calendar. The [15-day reversal simulation](examples/08-reversal-15-day-simulation.md#inputs-and-assumed-schedule) uses a separate illustrative schedule.
+
+## Relation to the architecture
+
+Financial settlement follows Authorization's [source counter validation](../deliverables/AMBIGUITIES.md#yield-calculation-and-payment) and [snapshot and ID rules](../deliverables/AMBIGUITIES.md#snapshot-recording-and-retries). This study specifies the payment policy, not the event representation or counter effects of a zero settlement. Daily arithmetic follows the [adopted daily calculation](../deliverables/AMBIGUITIES.md#daily-interest-calculation).
 
 ## Remaining questions
 

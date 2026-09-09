@@ -10,6 +10,18 @@ Later dated activity entries identify when the summary was recorded, not when th
 
 ## Research and Documentation Updates
 
+### 09 September 2026, 00:13:55
+
+Recorded in America/Sao_Paulo. This timestamp records the entry, not execution start, completion time or duration.
+
+* Completed the [LEDGER-ARCHITECTURE document](../architecture.md), defining the in-memory module boundaries, Authorization's operational snapshots, Yield's event-based calculations and Ledger's separate balanced postings. Preserved the C3 interaction labels and calculation version example.
+* Finalized [snapshot recording and retries](AMBIGUITIES.md#snapshot-recording-and-retries): supplied IDs remain stable, recorded IDs are skipped before payload inspection, and validation is indivisible with recording. A decline records only its decision and ID, without a hold, financial posting, snapshot or counter increment. Payments and fees validate their source account counter; committed Ledger delivery retries preserve the original transaction.
+* Reconciled the worktree with remote main at `ec4e20c`. Kept exact daily interest multiplication with one HALF_UP rounding, account type fees of AED 25.00 and BHD 0.000, rejection of criterion 8 and the approved E10 allocation. Aligned architecture references and research integration notes with these decisions.
+* Kept the remaining [calculation decisions](AMBIGUITIES.md#pending-calculation-decisions) explicit. Research records source decisions about ordinary fee dates, E10 receipt, calendar mapping and signed settlement that have not been incorporated into these deliverables. Final replay totals and calculation input completeness remain open.
+* Moved the [exercise statement](../exercise-inputs/exercise-statement.md) and [corrected business rules](../exercise-inputs/business-rules-corrected.md) into `exercise-inputs`. Preserved the statement's content during relocation and the rules' approved behavior. Updated local links, including only the three previously authorized historical worklog destinations, without rewriting prior entries.
+* Retained examples 05 through 07, including example 06's decline and redelivery behavior. Examples 04 and 08 remain marked as earlier schedules awaiting alignment. The three untracked examples in the primary checkout are excluded from publication, along with unrelated local files.
+* Independent reviews found no material issue. Diff, whitespace, local file and anchor checks passed; 36 arithmetic assertions passed using exact decimal values. Verified preservation of all 31 primary checkout files, its index and HEAD. No executable ledger or test suite exists, and no implementation was added. These checks precede the authorized signed commit and push to `origin/main`.
+
 ### 08 September 2026, 23:38:45
 
 Recorded in America/Sao_Paulo. This timestamp records the entry, not execution start, completion time or duration.
@@ -67,11 +79,24 @@ Recorded in America/Sao_Paulo. This timestamp records the entry, not execution s
 * Independent review rechecked the ISO 20022 and Canopy sources and their limits, the example calculations and document consistency. Coordinated checks covered 88 local links and anchors, 14 Markdown tables, whitespace, the final diff and preservation of the 30-file original-checkout snapshot. No executable ledger or test suite exists.
 * This summary records completed work before the authorized signed commit on local main, not completion of that commit. No push or PR is authorized for study 08. Recording time is America/Sao_Paulo; no execution duration is inferred.
 
+### 08 September 2026, 00:03:39
+
+* Numbered the five [component interactions](../architecture.md#c3-component-view) as 1, 2, 3, 10, and 11. Used the requested approval or recalculation label and explained that these references are not event counters or one continuous sequence; calculation has an independent trigger.
+* Extended the source counter validation and approval or recalculation response to fee submissions, aligning the [decision](AMBIGUITIES.md#yield-calculation-and-payment). Preserved the user's Yield paragraphs and left other fee policy and protocol details pending.
+* Reviewed the changes, checked whitespace and 24 local links and anchors, and verified the five numbers and exact requested label. The diagram rendered successfully; visual inspection confirmed four components, five numbered relationships, and readable labels without clipping or overlap. No behavior tests ran for this documentation update.
+
 ### 08 September 2026, 00:00:17
 
 * Simplified [study 07](../research/07-overdraft-fees-research.md) from 1,333 to 546 words, removing duplicated explanations and process details while preserving approved policies, both examples, and accepted open dependencies.
 * Reviewed the editorial diff and verified six Decimal calculations, local links and anchors, and whitespace. No executable ledger tests exist.
 * The user authorized amending the unpushed study 07 commit with this revision and worklog entry. This records the authorization before the amend, not its completion.
+
+### 08 September 2026, 00:00:10
+
+* Integrated approved [study 06](../research/06-daily-closing-research.md) from source commit `8debeabc462f91d54931f9baa17698060abe2cce`. The daily job uses the previous day's cumulative booking cutoff. The Day 6 payment uses reference Day 5; Day 6 interest is calculated on Day 7 and awaits later payment details. Later source changes, including study 07, were left outside this integration.
+* Recorded that [all interest adjustments wait for eligible payment](AMBIGUITIES.md#interest-adjustments-wait-for-payment), including corrections for paid periods. Updated architecture, business rules, research 02, numerical rationale, and the abandoned immediate balance correction approach. Preserved fee adjustment dates and marked examples 04 and 08 as earlier schedules awaiting numerical alignment, without inventing replacement replay results.
+* Kept the approved Authorization account-counter check distinct from proposed validation of cutoff-relevant calculation records. An excluded booking can preserve the payment amount while invalidating its source counter. Preserved supplied IDs, module boundaries, manual architecture edits, and the diagram. Study 06's open items and later study dependencies remain explicit.
+* Reviewed the changes and checked whitespace, 126 local links and anchors across 14 changed Markdown files, and six exact Decimal calculations before recording this entry. Final review found no material contradiction, including independent analysis of the cutoff and source-counter distinction. Verified work remained in the isolated worktree with an empty index and unchanged HEAD; external primary-checkout changes were preserved. No diagram rendering was repeated and no ledger behavior tests ran.
 
 ### 07 September 2026, 23:52:53
 
@@ -90,6 +115,66 @@ Recorded in America/Sao_Paulo. This timestamp records the entry, not execution s
 * The user approved study 06 for now with its recorded open items and dependencies pending, to revisit when a later study affects it. Remaining proposals were not adopted.
 * Reviewed the documentation diff, local links and anchors, whitespace, and Decimal arithmetic. Independent review checked consistency. No executable ledger or test suite exists yet.
 * The user authorized a signed commit and push restricted to study 06 and its related changes. This entry records that authorization before either action is performed.
+
+### 07 September 2026, 23:05:58
+
+* Revised the user's [Yield calculation and payment text](../architecture.md#yield-calculation-and-payment) in plain English. Explained that Authorization can record a transaction before it reaches Yield, including during calculation or payment delivery. The counter 10 to 11 example now states that Yield must receive the missing approved transaction before recalculating.
+* Clarified that a new transaction assigned counter N requires the current snapshot at N-1; a Yield payment also requires its source counter at N-1. Kept ID checking, counter validation, the credit or debit, and transaction plus balance snapshot recording indivisible. Preserved duplicate handling and the user's removed text without treating the remaining coordination questions in AMBIGUITIES as resolved.
+* Reviewed the revised section, checked whitespace and the local document link, and verified that the original primary checkout files were preserved. The diagram was unchanged, so rendering was not repeated. No behavior tests ran for this documentation revision.
+
+### 07 September 2026, 22:38:17
+
+* Corrected the [module boundaries](AMBIGUITIES.md#system-and-domain-boundaries): Transaction communicates only with Authorization. Authorization forwards approved transactions to Yield and Fees after recording the transaction and snapshot, and sends financial movements to Ledger. Renamed the current component labels and separated test replay and daily report inspection from the Transaction module.
+* Updated architecture, business rules, and research 04 and 06 to use Authorization's [approved transaction feed](AMBIGUITIES.md#yield-calculation-and-payment). Preserved counter, identity, payment validation, and confirmed settlement policies. Recorded the remaining completeness issue when declined transactions advance the account counter but are absent from the approved feed. Excluded tax charges on yield and changes to those taxes, without changing the interest-rate rule. NUMBERS was unchanged in this update.
+* Reviewed the changed passages and checked whitespace and 97 local links and anchors before recording this summary. Mermaid 11.17.2 parsed and rendered the revised diagram; visual inspection confirmed four components and five labelled relationships without clipping or overlap. Verified that the original primary checkout files were preserved. No behavior tests ran for this documentation update.
+
+### 07 September 2026, 22:33:14
+
+* Recorded the approved [counter and transaction ID definitions](AMBIGUITIES.md#snapshot-recording-and-retries). Counters start at 1 per account and advance by one. Each candidate belongs to the snapshot used for calculation; an advanced base requires rereading and reapplying the uncommitted transaction before deriving a fresh candidate. Added the initial value and increment rationale to [NUMBERS.md](NUMBERS.md#account-event-counter).
+* Transactions retain their supplied IDs. Recorded IDs are skipped before repeating calculations or inspecting amount or content, even when content differs. Updated architecture, business rules, research 04, and research 06. Yield retains its source counter and receives the next transaction counter only with an accepted payment; recorded payment redelivery creates no credit, recalculation, snapshot, or counter increment. Removed the resolved allocation and changed-content questions while preserving open event acquisition and completeness details.
+* Reviewed the changed passages and checked whitespace and 94 local links and anchors before recording this summary. Verified that the diagram source and original primary checkout files were unchanged. No diagram rendering was repeated and no behavior tests ran for this documentation update.
+
+### 07 September 2026, 22:09:01
+
+* Rewrote the Yield calculation and payment explanation to lead with concurrency: Authorization continues processing while Yield calculates or sends its payment. An illustrative counter 10 to 11 example shows why a newly recorded transaction causes the older calculation to return for recalculation without a payment effect.
+* Clarified the rationale in the [Yield decision](AMBIGUITIES.md#yield-calculation-and-payment) and research 06. Kept ID checking, counter comparison, and payment plus snapshot recording in one indivisible operation. Preserved the trigger, event inputs, identity rules, financial policies, and unresolved details.
+* Reviewed the revised passages and checked whitespace and 84 local links and anchors before recording this summary. Verified that the diagram source and primary checkout files were unchanged. No diagram rendering was repeated and no behavior tests ran for this documentation clarification.
+
+### 07 September 2026, 21:58:20
+
+* Applied the user's [Yield calculation and payment decision](AMBIGUITIES.md#yield-calculation-and-payment). Yield reconstructs dated interest bases from customer events and opening state, without consuming Ledger or Authorization balances. Payments carry the target account's source-view counter, distinct from the new payment counter. Authorization checks recorded IDs first, then validates source-view equality together with conditional payment and snapshot recording. A mismatch applies no payment and requests recalculation from a synchronized current event view.
+* Updated architecture, business rules, research 06, and related research 04 wording. Replaced the Ledger balance input in the component diagram with logical event inputs, versioned interest payment, and a recalculation request. Preserved fee submission ownership, the approved one-system scope, financial rules, and the distinction between approved payment validation and proposed timing or unpaid accrual recording. Event acquisition and completeness verification, new transaction counter allocation, and fee submission validation remain open.
+* Reviewed the diff and checked whitespace and 83 local links and anchors before recording this summary. Mermaid 11.17.2 parsed and rendered the revised diagram; visual inspection confirmed four components and six labelled relationships without clipping or label overlap. Reviewed the view, counter, identity, and calculation implications. No executable ledger or test suite exists, so no behavior tests ran.
+
+### 07 September 2026, 21:45:30
+
+* Recorded the user's decisions that event counters belong to accounts and transaction IDs remain unique and stable across retries and redelivery. Updated the [snapshot decision](AMBIGUITIES.md#snapshot-recording-and-retries), architecture, business rules, and research 04. Combined Authorization's uniqueness check with conditional transaction and snapshot recording; Ledger uses the same ID to prevent duplicate journal entries. Counter allocation relative to the base snapshot remains unresolved.
+* Recorded [Ledger delivery](AMBIGUITIES.md#ledger-delivery) as a separate operation after Authorization records its transaction and snapshot. Delivery may be asynchronous. Distinguished retrying delivery of a recorded transaction from reapplying an uncommitted attempt to a newer snapshot. Preserved transaction IDs, booking and value dates, calculation bases, double-entry bookkeeping, and the direction of data flow. Documented possible accounting lag and open recovery and calculation readiness details.
+* Reviewed the diff and checked whitespace and 74 local links and anchors before recording this summary. Mermaid 11.17.2 parsed and rendered the updated delivery label; visual inspection confirmed four components and six labelled relationships without clipping or overlap. Reviewed the recording, delivery, and calculation implications. No executable ledger or test suite exists, so no behavior tests ran.
+
+### 07 September 2026, 21:30:05
+
+* Updated the Ledger paragraph in Architecture and Tradeoffs to describe the user's chosen double-entry bookkeeping model. Each money movement received from Authorization has equal debit and credit postings in the same currency, kept together as one balanced journal entry.
+* Recorded the [bookkeeping decision](AMBIGUITIES.md#ledger-bookkeeping), its rationale, and the OpenStax conceptual reference. Distinguished book accounts from customer accounts and exercise event labels from posting mappings. Left the chart of accounts, event mappings, and Authorization-to-Ledger recording boundary unresolved. Preserved snapshot ownership, counter questions, and the diagram.
+* Reviewed the focused changes and checked whitespace and 70 local links and anchors before recording this summary. No executable ledger or test suite exists, so no behavior tests ran. The diagram was unchanged and did not require another rendering.
+
+### 07 September 2026, 21:23:41
+
+* Applied the user's correction to [Architecture and Tradeoffs](../architecture.md): Authorization guards available balance through operational snapshots and sends financial data to Ledger without consuming Ledger data. Routed all financial effects through Authorization, including fees and capitalization. Explicitly superseded the earlier Ledger-supplied balance approach in the ambiguity decision, business rules, and research 04. Clarified the balance source in example 06 without changing its arithmetic.
+* Recorded the [snapshot and retry decision](AMBIGUITIES.md#snapshot-recording-and-retries): each transaction accompanies a new snapshot, and validation plus conditional recording is indivisible. Preserved recorded decisions, confirmed settlement treatment, hold effects, unpaid interest treatment, and late adjustment dates. The relationship between counter allocation and the base snapshot remains unresolved, so the comparison is not claimed to detect every conflict. Other unspecified counter and posting details remain open.
+* Reviewed the diff and checked whitespace and 68 local links and anchors before recording this summary. Mermaid 11.17.2 parsed and rendered the revised diagram; visual inspection confirmed four components and six labelled relationships without clipping or overlap. Independent review of the structural documents found no actionable issues before this entry. No executable ledger or test suite exists, so no behavior tests ran.
+
+### 07 September 2026, 21:14:31
+
+* The user confirmed that the Part 2 title and evaluation paragraph are all the supplied instructions. Corrected the exercise statement's editorial reference note and positioned [Architecture and Tradeoffs](../architecture.md) as the Part 2 deliverable in README and the decision record. Earlier worklog entries retain the context recorded at that time.
+* Compared the design alternatives: one combined module needs less initial structure but entangles responsibilities; separate systems add coordination overhead. The chosen three domain modules keep ownership explicit and testable within one system. Preserved the diagram, existing decisions, and unresolved business and design policies.
+* Reviewed the diff and checked whitespace and 49 local links and anchors before recording this clarification. No behavior tests ran because the repository has no executable ledger or test suite. The diagram source was unchanged, so this follow-up did not repeat rendering.
+
+### 07 September 2026, 21:08:10
+
+* Recorded the approved LEDGER-ARCHITECTURE scope in [Architecture](../architecture.md): Ledger, Authorization, and Interest and Fees remain one in-memory system with explicit module boundaries and a technical replay coordinator. Added a logical C4 Level 3 component diagram and linked the document from README.
+* Added the decision, assumption, and rationale to [AMBIGUITIES.md](AMBIGUITIES.md#system-and-domain-boundaries). Preserved existing financial and authorization decisions, unresolved policies, and the unspecified process model and technology choices. Detailed Part 2 instructions remain unavailable.
+* Prepared the documentation in an isolated worktree from `e1cebb2` on `codex/ledger-architecture`, preserving the primary checkout. Reviewed the diff and checked whitespace and 48 local links and anchors. Independent document review found no actionable issues. Mermaid 11.17.2 parsed and rendered the diagram; visual inspection confirmed that all four components and five labelled relationships are legible, without clipping or overlap. No executable ledger or test suite exists, so no behavior tests ran.
 
 ### 07 September 2026, 20:36:37
 
@@ -165,7 +250,7 @@ Recorded the completed review of the rounding research and the resulting documen
 
 * Reviewed the [rounding research](../research/01-rounding-research.md) and checked its official sources. The securities examples provide limited precedents; Mambu describes precision and rounding stages without specifying HALF_UP or HALF_EVEN.
 * Recorded HALF_UP as a project choice in [AMBIGUITIES.md](AMBIGUITIES.md), keeping AED at two decimal places and BHD at three. The explicit assumption is to favor recipients of positive interest at exact ties and accept the upward bias in those cases.
-* Added the decision and a link to its rationale to the [business rules](../business-rules.md). Intermediate precision and rounding stages remain unresolved.
+* Added the decision and a link to its rationale to the [business rules](../exercise-inputs/business-rules-corrected.md). Intermediate precision and rounding stages remain unresolved.
 * Moved the report into docs/research and removed the temporary suffix. Its additional calculation proposals remain research recommendations, not adopted project decisions.
 
 ## Verified Commit Milestones
@@ -183,13 +268,13 @@ Signed commit `9a69223` organized the documentation and added the required deliv
 
 ### 07 September 2026, 11:35:01
 
-Signed commit `6aa6245` added the [exercise statement](../exercise-statement.md) as a separate reference document.
+Signed commit `6aa6245` added the [exercise statement](../exercise-inputs/exercise-statement.md) as a separate reference document.
 
 The statement includes the event stream in its supplied order, the acceptance criteria, the required deliverables, and the evaluation guidance. Criteria that the exercise asks the candidate to challenge remain in the reference text. The document explicitly records that the detailed instructions for Part 2 have not been provided.
 
 ### 07 September 2026, 10:58:18
 
-Signed commit `9b8eae0` added the [business rules](../business-rules.md).
+Signed commit `9b8eae0` added the [business rules](../exercise-inputs/business-rules-corrected.md).
 
 The document records 12 business rules separately from initial account data and the test scenario. It leaves rounding, the currency of overdraft fees, the effects of backdated entries and reversals, and the lifecycle of authorization holds as open questions.
 
